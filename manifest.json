@@ -1,14 +1,22 @@
 {
   "name": "Tag you're it",
-  "description": "Make the meaning clear. This plugin enables you to tag words on web sites with semantic meaning.",
+  "description": "Make the meaning clear. This plugin enables semantic tagging of web content.",
   "version": "0.7",
   "permissions": [""],
   "background": {
     "persistent": false,
     "scripts": ["background.js"]
   },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "css": ["bower_components/bootstrap/dist/css/bootstrap.min.css"],
+    "js": [
+      "bower_components/jquery/dist/jquery.min.js",
+      "bower_components/bootstrap/dist/js/bootstrap.min.js",
+      "content_script.js"]
+  }],
   "browser_action": {
-      "name": "Click to enable or disable tagging"
-  },
-  "manifest_version": 2
+    "default_title": "Tag you're it! Click to enable or disable tagging of web content."
+    },
+    "manifest_version": 2
 }
