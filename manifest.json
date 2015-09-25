@@ -1,0 +1,14 @@
+{
+  "name": "Tag you're it",
+  "description": "Make the meaning clear. This plugin enables you to tag words on web sites with semantic meaning.",
+  "version": "0.7",
+  "permissions": [""],
+  "background": {
+    "persistent": false,
+    "scripts": ["background.js"]
+  },
+  "browser_action": {
+      "name": "Click to enable or disable tagging"
+  },
+  "manifest_version": 2
+}

@@ -1,0 +1,26 @@
+{
+  "name": "tag-youre-it",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nilsnh/tag-youre-it",
+  "authors": [
+    "Nils Norman Haukås <nils@thunki.com>"
+  ],
+  "description": "A browser extension for semantic tagging of words",
+  "main": "main.js",
+  "keywords": [
+    "semantic",
+    "web",
+    "tagging"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5"
+  }
+}
