@@ -6,6 +6,9 @@
     "persistent": false,
     "scripts": ["background.js"]
   },
+  "web_accessible_resources": [
+    "**/*.html"
+  ],
   "content_scripts": [{
     "matches": ["<all_urls>"],
     "css": ["bower_components/bootstrap/dist/css/bootstrap.min.css"],

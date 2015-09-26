@@ -1,8 +1,25 @@
 $(document).ready(function () {
   console.log('hello world!');
 
-  // $("body").append('<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And heres some amazing content. Its very engaging. Right?">Click to toggle popover</button>');
+  var popoverContent;
 
-  $('[data-toggle="popover"]').popover('show');
+  $.get('test-menu-content.html', function (data) {
+    popoverContent = data;
+    contentReady();
+  });
+
+  function contentReady () {
+    $('.selected').popover({
+      title: "Please select a semantic tag",
+
+      content: popoverContent,
+
+      html: true,
+
+      placement: 'auto'
+
+    });
+
+    $('.selected').popover('show');
+  }
 });
-
