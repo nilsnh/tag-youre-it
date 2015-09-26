@@ -3,17 +3,33 @@
 <head>
   <title>Prototype page mockup</title>
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/bootstrap/js/tooltip.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="content_script.js"></script>
 </head>
-<body class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <h1>Testing ground</h1>
 
-      <p>The Triumph of Cleopatra, also known as Cleopatra's Arrival in Cilicia[1] and The Arrival of Cleopatra in Cilicia,[2] is an oil painting by English artist William Etty. It was first exhibited in 1821, and is now in the Lady Lever Art Gallery in Port Sunlight across the River Mersey from Liverpool. During the 1810s Etty had become widely respected among staff and students at the Royal
+<body class="container">
+
+  <div style="width:40%;" class="well pull-right u-add-margin-top tagit-selection-menu">
+    <h2>Add a tag</h2>
+
+    <input type="text" class="form-control" placeholder="Filter tags">
+
+    <ul>
+      <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Conscientious_objector"><em class="word">Conscientious objector</em>:             A conscientious objector (CO) is an "individual who has claimed the right to refuse to perform military service" on the grounds of freedom</li>
+
+      <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Irish_War_of_Independence"><em class="word">Irish War of Independence</em>:             The Irish War of Independence (Irish: Cogadh na Saoirse), Anglo-Irish War, Black and Tan War, or Tan War was a guerrilla war mounted by the Irish Republican Army (IRA) against the British government and its forces in Ireland.</li>
+
+      <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Flag_of_the_United_States"><em class="word">Flag of the United States</em>:             The national flag of the United States of America, often simply referred to as the American flag, consists of thirteen equal horizontal stripes of red (top and bottom) alternating with white, with a blue rectangle in the canton</li>
+    </ul>
+  </div>
+
+  <div style="width:60%;">
+    <h1>Testing ground</h1>
+
+    <p>The Triumph of Cleopatra, also known as Cleopatra's Arrival in Cilicia[1] and The Arrival of Cleopatra in Cilicia,[2] is an oil painting by English artist William Etty. It was first exhibited in 1821, and is now in the Lady Lever Art Gallery in Port Sunlight across the River Mersey from Liverpool. During the 1810s Etty had become widely respected among staff and students at the Royal
 
       Academy of Arts, in particular for his use of colour and ability to paint realistic flesh tones. Despite having exhibited at every Summer Exhibition since 1811 he attracted little commercial or critical interest. In 1820 he exhibited The Coral Finder, which showed nude figures on a gilded boat. This painting attracted the attention of Sir Francis Freeling, who commissioned a similar painting on a more ambitious scale.</p>
 
@@ -22,6 +38,5 @@
       <div>Yet another weird <span class="selected">text.</span></div>
 
     </div>
-  </div>
-</body>
-</html>
+  </body>
+  </html>

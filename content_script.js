@@ -14,7 +14,26 @@ $(document).ready(function () {
       var sel = window.getSelection();
       var selectedText = sel.toString();
     }
-    console.log(selectedText);
+    if (selectedText == false) {
+      return;
+    } else {
+      createPopover(document.activeElement, selectedText);
+    }
+  }
+
+  function createPopover(element, content) {
+    console.log('createPopover');
+
+    $(document.activeElement).append('test');
+
+    $(document.activeElement).popover({
+      title: "Please select a semantic tag",
+      content: 'say something',
+      html: true,
+      placement: 'auto'
+    });
+
+    $(document.activeElement).popover('show');
   }
 
   document.addEventListener('click', function(evt) {
@@ -26,25 +45,4 @@ $(document).ready(function () {
     // evt.preventDefault();
   }, false);
 
-  // var popoverContent;
-
-  // $.get('test-menu-content.html', function (data) {
-  //   popoverContent = data;
-  //   contentReady();
-  // });
-
-  // function contentReady () {
-  //   $('.selected').popover({
-  //     title: "Please select a semantic tag",
-
-  //     content: popoverContent,
-
-  //     html: true,
-
-  //     placement: 'auto'
-
-  //   });
-
-  //   $('.selected').popover('show');
-  // }
 });
