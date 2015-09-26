@@ -11,6 +11,10 @@ function updateIcon () {
   }
 }
 
-chrome.browserAction.onClicked.addListener(updateIcon);
+function initBackground () {
+  chrome.browserAction.onClicked.addListener(updateIcon);
+  updateIcon();
+}
 
-updateIcon();
+initBackground();
+
