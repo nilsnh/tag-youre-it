@@ -20,14 +20,21 @@ $(document).ready(function () {
     }
     if (selectedText) {
       currentlySelectedWord = selectedText;
-      console.log(selectedText);
-      queryServer(selectedText);
-    } else {
-      currentlySelectedWord = "";
+      displaySelectedWord(currentlySelectedWord);
+      getSensesFromServer(currentlySelectedWord);
     }
   }
 
-  function queryServer (word) {
+  function displaySelectedWord (word) {
+      $('#js-selected-word')
+        .replaceWith('<span id="js-selected-word">' + word + '</span>');
+  }
+
+  function getSensesFromServer (word) {
+    if (!word) {
+      return;
+    };
+
     var serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data={"word":"QUERYTOREPLACE"}'
     $.get(serverUrl.replace('QUERYTOREPLACE', word), function (serverResponse) {
       console.log(serverResponse);
@@ -37,7 +44,7 @@ $(document).ready(function () {
     function updateList (serverResponse) {
       var senses = serverResponse.senses;
       senses.reverse();
-      var listTemplate = '<li id="SENSEID"><strong>WORD.</strong> EXPLANATION</li>'
+      var listTemplate = '<li id="SENSEID" class="list-unstyled"><strong>WORD.</strong> EXPLANATION</li>'
       var htmlList = [];
       for (var i = senses.length - 1; i >= 0; i--) {
         htmlList.push(listTemplate
@@ -49,8 +56,6 @@ $(document).ready(function () {
       htmlList = '<ul id="senses">' +
         htmlList.join('') +
         '</ul>';
-
-      // debugger;
 
       $('#senses').replaceWith(htmlList);
 
@@ -89,8 +94,9 @@ $(document).ready(function () {
     isMenuShown = false;
   }
 
+  // Beware order is significant
+  $('#js-show-menu').click(addMenu);
   addMenu();
-
-  // $('#js-show-menu').click(addMenu);
+  isMenuShown = true;
 
 });

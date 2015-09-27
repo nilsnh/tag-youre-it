@@ -1,12 +1,8 @@
-.u-add-margin-top {
-  margin-top: 20px;
-}
-
 .tagit-body {
   width: 70%;
   position: absolute;
   right: 0;
-  padding-left: 5px;
+  padding: 10px;
 }
 
 .tagit-menu {
@@ -21,7 +17,16 @@
 }
 
 .tagit-menu ul {
-  padding-left: 15px;
+  padding-left: 0px;
   margin-top: 10px;
+}
+
+.tagit-menu li {
+  padding: 5px;
+}
+
+.tagit-menu li:hover {
+  background-color: #eee;
+  cursor: pointer;
 }
 
