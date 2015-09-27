@@ -96,7 +96,7 @@ $(document).ready(function () {
 
   // Beware order is significant
   $('#js-show-menu').click(addMenu);
-  addMenu();
-  isMenuShown = true;
+  // addMenu();
+  // isMenuShown = true;
 
 });
