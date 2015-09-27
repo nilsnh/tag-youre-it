@@ -1,13 +1,30 @@
-<div class="well pull-right u-add-margin-top tagit-selection-menu">
-  <h2>Add a tag</h2>
+<div class="tagit-menu">
+
+  <div class="clearfix">
+  <button id="js-hide-menu" class="btn btn-default pull-right">
+    Done tagging
+  </button>
+  </div>
+
+  <h2>Tag you're it</h2>
+
+  <p>Select a word to tag with a semantic tag.</p>
+
+  <p>Currently selected word: </p>
 
   <input type="text" class="form-control" placeholder="Filter tags">
 
-  <ul>
-    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Conscientious_objector"><em class="word">Conscientious objector</em>:             A conscientious objector (CO) is an "individual who has claimed the right to refuse to perform military service" on the grounds of freedom</li>
-
-    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Irish_War_of_Independence"><em class="word">Irish War of Independence</em>:             The Irish War of Independence (Irish: Cogadh na Saoirse), Anglo-Irish War, Black and Tan War, or Tan War was a guerrilla war mounted by the Irish Republican Army (IRA) against the British government and its forces in Ireland.</li>
-
-    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Flag_of_the_United_States"><em class="word">Flag of the United States</em>:             The national flag of the United States of America, often simply referred to as the American flag, consists of thirteen equal horizontal stripes of red (top and bottom) alternating with white, with a blue rectangle in the canton</li>
-  </ul>
-</div>
+  <ul id="senses">
+    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Mathematical_proof"><em class="word">Mathematical proof</em>:             In mathematics, a proof is a demonstration that if some fundamental statements are assumed to be true, then some mathematical statement is necessarily true. Proofs are obtained from deductive reasoning, rather than from inductive or empirical arguments; a proof must demonstrate that a statement is always true (occasionally by listing all possible cases and showing that it holds in each), rather than enumerate many confirmatory cases.        </li>
+    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Probate"><em class="word">Probate</em>:             Receipt of probate is the first step in the legal process of administering the estate of a deceased person, resolving all claims and distributing the deceased person's property under a will. A probate court (surrogate court) decides the legal validity of a testator's will and grants its approval (which word derives also from the Latin probo, probare) by granting probate to the executor.        </li>
+    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Evidence_(law)"><em class="word">Evidence (law)</em>:             The law of evidence encompasses the rules and legal principles that govern the proof of facts in a legal proceeding. These rules determine what evidence can be considered by the trier of fact in reaching its decision and, sometimes, the weight that may be given to that evidence. The law of evidence is also concerned with the quantum (amount), quality, and type of proof needed to prevail in litigation.        </li>
+    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Oil_reserves"><em class="word">Oil reserves</em>:             The total estimated amount of oil in an oil reservoir, including both producible and non-producible oil, is called oil in place. However, because of reservoir characteristics and limitations in petroleum extraction technologies, only a fraction of this oil can be brought to the surface, and it is only this producible fraction that is considered to be reserves. The ratio of producible oil reserves to total oil in place for a given field is often referred to as the recovery factor.        </li>
+    <li data-source="DBPedia" class="word-sense" id="http://dbpedia.org/resource/Presumption_of_innocence"><em class="word">Presumption of innocence</em>:             The presumption of innocence, sometimes referred to by the Latin expression Ei incumbit probatio qui dicit, non qui negat, is the principle that one is considered innocent until proven guilty. Application of this principle is a legal right of the accused in a criminal trial, recognised in many nations.        </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-person-noun-1"><em class="word">A person</em>: a human being</li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-event-noun-1"><em class="word">An event</em>: something that happens at a given place and time </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-creation-noun-2"><em class="word">A creative work</em>: an artifact that has been brought into existence by someone </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-abstraction-noun-6"><em class="word">An abstraction</em>: a general concept formed by extracting common features from specific examples </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-organization-noun-1"><em class="word">An organization</em>: a group of people who work together </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-topographic_point-noun-1"><em class="word">A place or spot</em>: a point located with respect to surface features of some region; "this is a nice place for a picnic"; "a bright spot on a planet" </li>
+    <li data-source="schema_org" class="word-sense" id="http://www.w3.org/2006/03/wn/wn20/instances/synset-merchandise-noun-1"><em class="word">A product, some merchandise</em>: commodities offered for sale; "good business depends on having good merchandise"; "that store offers a variety of products" </li></ul>
+  </div>

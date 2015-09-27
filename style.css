@@ -3,15 +3,25 @@
 }
 
 .tagit-body {
-  width: 60%;
+  width: 70%;
+  position: absolute;
+  right: 0;
+  padding-left: 5px;
 }
 
-.tagit-selection-menu {
-  width: 40%;
-  margin-left: 5px;
+.tagit-menu {
+  position: fixed;
+  overflow-y: auto;
+  width: 30%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #ccc;
+  padding: 10px;
 }
 
-.tagit-selection-menu ul {
+.tagit-menu ul {
   padding-left: 15px;
+  margin-top: 10px;
 }
 
