@@ -8,7 +8,7 @@ gulp.task('serve', function () {
     browserSync.init({
         server: {
           baseDir: "./",
-          index: "prototype-menu.html"
+          index: "example1.html"
         }
     });
 

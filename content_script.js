@@ -6,7 +6,7 @@ $(document).ready(function () {
     if (focused) {
       try {
         selectedText = focused.value.substring(
-            focused.selectionStart, focused.selectionEnd);
+          focused.selectionStart, focused.selectionEnd);
       } catch (err) {
       }
     }
@@ -45,4 +45,20 @@ $(document).ready(function () {
     // evt.preventDefault();
   }, false);
 
+  /*
+    Take the existing content, make it narrower and
+    insert a menu for tagging up content.
+  */
+  var isMenuShown = false;
+  function bootstrapApplication () {
+    if (isMenuShown) {
+      return true;
+    }
+    $.get('example1.menu.html', function (htmlData) {
+      $('body').children().wrapAll('<div class="tagit-body" />');
+      $('.tagit-body').before(htmlData);
+      isMenuShown = true;
+    });
+  }
+  $('#js-show-menu').click(bootstrapApplication);
 });

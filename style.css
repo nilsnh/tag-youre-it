@@ -2,6 +2,16 @@
   margin-top: 20px;
 }
 
+.tagit-body {
+  width: 60%;
+}
+
+.tagit-selection-menu {
+  width: 40%;
+  margin-left: 5px;
+}
+
 .tagit-selection-menu ul {
   padding-left: 15px;
 }
+
