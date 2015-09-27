@@ -1,5 +1,9 @@
 $(document).ready(function () {
 
+  var isMenuShown = false;
+  var currentlySelectedWord;
+
+  // Find currently selected word
   function processSelection () {
     var focused = document.activeElement;
     var selectedText;
@@ -15,8 +19,43 @@ $(document).ready(function () {
       var selectedText = sel.toString();
     }
     if (selectedText) {
+      currentlySelectedWord = selectedText;
       console.log(selectedText);
+      queryServer(selectedText);
+    } else {
+      currentlySelectedWord = "";
     }
+  }
+
+  function queryServer (word) {
+    var serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data={"word":"QUERYTOREPLACE"}'
+    $.get(serverUrl.replace('QUERYTOREPLACE', word), function (serverResponse) {
+      console.log(serverResponse);
+      updateList(serverResponse);
+    });
+
+    function updateList (serverResponse) {
+      var senses = serverResponse.senses;
+      senses.reverse();
+      var listTemplate = '<li id="SENSEID"><strong>WORD.</strong> EXPLANATION</li>'
+      var htmlList = [];
+      for (var i = senses.length - 1; i >= 0; i--) {
+        htmlList.push(listTemplate
+          .replace('SENSEID', senses[i].senseid)
+          .replace('WORD', senses[i].word)
+          .replace('EXPLANATION', senses[i].explanation))
+      };
+
+      htmlList = '<ul id="senses">' +
+        htmlList.join('') +
+        '</ul>';
+
+      // debugger;
+
+      $('#senses').replaceWith(htmlList);
+
+    }
+
   }
 
   document.addEventListener('click', function(evt) {
@@ -32,7 +71,7 @@ $(document).ready(function () {
     Take the existing content, make it narrower and
     insert a menu for tagging up content.
   */
-  var isMenuShown = false;
+
 
   function addMenu () {
     if (isMenuShown) return;
@@ -50,6 +89,8 @@ $(document).ready(function () {
     isMenuShown = false;
   }
 
-  $('#js-show-menu').click(addMenu);
+  addMenu();
+
+  // $('#js-show-menu').click(addMenu);
 
 });
