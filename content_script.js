@@ -54,8 +54,7 @@ $(document).ready(function () {
       };
 
       htmlList = '<ul id="senses">' +
-        htmlList.join('') +
-        '</ul>';
+        htmlList.join('') + '</ul>';
 
       $('#senses').replaceWith(htmlList);
 
@@ -76,8 +75,6 @@ $(document).ready(function () {
     Take the existing content, make it narrower and
     insert a menu for tagging up content.
   */
-
-
   function addMenu () {
     if (isMenuShown) return;
     $.get('example1.menu.html', function (htmlData) {
