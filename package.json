@@ -24,6 +24,20 @@
   "homepage": "https://github.com/nilsnh/tag-youre-it",
   "devDependencies": {
     "browser-sync": "^2.9.6",
-    "gulp": "^3.9.0"
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.6",
+    "lodash": "^3.10.1",
+    "lodash.assign": "^3.2.0",
+    "tsify": "^0.12.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.4.0"
+  },
+  "dependencies": {
+    "angular": "^1.4.7",
+    "bootstrap": "^3.3.5",
+    "jquery": "^2.1.4"
   }
 }
