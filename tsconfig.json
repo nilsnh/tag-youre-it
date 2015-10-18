@@ -3,8 +3,7 @@
         "module": "commonjs",
         "noImplicitAny": true
     },
-    "exclude": [
-        "node_modules",
-        "testfolder"
+    "files": [
+        "src/index.ts"
     ]
 }

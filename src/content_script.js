@@ -16,7 +16,7 @@ $(document).ready(function () {
     var s = document.createElement('script');
     // TODO: add "script.js" to web_accessible_resources in manifest.json
     // s.src = chrome.extension.getURL('script.js');
-    s.src = 'scripts/bundle.js'
+    s.src = 'bundle.js'
     s.onload = function() {
         this.parentNode.removeChild(this);
         bootStrapAndRestoreAngular();
@@ -32,4 +32,34 @@ $(document).ready(function () {
     });
   }
 
+  document.addEventListener('click', function(evt) {
+    if (!document.hasFocus()) {
+      return true;
+    }
+    processSelection();
+    // evt.stopPropagation();
+    // evt.preventDefault();
+  }, false);
+
+  // Find currently selected word
+  function processSelection () {
+    var focused = document.activeElement;
+    var selectedText;
+    if (focused) {
+      try {
+        selectedText = focused.value.substring(
+          focused.selectionStart, focused.selectionEnd);
+      } catch (err) {
+      }
+    }
+    if (selectedText == undefined) {
+      var sel = window.getSelection();
+      var selectedText = sel.toString();
+    }
+    if (selectedText) {
+      currentlySelectedWord = selectedText;
+      displaySelectedWord(currentlySelectedWord);
+      getSensesFromServer(currentlySelectedWord);
+    }
+  }
 });

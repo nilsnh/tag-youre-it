@@ -11,6 +11,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var assign = require('lodash.assign');
 var browserSync = require('browser-sync').create();
 var del = require('del');
+var flatten = require('gulp-flatten');
 
 // add custom browserify options here
 var customOpts = {
@@ -40,7 +41,7 @@ function bundle() {
     .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
        // Add transformation tasks to the pipeline here.
     .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('./dist/scripts'));
+    .pipe(gulp.dest('./dist'));
 }
 
 gulp.task('dist', ['dist-node-modules'], function () {
@@ -49,6 +50,7 @@ gulp.task('dist', ['dist-node-modules'], function () {
     'src/**/*.css',
     'src/**/*.js'
     ], {base: 'src'})
+    .pipe(flatten())
     .pipe(gulp.dest('dist'));
 });
 

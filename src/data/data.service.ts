@@ -2,7 +2,8 @@
 
 class DataService {
 
-  $http : ng.IHttpService;
+  $http : ng.IHttpService
+  serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data='
 
   static $inject = ["$scope", "$log"];
   constructor($http: ng.IHttpService, $log: ng.ILogService) {
@@ -10,18 +11,16 @@ class DataService {
   }
 
   createQuery (word: string) {
-    return '{"word":"QUERYTOREPLACE"}'.replace(/QUERYTOREPLACE/, word);
+    return '{"word":"QUERYTOREPLACE"}'
+      .replace(/QUERYTOREPLACE/, word);
   }
 
   callServer (word: string) {
     if (!word) {
       return;
     };
-
-    var serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data='
-
-    return this.$http.get(serverUrl + this.createQuery(word));
-
+    return this.$http
+      .get(this.serverUrl + this.createQuery(word));
   }
 }
 
