@@ -1,8 +1,9 @@
-<div class="tagit-menu">
+<!-- angular menu example -->
+<div id="tagit-menu" class="tagit-menu" ng-controller="MenuCtrl">
 
   <br/>
 
-  <button id="js-hide-menu" class="btn btn-default">
+  <button ng-click="vm.remove()" class="btn btn-default">
     Done tagging
   </button>
 
@@ -11,10 +12,16 @@
   <p>Select a word to tag with a semantic tag.</p>
 
   <p>
-    Currently selected word: <strong><span id="js-selected-word"></span></strong>
+    Currently selected word: <strong>{{vm.selectedWord}}</strong>
   </p>
 
   <input type="text" class="form-control" placeholder="Filter tags" />
+
+  <ul id="senses">
+    <li id="sense.senseid" ng-repeat="sense in senses" class="list-unstyled">
+      <strong>{{sense.word}}</strong> {{sense.explanation}}
+    </li>
+  </ul>
 
   <ul id="senses">
     <ul id="senses"><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-exhibit-verb-1" class="list-unstyled"><strong>(to ..) exhibit .</strong> show an attribute, property, knowledge, or skill; "he exhibits a great talent"  </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-expose-verb-3" class="list-unstyled"><strong>(to ..) expose, exhibit, display .</strong> to show, make visible or apparent; "The Metropolitan Museum is exhibiting Goya's works this month"; "Why don't you show your nice legs and wear shorter skirts?"; "National leaders will have to display the highest skills of statesmanship"  </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-show-verb-1" class="list-unstyled"><strong>(to ..) show, demo, exhibit, present, demonstrate .</strong> give an exhibition of to an interested audience; "She shows her dogs frequently"; "We will demo the new software in Washington"  </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-parade-verb-1" class="list-unstyled"><strong>(to ..) parade, exhibit, march .</strong> walk ostentatiously; "She parades her new husband around town"  </li><li id="http://dbpedia.org/resource/Art_exhibition" class="list-unstyled"><strong>Art exhibition.</strong>             Art exhibitions are traditionally the space in which art objects (in the most general sense) meet an audience. The exhibit is universally understood to be for some temporary period unless, as is rarely true, it is stated to be a "permanent exhibition". In American English, they may be called "exhibit", "exposition" (the French word) or "show". In UK English, they are always called "exhibitions" or "shows", and an individual item in the show is an "exhibit".        </li><li id="http://dbpedia.org/resource/Exhibition" class="list-unstyled"><strong>Exhibition.</strong>             An exhibition, in the most general sense, is an organized presentation and display of a selection of items. In practice, exhibitions usually occur within museums, galleries and exhibition halls, and World's Fairs. Exhibitions include [whatever as in major art museums and small art galleries; interpretive exhibitions, as at natural history museums and history museums], for example; and commercial exhibitions, or trade fairs.        </li><li id="http://dbpedia.org/resource/Freak_show" class="list-unstyled"><strong>Freak show.</strong>             For the tv-series see Freak Show (TV series). A freak show is an exhibition of biological rarities, referred to as "freaks of nature". Typical features would be physically unusual humans, such as those uncommonly large or small, those with both male and female secondary sexual characteristics, people with other extraordinary diseases and conditions, and performances that are expected to be shocking to the viewers.        </li><li id="http://dbpedia.org/resource/Royal_Academy_summer_exhibition" class="list-unstyled"><strong>Royal Academy summer exhibition.</strong>             The Summer Exhibition is an open art exhibition held annually by the Royal Academy in Burlington House, Piccadilly in central London, England, during the summer months of June, July, and August. The exhibition includes paintings, prints, drawings, sculpture, architectural designs and models, and is the largest and most popular open exhibition in the United Kingdom.        </li><li id="http://dbpedia.org/resource/Online_disinhibition_effect" class="list-unstyled"><strong>Online disinhibition effect.</strong> </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-person-noun-1" class="list-unstyled"><strong>A PERSON.</strong> a human being</li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-event-noun-1" class="list-unstyled"><strong>AN EVENT.</strong> something that happens at a given place and time </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-creation-noun-2" class="list-unstyled"><strong>A CREATIVE WORK.</strong> an artifact that has been brought into existence by someone </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-abstraction-noun-6" class="list-unstyled"><strong>AN ABSTRACTION.</strong> a general concept formed by extracting common features from specific examples </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-organization-noun-1" class="list-unstyled"><strong>AN ORGANIZATION.</strong> a group of people who work together </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-topographic_point-noun-1" class="list-unstyled"><strong>A PLACE or SPOT.</strong> a point located with respect to surface features of some region; "this is a nice place for a picnic"; "a bright spot on a planet" </li><li id="http://www.w3.org/2006/03/wn/wn20/instances/synset-merchandise-noun-1" class="list-unstyled"><strong>A PRODUCT, SOME MERCHANDISE.</strong> commodities offered for sale; "good business depends on having good merchandise"; "that store offers a variety of products" </li></ul>

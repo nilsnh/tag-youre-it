@@ -7,6 +7,8 @@ $(document).ready(function () {
   // angular.js to load itself into
   var angular = (window.angular = {});
 
+  console.log('running inject script');
+
   injectScriptBundle();
 
   function injectScriptBundle () {
@@ -14,7 +16,7 @@ $(document).ready(function () {
     var s = document.createElement('script');
     // TODO: add "script.js" to web_accessible_resources in manifest.json
     // s.src = chrome.extension.getURL('script.js');
-    s.src = '../dist/bundle.js'
+    s.src = 'scripts/bundle.js'
     s.onload = function() {
         this.parentNode.removeChild(this);
         bootStrapAndRestoreAngular();
@@ -27,17 +29,6 @@ $(document).ready(function () {
     angular.element(document).ready(function() {
       // angular.bootstrap(document.getElementById('my-widget', ['MyWidget']);
       window.angular = existingWindowDotAngular; // restore the old angular version
-      console.log('this should be the old angular');
-      console.log(window.angular.version);
-      console.log('this should be the old jquery');
-      console.log($().jquery);
-
-      setTimeout(function () {
-        console.log('this should still be the old angular');
-        console.log(window.angular.version);
-        console.log('this should still be the old jquery');
-        console.log($().jquery);
-      }, 4000);
     });
   }
 

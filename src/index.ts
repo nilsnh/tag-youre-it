@@ -1,27 +1,23 @@
-declare var require;
-declare var jQuery;
-declare var $$;
+/// <reference path="../typings/tsd.d.ts" />
 
-var jquery = require('jquery');
-var angular = require('angular');
-var $$ = jquery;
+import $ = require('jquery');
+import angular = require('angular');
+import MenuCtrl = require('./menu/menu.controller');
+import DataService = require('./data/data.service');
 
-class Menu {
+angular.module('tagIt', [])
+  .factory('DataService', DataService)
+  .controller('MenuCtrl', MenuCtrl);
 
-  constructor () {
-    console.log('New angular:')
-    console.log(angular.version)
-    console.log('New jquery:')
-    console.log($$().jquery)
-
-    setTimeout(function() {
-      console.log('Still new angular:')
-      console.log(angular.version)
-      console.log('Still new jquery:')
-      console.log($$().jquery)
-    }, 4000)
-  }
-
+function initAngular () {
+  $.get('menu/menu.tpl.html', function (htmlData) {
+    $('body').children().wrapAll('<div class="tagit-body" />');
+    $('.tagit-body').before(htmlData);
+    angular.bootstrap(
+      document.getElementById("tagit-menu"),
+      ['tagIt']
+      );
+  });
 }
 
-var menu = new Menu();
+initAngular();

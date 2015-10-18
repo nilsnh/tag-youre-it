@@ -38,6 +38,7 @@
   "dependencies": {
     "angular": "^1.4.7",
     "bootstrap": "^3.3.5",
+    "del": "^2.0.2",
     "jquery": "^2.1.4"
   }
 }
