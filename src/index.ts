@@ -7,8 +7,8 @@ import DataService = require('./data/data.service');
 import SelectedWordService = require('./selectedWord/selectedWord.service');
 
 angular.module('tagIt', [])
-  .factory('DataService', DataService)
-  .factory('SelectedWordService', SelectedWordService)
+  .service('DataService', DataService)
+  .service('SelectedWordService', SelectedWordService)
   .controller('MenuCtrl', MenuCtrl);
 
 function initAngular () {
@@ -19,7 +19,8 @@ function initAngular () {
       document.getElementById("tagit-menu"),
       ['tagIt']
       );
-  });
+    });
 }
 
 initAngular();
+

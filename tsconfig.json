@@ -3,7 +3,5 @@
         "module": "commonjs",
         "noImplicitAny": true
     },
-    "files": [
-        "src/index.ts"
-    ]
+    "files": []
 }

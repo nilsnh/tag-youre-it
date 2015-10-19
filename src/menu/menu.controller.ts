@@ -10,11 +10,16 @@ class MenuCtrl {
   testWord = "It's working"
   selectedWord = "No word yet"
 
-  static $inject = ["$scope", "$log", "SelectedWordService"]
+  static $inject = ["$scope", "$log", "SelectedWordService", "DataService"]
 
-  constructor($scope: any, $log: angular.ILogService, SelectedWordService: any) {
+  constructor($scope: any, $log: angular.ILogService,
+    SelectedWordService: any, DataService : any) {
     $scope.vm = this;
-    SelectedWordService.init();
+    SelectedWordService.controllerToNotify = this.onWordSelected;
+  }
+
+  onWordSelected (newWord : string) {
+    this.selectedWord = newWord;
   }
 
   remove() {

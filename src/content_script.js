@@ -32,34 +32,4 @@ $(document).ready(function () {
     });
   }
 
-  document.addEventListener('click', function(evt) {
-    if (!document.hasFocus()) {
-      return true;
-    }
-    processSelection();
-    // evt.stopPropagation();
-    // evt.preventDefault();
-  }, false);
-
-  // Find currently selected word
-  function processSelection () {
-    var focused = document.activeElement;
-    var selectedText;
-    if (focused) {
-      try {
-        selectedText = focused.value.substring(
-          focused.selectionStart, focused.selectionEnd);
-      } catch (err) {
-      }
-    }
-    if (selectedText == undefined) {
-      var sel = window.getSelection();
-      var selectedText = sel.toString();
-    }
-    if (selectedText) {
-      currentlySelectedWord = selectedText;
-      displaySelectedWord(currentlySelectedWord);
-      getSensesFromServer(currentlySelectedWord);
-    }
-  }
 });
