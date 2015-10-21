@@ -1,7 +1,9 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitAny": true
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "out": "output.js"
     },
-    "files": []
+    "files": [
+      "src/index.ts"
+    ]
 }

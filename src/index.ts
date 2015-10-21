@@ -1,26 +1,25 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-import $ = require('jquery');
-import angular = require('angular');
-import MenuCtrl = require('./menu/menu.controller');
-import DataService = require('./data/data.service');
-import SelectedWordService = require('./selectedWord/selectedWord.service');
+/// <reference path="menu/menu.controller.ts" />
+/// <reference path="services/data.service.ts" />
+/// <reference path="services/selectedWord.service.ts" />
 
-angular.module('tagIt', [])
-  .service('DataService', DataService)
-  .service('SelectedWordService', SelectedWordService)
-  .controller('MenuCtrl', MenuCtrl);
+module tagIt {
 
-function initAngular () {
-  $.get('menu.tpl.html', function (htmlData) {
-    $('body').children().wrapAll('<div class="tagit-body" />');
-    $('.tagit-body').before(htmlData);
-    angular.bootstrap(
-      document.getElementById("tagit-menu"),
-      ['tagIt']
-      );
+  angular.module('tagit', [])
+    .service('DataService', DataService)
+    .service('SelectedWordService', SelectedWordService)
+    .controller('MenuCtrl', MenuCtrl);
+
+  export function init (callback: () => void) {
+    var $ = jQuery;
+    $.get('menu.tpl.html', function (htmlData) {
+      $('body').children().wrapAll('<div class="tagit-body" />');
+      $('.tagit-body').before(htmlData);
+      angular.bootstrap(document.getElementById("tagit-menu"), ['tagit']);
+      console.log('TagIt menu loaded');
+      if(callback) callback();
     });
+  }
 }
-
-initAngular();
 

@@ -39,7 +39,10 @@
     "angular": "^1.4.7",
     "bootstrap": "^3.3.5",
     "del": "^2.0.2",
+    "gulp-concat": "^2.6.0",
     "gulp-flatten": "^0.2.0",
-    "jquery": "^2.1.4"
+    "gulp-typescript": "^2.9.2",
+    "jquery": "^2.1.4",
+    "merge2": "^0.3.6"
   }
 }
