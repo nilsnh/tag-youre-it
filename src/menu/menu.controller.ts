@@ -1,33 +1,62 @@
+/// <reference path="../index.ts" />
+
 module tagIt {
   'use strict';
 
-  interface IMenuScope extends angular.IScope {
-    startData: Object[];
-    testWord: String;
-  }
-
   export class MenuCtrl {
 
-    testWord = "It's working";
-    selectedWord = "No word yet";
+    selectedWord = "";
+    senses : Object[];
+    dataService : DataService;
+    selectedWordService : SelectedWordService;
+    $log : ng.ILogService;
+    $scope: ng.IScope;
 
-    static $inject = ["$scope", "$log", "DataService", "SelectedWordService"];
-    constructor($scope: any, $log: angular.ILogService,
+    static $inject = [
+      "$scope",
+      "$log",
+      "DataService",
+      "SelectedWordService"
+    ];
+
+    constructor ($scope: tagItAngularScope, $log: angular.ILogService,
       DataService: DataService,
       SelectedWordService: SelectedWordService) {
       $scope.vm = this;
-      SelectedWordService.controllerToNotify = this.onWordSelected;
-      window.setTimeout(function() {
-        $log.debug('should be new version of jquery');
-        $log.debug(jQuery.fn);
-      }, 2000);
+      this.$log = $log;
+      this.$scope = $scope;
+      this.dataService = DataService;
+      this.selectedWordService = SelectedWordService;
+      // Wire up clicklistener
+      this.selectedWordService.wireUpListener(this.onWordSelected,
+        this.onWordDeSelected);
     }
 
-    onWordSelected (newWord : string) {
+    onWordSelected = (newWord : string) => {
       this.selectedWord = newWord;
+      this.dataService.callServer(newWord)
+        .then((synsets : Object) => {
+          this.$log.debug(synsets);
+          this.senses = this.dataService.processSynsets(<synsetJson> synsets);
+        });
     }
 
-    remove() {
+    onWordDeSelected = () => {
+      this.$log.debug("onWordDeSelected");
+      this.selectedWord = "";
+      this.senses = [];
+      this.$scope.$apply();
+    }
+
+    selectWord (sense : ISense) {
+      this.dataService.storeTaggingInformation({
+        mail: "mail@nilsnh.no",
+        sentence: "whole sentence",
+        senseid: sense.senseid,
+      });
+    }
+
+    removeMenu() {
       $('.tagit-body').children().unwrap();
       $('.tagit-menu').remove();
     }

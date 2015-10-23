@@ -9,7 +9,9 @@ var ts = require('gulp-typescript');
 var merge = require('merge2');
 var concat = require('gulp-concat');
 
-var tsProject = ts.createProject('tsconfig.json');
+var tsProject = ts.createProject('tsconfig.json', {
+  sortOutput : true
+});
 
 gulp.task('scripts', function() {
   var tsResult = gulp.src('src/*.ts')

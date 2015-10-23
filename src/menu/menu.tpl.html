@@ -18,7 +18,7 @@
   <input type="text" ng-model="wordToFilterBy" class="form-control" placeholder="Filter tags" />
 
   <ul id="senses">
-    <li id="sense.senseid" ng-repeat="sense in senses" class="list-unstyled">
+    <li id="sense.senseid" ng-repeat="sense in vm.senses" class="list-unstyled">
       <strong>{{sense.word}}</strong> {{sense.explanation}}
     </li>
   </ul>

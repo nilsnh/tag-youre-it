@@ -21,5 +21,6 @@ module tagIt {
       if(callback) callback();
     });
   }
+
 }
 
