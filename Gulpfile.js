@@ -46,11 +46,9 @@ gulp.task('dist', ['tmp'], function () {
     '!tmp/index.html',
     '!tmp/content_script_web.js'
   ], {base: 'tmp'});
-  var imageAssets = gulp.src('src/*.png').pipe($.flatten());
+  var imageAssets = gulp.src('src/plugin-specific/*.png').pipe($.flatten());
   var chromePluginResources = gulp.src([
-    'src/content_script.js',
-    'src/background.js',
-    'src/manifest.json',
+    'src/plugin-specific/**/*',
   ])
   .pipe($.flatten())
   .pipe($.fileInclude({
@@ -65,7 +63,6 @@ gulp.task('dist', ['tmp'], function () {
 gulp.task('dist-node-modules', function () {
   return gulp.src([
     'node_modules/bootstrap/**/*',
-    'node_modules/material-design-lite/**/*',
     'node_modules/angular/**/*',
     'node_modules/jquery/**/*'
     ], {base: 'node_modules'})
