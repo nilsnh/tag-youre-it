@@ -16,5 +16,5 @@ function initBackground () {
   updateIcon();
 }
 
-initBackground();
+// initBackground();
 

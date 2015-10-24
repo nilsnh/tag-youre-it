@@ -1,0 +1,29 @@
+{
+  "name": "Tag you're it",
+  "description": "Make the meaning clear. This plugin enables semantic tagging of web content.",
+  "version": "0.7",
+  "manifest_version": 2,
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": ["storage"],
+  "background": {
+    "persistent": false,
+    "scripts": ["background.js"]
+  },
+  "web_accessible_resources": [
+    "**/*.html",
+    "**/*.js"
+  ],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content_script.js"]
+  }],
+  "browser_action": {
+    "default_title": "Tag you're it! Click to enable or disable tagging of web content.",
+    "default_icon": "icon48.png",
+    "default_popup": "popup.html"
+  }
+}

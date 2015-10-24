@@ -46,6 +46,7 @@
     "gulp-ng-annotate": "^1.1.0",
     "gulp-typescript": "^2.9.2",
     "jquery": "^2.1.4",
+    "material-design-lite": "^1.0.5",
     "merge2": "^0.3.6"
   }
 }

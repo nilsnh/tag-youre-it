@@ -46,9 +46,11 @@ gulp.task('dist', ['tmp'], function () {
     '!tmp/index.html',
     '!tmp/content_script_web.js'
   ], {base: 'tmp'});
+  var imageAssets = gulp.src('src/*.png').pipe($.flatten());
   var chromePluginResources = gulp.src([
     'src/content_script.js',
-    'manifest.json'
+    'src/background.js',
+    'src/manifest.json',
   ])
   .pipe($.flatten())
   .pipe($.fileInclude({
@@ -56,13 +58,14 @@ gulp.task('dist', ['tmp'], function () {
     basePath: '@file'
   }));
 
-  return $.merge([tmp, chromePluginResources])
+  return $.merge([tmp, chromePluginResources, imageAssets])
   .pipe(gulp.dest('dist'));
 });
 
 gulp.task('dist-node-modules', function () {
   return gulp.src([
     'node_modules/bootstrap/**/*',
+    'node_modules/material-design-lite/**/*',
     'node_modules/angular/**/*',
     'node_modules/jquery/**/*'
     ], {base: 'node_modules'})
@@ -71,6 +74,10 @@ gulp.task('dist-node-modules', function () {
 
 gulp.task('clean', function () {
   return $.del(['tmp', 'dist']);
+});
+
+gulp.task('watch-plugin', ['dist'], function () {
+  gulp.watch("src/**/*", ['dist']);
 });
 
 gulp.task('serve', ['tmp'], function () {
