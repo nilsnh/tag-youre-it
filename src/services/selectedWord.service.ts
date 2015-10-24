@@ -10,7 +10,7 @@ module tagIt {
     $log : ng.ILogService;
     currentSelectionRange : any;
 
-    static $inject = ["$log"];
+    /* @ngInject */
     constructor($log: ng.ILogService) {
       this.$log = $log;
     }

@@ -1,27 +1,26 @@
 'use strict';
 
 var gulp = require('gulp');
-var sourcemaps = require('gulp-sourcemaps');
+var $ = require('gulp-load-plugins')({
+  pattern: ['gulp-*', 'del', 'merge2'],
+  rename: {
+    'merge2': 'merge'
+  }
+});
 var browserSync = require('browser-sync').create();
-var del = require('del');
-var flatten = require('gulp-flatten');
-var ts = require('gulp-typescript');
-var merge = require('merge2');
-var concat = require('gulp-concat');
-var fileinclude = require('gulp-file-include');
-
-var tsProject = ts.createProject('tsconfig.json', {
+var tsProject = $.typescript.createProject('tsconfig.json', {
   sortOutput : true
 });
 
 gulp.task('scripts', function() {
   var tsResult = gulp.src('src/*.ts')
-  .pipe(sourcemaps.init())
-  .pipe(ts(tsProject));
+  .pipe($.sourcemaps.init())
+  .pipe($.typescript(tsProject));
 
   return tsResult.js
-    .pipe(concat('bundle.js'))
-    .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
+    .pipe($.concat('bundle.js'))
+    .pipe($.ngAnnotate())
+    .pipe($.sourcemaps.write()) // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('tmp'));
 });
 
@@ -32,8 +31,8 @@ gulp.task('tmp', ['scripts', 'dist-node-modules'], function () {
     'src/**/*.css',
     'src/content_script_web.js'
     ], {base: 'src'})
-  .pipe(flatten())
-  .pipe(fileinclude({
+  .pipe($.flatten())
+  .pipe($.fileInclude({
     prefix: '@@',
     basePath: '@file'
   }))
@@ -51,13 +50,13 @@ gulp.task('dist', ['tmp'], function () {
     'src/content_script.js',
     'manifest.json'
   ])
-  .pipe(flatten())
-  .pipe(fileinclude({
-      prefix: '@@',
-      basePath: '@file'
+  .pipe($.flatten())
+  .pipe($.fileInclude({
+    prefix: '@@',
+    basePath: '@file'
   }));
 
-  return merge([tmp, chromePluginResources])
+  return $.merge([tmp, chromePluginResources])
   .pipe(gulp.dest('dist'));
 });
 
@@ -71,7 +70,7 @@ gulp.task('dist-node-modules', function () {
 });
 
 gulp.task('clean', function () {
-  return del(['tmp', 'dist']);
+  return $.del(['tmp', 'dist']);
 });
 
 gulp.task('serve', ['tmp'], function () {

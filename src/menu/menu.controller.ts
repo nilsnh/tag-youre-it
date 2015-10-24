@@ -12,13 +12,7 @@ module tagIt {
     $log : ng.ILogService;
     $scope: ng.IScope;
 
-    static $inject = [
-      "$scope",
-      "$log",
-      "DataService",
-      "SelectedWordService"
-    ];
-
+    /* @ngInject */
     constructor ($scope: IVMScope, $log: angular.ILogService,
       DataService: DataService,
       SelectedWordService: SelectedWordService) {
@@ -35,7 +29,7 @@ module tagIt {
 
     onTagSelect (sense: ISense) {
       this.selectedWordService.addTagToPage(sense);
-      this.dataService.storeTagingInformation({});
+      this.dataService.storeTaggingInformation({});
     }
 
     onWordSelected = (newWord : string) => {

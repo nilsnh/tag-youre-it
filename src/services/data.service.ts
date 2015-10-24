@@ -13,7 +13,7 @@ module tagIt {
     $http : ng.IHttpService;
     private serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
 
-    static $inject = ["$http", "$log"];
+    /* @ngInject */
     constructor($http: ng.IHttpService, $log: ng.ILogService) {
       this.$http = $http;
     }
@@ -31,7 +31,7 @@ module tagIt {
 
     // save tagging information
     // Params: email, tagging, sentence
-    storeTagingInformation (tag : Object) {
+    storeTaggingInformation (tag : Object) {
       storeTagData();
     }
 
