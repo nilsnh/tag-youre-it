@@ -1,6 +1,6 @@
 var pluginEnabled = true;
 
-console.log('background page was started');
+// console.log('background page was started');
 
 function updateIcon () {
   var selectedIcon;

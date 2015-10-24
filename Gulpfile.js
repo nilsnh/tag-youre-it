@@ -49,6 +49,7 @@ gulp.task('dist', ['tmp'], function () {
   var imageAssets = gulp.src('src/plugin-specific/*.png').pipe($.flatten());
   var chromePluginResources = gulp.src([
     'src/plugin-specific/**/*',
+    '!src/plugin-specific/*.png',
   ])
   .pipe($.flatten())
   .pipe($.fileInclude({
