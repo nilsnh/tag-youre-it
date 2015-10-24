@@ -35,6 +35,7 @@ module tagIt {
 
     onTagSelect (sense: ISense) {
       this.selectedWordService.addTagToPage(sense);
+      this.dataService.storeTagingInformation({});
     }
 
     onWordSelected = (newWord : string) => {

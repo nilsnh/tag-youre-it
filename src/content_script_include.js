@@ -5,8 +5,6 @@ var existingWindowDotAngular = window['angular'];
 // angular.js to load itself into
 var angular = (window.angular = {});
 
-injectScripts();
-
 function injectScripts () {
 
   loadScript('vendor/jquery/dist/jquery.js', loadAngular);

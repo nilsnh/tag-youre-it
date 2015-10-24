@@ -4,6 +4,10 @@
 
 module tagIt {
 
+  //Declare that function is available.
+  //The actual function is found in the content_script
+  declare function storeTagData() : void;
+
   export class DataService {
 
     $http : ng.IHttpService;
@@ -27,8 +31,8 @@ module tagIt {
 
     // save tagging information
     // Params: email, tagging, sentence
-    storeTaggingInformation (tag : Object) {
-
+    storeTagingInformation (tag : Object) {
+      storeTagData();
     }
 
     private createQuery (word: string) {
