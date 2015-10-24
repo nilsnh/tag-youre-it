@@ -14,7 +14,7 @@ module tagIt {
   export function init (callback: () => void) {
     var $ = jQuery;
     $.get('menu.tpl.html', function (htmlData) {
-      $('body').children().wrapAll('<div class="tagit-body" />');
+      $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
       $('.tagit-body').before(htmlData);
       angular.bootstrap(document.getElementById("tagit-menu"), ['tagit']);
       console.log('TagIt menu loaded');

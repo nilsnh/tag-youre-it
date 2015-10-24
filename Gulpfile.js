@@ -8,6 +8,7 @@ var flatten = require('gulp-flatten');
 var ts = require('gulp-typescript');
 var merge = require('merge2');
 var concat = require('gulp-concat');
+var fileinclude = require('gulp-file-include');
 
 var tsProject = ts.createProject('tsconfig.json', {
   sortOutput : true
@@ -21,16 +22,42 @@ gulp.task('scripts', function() {
   return tsResult.js
     .pipe(concat('bundle.js'))
     .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('tmp'));
 });
 
-gulp.task('dist', ['dist-node-modules'], function () {
+// build project for serving up locally
+gulp.task('tmp', ['scripts', 'dist-node-modules'], function () {
   return gulp.src([
     'src/**/*.html',
     'src/**/*.css',
-    'src/**/*.js'
+    'src/content_script_web.js'
     ], {base: 'src'})
   .pipe(flatten())
+  .pipe(fileinclude({
+    prefix: '@@',
+    basePath: '@file'
+  }))
+  .pipe(gulp.dest('tmp'));
+});
+
+// build project for loading up in Chrome
+gulp.task('dist', ['tmp'], function () {
+  var tmp = gulp.src([
+    'tmp/**/*',
+    '!tmp/index.html',
+    '!tmp/content_script_web.js'
+  ], {base: 'tmp'});
+  var chromePluginResources = gulp.src([
+    'src/content_script.js',
+    'manifest.json'
+  ])
+  .pipe(flatten())
+  .pipe(fileinclude({
+      prefix: '@@',
+      basePath: '@file'
+  }));
+
+  return merge([tmp, chromePluginResources])
   .pipe(gulp.dest('dist'));
 });
 
@@ -40,29 +67,28 @@ gulp.task('dist-node-modules', function () {
     'node_modules/angular/**/*',
     'node_modules/jquery/**/*'
     ], {base: 'node_modules'})
-  .pipe(gulp.dest('dist/vendor'));
+  .pipe(gulp.dest('tmp/vendor'));
 });
 
 gulp.task('clean', function () {
-  return del('dist');
+  return del(['tmp', 'dist']);
 });
 
-gulp.task('serve', ['scripts', 'dist', 'dist-node-modules'], function () {
+gulp.task('serve', ['tmp'], function () {
+  // Serve files from the root of this project
+  browserSync.init({
+    server: {
+      baseDir: "./tmp",
+    }
+  });
 
-    // Serve files from the root of this project
-    browserSync.init({
-        server: {
-          baseDir: "./dist",
-        }
-    });
-
-    // add browserSync.reload to the tasks array to make
-    // all browsers reload after tasks are complete.
-    gulp.watch("src/**/*.ts", ['scripts']);
-    gulp.watch([
-      "src/**/*.html",
-      "src/**/*.css",
-      "src/**/*.js"
-      ], ['dist']);
-    gulp.watch("dist/**/*").on("change", browserSync.reload);
+  // add browserSync.reload to the tasks array to make
+  // all browsers reload after tasks are complete.
+  gulp.watch("src/**/*.ts", ['scripts']);
+  gulp.watch([
+    "src/**/*.html",
+    "src/**/*.css",
+    "src/**/*.js"
+    ], ['tmp']);
+  gulp.watch("tmp/**/*").on("change", browserSync.reload);
 });

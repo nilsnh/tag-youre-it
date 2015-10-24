@@ -19,7 +19,7 @@ module tagIt {
       "SelectedWordService"
     ];
 
-    constructor ($scope: tagItAngularScope, $log: angular.ILogService,
+    constructor ($scope: IVMScope, $log: angular.ILogService,
       DataService: DataService,
       SelectedWordService: SelectedWordService) {
       $scope.vm = this;
@@ -27,9 +27,14 @@ module tagIt {
       this.$scope = $scope;
       this.dataService = DataService;
       this.selectedWordService = SelectedWordService;
+
       // Wire up clicklistener
       this.selectedWordService.wireUpListener(this.onWordSelected,
         this.onWordDeSelected);
+    }
+
+    onTagSelect (sense: ISense) {
+      this.selectedWordService.addTagToPage(sense);
     }
 
     onWordSelected = (newWord : string) => {
@@ -37,7 +42,7 @@ module tagIt {
       this.dataService.callServer(newWord)
         .then((synsets : Object) => {
           this.$log.debug(synsets);
-          this.senses = this.dataService.processSynsets(<synsetJson> synsets);
+          this.senses = this.dataService.processSynsets(<ISynset> synsets);
         });
     }
 

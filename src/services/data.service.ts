@@ -1,3 +1,5 @@
+/// <reference path="../index.interfaces.ts" />
+
 'use strict';
 
 module tagIt {
@@ -19,7 +21,7 @@ module tagIt {
       return this.$http.get(this.serverUrl + this.createQuery(word));
     }
 
-    processSynsets (synsets: synsetJson) : string[] {
+    processSynsets (synsets: ISynset) : string[] {
       return synsets.data.senses;
     }
 

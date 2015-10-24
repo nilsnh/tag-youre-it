@@ -3,7 +3,7 @@
 
   <br/>
 
-  <button ng-click="vm.remove()" class="btn btn-default">
+  <button ng-click="vm.removeMenu()" class="btn btn-default">
     Done tagging
   </button>
 
@@ -18,7 +18,7 @@
   <input type="text" ng-model="wordToFilterBy" class="form-control" placeholder="Filter tags" />
 
   <ul id="senses">
-    <li id="sense.senseid" ng-repeat="sense in vm.senses" class="list-unstyled">
+    <li ng-click="vm.onTagSelect(sense)" id="sense.senseid" ng-repeat="sense in vm.senses | filter:wordToFilterBy" class="list-unstyled">
       <strong>{{sense.word}}</strong> {{sense.explanation}}
     </li>
   </ul>

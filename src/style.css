@@ -30,3 +30,8 @@
   cursor: pointer;
 }
 
+.tagit-tag {
+  background-color: #EDDE45;
+  padding: 3px;
+}
+

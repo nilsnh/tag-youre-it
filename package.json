@@ -40,6 +40,7 @@
     "bootstrap": "^3.3.5",
     "del": "^2.0.2",
     "gulp-concat": "^2.6.0",
+    "gulp-file-include": "^0.13.7",
     "gulp-flatten": "^0.2.0",
     "gulp-typescript": "^2.9.2",
     "jquery": "^2.1.4",

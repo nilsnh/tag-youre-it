@@ -8,6 +8,7 @@ module tagIt {
   export class SelectedWordService {
 
     $log : ng.ILogService;
+    currentSelectionRange : any;
 
     static $inject = ["$log"];
     constructor($log: ng.ILogService) {
@@ -17,13 +18,15 @@ module tagIt {
     wireUpListener (callbackOnSelectFunc : (result : Object) => void,
         callbackOnDeSelectFunc : () => void) {
       var that = this;
-      document.addEventListener('click', (evt : any) => {
+      document.getElementById('tagit-body')
+      .addEventListener('click', (evt : any) => {
         if (!document.hasFocus()) {
           return true;
         }
-        var selectedWord = that.findSelection();
-        if(selectedWord) {
-           callbackOnSelectFunc(joinLongWords(selectedWord));
+        var selection = that.findSelection();
+        if(selection) {
+          this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
+          callbackOnSelectFunc(joinLongWords(selection.toString()));
         } else {
           callbackOnDeSelectFunc();
         }
@@ -36,23 +39,40 @@ module tagIt {
       }
     }
 
+    // place spans around a tagged word.
+    addTagToPage (sense : ISense) {
+      var windowSelection = window.getSelection();
+      var range = this.currentSelectionRange;
+      var span : HTMLSpanElement = document.createElement('span');
+      span.id = sense.senseid;
+      span.title = sense.explanation;
+      span.className = 'tagit-tag';
+      range.surroundContents(span);
+      windowSelection.removeAllRanges();
+      // windowSelection.addRange(range);
+      this.$log.debug('addTagToPage');
+    }
+
     private findSelection () {
       var focused : any = document.activeElement;
       var selectedText : string;
-      if (focused) {
-        try {
-          selectedText = focused.value.substring(
-            focused.selectionStart, focused.selectionEnd);
-        } catch (err) {
-        }
-      }
+      // try grabbing text from an input or textarea field
+      // commenting this until we need to figure out tagging of editable fields
+      // if (focused) {
+      //   try {
+      //     selectedText = focused.value.substring(
+      //       focused.selectionStart, focused.selectionEnd);
+      //   } catch (err) {
+      //   }
+      // }
+      // if previous method did not work ask window for selection
       if (selectedText == undefined) {
-        var sel = window.getSelection();
-        var selectedText = sel.toString();
+        var currentSelection : Selection = window.getSelection();
+        var selectedText = currentSelection.toString();
       }
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
-        return selectedText;
+        return currentSelection;
       } else {
         return;
       }

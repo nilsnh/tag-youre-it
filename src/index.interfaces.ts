@@ -2,14 +2,14 @@
 
 module tagIt {
 
-  export interface synsetJson {
+  export interface ISynset {
     config: Object,
     data: {
       senses: string[]
     }
   }
 
-  export interface tagItAngularScope extends angular.IScope {
+  export interface IVMScope extends angular.IScope {
     vm : Object;
   }
 
@@ -22,5 +22,15 @@ module tagIt {
     word: string
   }
 
+  /*
+  sentence: represents everything contained by punctuations.
+  context: represents ten chars "in both directions" from the word.
+   */
+  export interface ISenseTag {
+    userEmail: string,
+    senseid: string,
+    sentence: string,
+    context: string
+  }
 }
 
