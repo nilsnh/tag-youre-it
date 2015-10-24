@@ -1,11 +1,11 @@
-// Save a copy of existing angular js and jquery
-// Source: http://www.mattburkedev.com/multiple-angular-versions-on-the-same-page/
-var existingWindowDotAngular = window['angular'];
-// create a new window.angular and a closure variable for
-// angular.js to load itself into
-var angular = (window.angular = {});
-
 function injectScripts () {
+
+  // Save a copy of existing angular js and jquery
+  // Source: http://www.mattburkedev.com/multiple-angular-versions-on-the-same-page/
+  var existingWindowDotAngular = window['angular'];
+  // create a new window.angular and a closure variable for
+  // angular.js to load itself into
+  var angular = (window.angular = {});
 
   loadScript('vendor/jquery/dist/jquery.js', loadAngular);
 
@@ -33,7 +33,7 @@ function injectScripts () {
     var s = document.createElement('script');
     s.src = scriptName;
     s.onload = function() {
-      // this.parentNode.removeChild(this);
+      this.parentNode.removeChild(this);
       if (callback) callback();
     };
     (document.head||document.documentElement).appendChild(s);
