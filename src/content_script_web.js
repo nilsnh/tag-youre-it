@@ -10,8 +10,3 @@ document.addEventListener("DOMContentLoaded", function(event) {
     if (!document.getElementById('tagit-menu')) injectScripts();
   });
 });
-
-// will be called within a angular service
-function storeTagData (tagData) {
-  console.log('storeTagDataInBrowser was called');
-}

@@ -23,7 +23,7 @@ module tagIt {
     });
 
     function chromeUrlTranslator(relativeUrl : string) {
-      if(chrome) {
+      if(chrome && chrome.extension) {
         return chrome.extension.getURL(relativeUrl);
       } else {
         relativeUrl;

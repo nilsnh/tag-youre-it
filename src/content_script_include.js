@@ -20,7 +20,6 @@ function injectScripts () {
   function loadPluginCode () {
     console.log('loading tagit');
     loadScript('bundle.js', function () {
-      debugger;
       tagIt.init(restoreOldAngularAndJquery);
     });
   }
@@ -36,7 +35,7 @@ function injectScripts () {
   function loadScript (relativeScriptPath, callback) {
     function translateToPluginPath (relativeScriptPath) {
       // if "chrome" present, we deduce that we're running as a plugin
-      if (chrome) {
+      if (chrome && chrome.extension) {
         return chrome.extension.getURL(relativeScriptPath);
       } else {
         return relativeScriptPath;

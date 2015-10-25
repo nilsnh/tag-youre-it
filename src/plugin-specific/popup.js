@@ -1,6 +1,7 @@
-// Runs at the end of the  Wire up listeners to popup menu
 
-document.getElementById('js-open-menu').addEventListener('click', openMenu);
+document.addEventListener("DOMContentLoaded", function(event) {
+  document.getElementById('js-open-menu').addEventListener('click', openMenu);
+});
 
 function openMenu () {
   logToBG('open menu was clicked');
