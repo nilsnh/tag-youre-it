@@ -9,4 +9,11 @@ A chrome extension for tagging words with semantic information.
 4. Run `gulp serve` to serve up the prototype for live development.
 5. Run `gulp dist` to build the chrome plugin in the `dist/` folder.
 
+## Chrome testing
+
+1. Inside chrome go to `settings -> Extensions`.
+2. Select `Load unpacked extension` and select the project's `dist/` folder.
+3. You should now see a new browser icon. Go to a page and start tagging.
+4. In case of error: Press "f12" and have a look at the console log output.
+
 **Important** A [workaround for CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?utm_source=chrome-app-launcher-info-dialog) is currently needed to communicate with the server.
