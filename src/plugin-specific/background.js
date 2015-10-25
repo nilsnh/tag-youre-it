@@ -1,22 +1,13 @@
-var pluginEnabled = true;
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(sender.tab ?
+      "from a content script:" + sender.tab.url :
+      "from the extension");
+    if (request.logMsg) console.log(request.logMsg);
 
-// console.log('background page was started');
-
-function updateIcon () {
-  var selectedIcon;
-  if (pluginEnabled) {
-    chrome.browserAction.setIcon({path:'icon2.png'});
-    pluginEnabled = false;
-  } else {
-    chrome.browserAction.setIcon({path:'icon1.png'});
-    pluginEnabled = true;
-  }
-}
-
-function initBackground () {
-  chrome.browserAction.onClicked.addListener(updateIcon);
-  updateIcon();
-}
+    // if (request.greeting == "hello")
+    //   sendResponse({farewell: "goodbye"});
+});
 
 // initBackground();
 

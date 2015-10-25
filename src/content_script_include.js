@@ -1,3 +1,5 @@
+// Code used by both the local web prototype as well as the plugin.
+
 function injectScripts () {
 
   // Save a copy of existing angular js and jquery
@@ -7,14 +9,18 @@ function injectScripts () {
   // angular.js to load itself into
   var angular = (window.angular = {});
 
+  console.log('loading jquery');
   loadScript('vendor/jquery/dist/jquery.js', loadAngular);
 
   function loadAngular () {
+    console.log('loading angular');
     loadScript('vendor/angular/angular.js', loadPluginCode);
   }
 
   function loadPluginCode () {
+    console.log('loading tagit');
     loadScript('bundle.js', function () {
+      debugger;
       tagIt.init(restoreOldAngularAndJquery);
     });
   }
@@ -27,11 +33,17 @@ function injectScripts () {
     $.noConflict();
   }
 
-  // TODO: add "script.js" to web_accessible_resources in manifest.json
-  // s.src = chrome.extension.getURL('script.js');
-  function loadScript (scriptName, callback) {
+  function loadScript (relativeScriptPath, callback) {
+    function translateToPluginPath (relativeScriptPath) {
+      // if "chrome" present, we deduce that we're running as a plugin
+      if (chrome) {
+        return chrome.extension.getURL(relativeScriptPath);
+      } else {
+        return relativeScriptPath;
+      }
+    }
     var s = document.createElement('script');
-    s.src = scriptName;
+    s.src = translateToPluginPath(relativeScriptPath);
     s.onload = function() {
       this.parentNode.removeChild(this);
       if (callback) callback();

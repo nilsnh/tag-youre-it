@@ -2,9 +2,6 @@
 <html>
 <head>
   <title>Popup menu for TagIt plugin</title>
-
-  <!-- <script src="popup.js"></script> -->
-
   <link rel="stylesheet" type="text/css" href="vendor/bootstrap/dist/css/bootstrap.min.css">
   <style type="text/css">
     .container {
@@ -13,12 +10,11 @@
   </style>
 
 </head>
-<body id="tagit-popup" class="container" ng-app="tagItPopUpMenu">
-  <div ng-controller="popUpCtrl">
+<body id="tagit-popup" class="container">
+  <div>
     <h1>Tag you're it</h1>
     <div class="btn-group" role="group" aria-label="...">
-      <button ng-click="vm.openMenu()" type="button" class="btn btn-default">Open</button>
-      <button type="button" class="btn btn-default">Close</button>
+      <button id="js-open-menu" type="button" class="btn btn-default">Open menu</button>
     </div>
     <p></p>
     <form>
@@ -36,5 +32,6 @@
       </div>
     </form>
   </div>
+  <script src="popup.js"></script>
 </body>
 </html>

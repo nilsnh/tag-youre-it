@@ -6,6 +6,8 @@
 
 module tagIt {
 
+  declare var chrome : any;
+
   angular.module('tagit', [])
     .service('DataService', DataService)
     .service('SelectedWordService', SelectedWordService)
@@ -13,14 +15,22 @@ module tagIt {
 
   export function init (callback: () => void) {
     var $ = jQuery;
-    $.get('menu.tpl.html', function (htmlData) {
+    $.get(chromeUrlTranslator('menu.tpl.html'), function (htmlData) {
       $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
       $('.tagit-body').before(htmlData);
+      window.name = '';
       angular.bootstrap(document.getElementById("tagit-menu"), ['tagit']);
       console.log('TagIt menu loaded');
       if(callback) callback();
     });
-  }
 
+    function chromeUrlTranslator(relativeUrl : string) {
+      if(chrome) {
+        return chrome.extension.getURL(relativeUrl);
+      } else {
+        relativeUrl;
+      }
+    }
+  }
 }
 
