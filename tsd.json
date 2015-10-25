@@ -10,6 +10,21 @@
     },
     "angularjs/angular.d.ts": {
       "commit": "af5b8275d1f2b92738b93fddabc461fc20c553a1"
+    },
+    "filewriter/filewriter.d.ts": {
+      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+    },
+    "webrtc/MediaStream.d.ts": {
+      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+    },
+    "es6-promise/es6-promise.d.ts": {
+      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+    },
+    "filesystem/filesystem.d.ts": {
+      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+    },
+    "chrome/chrome.d.ts": {
+      "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
     }
   }
 }

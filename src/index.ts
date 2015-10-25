@@ -6,8 +6,6 @@
 
 module tagIt {
 
-  declare var chrome : any;
-
   angular.module('tagit', [])
     .service('DataService', DataService)
     .service('SelectedWordService', SelectedWordService)

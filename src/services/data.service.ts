@@ -4,18 +4,16 @@
 
 module tagIt {
 
-  //Declare that function is available.
-  //The actual function is found in the content_script
-  declare function storeTagData() : void;
-
   export class DataService {
 
     $http : ng.IHttpService;
+    $log : ng.ILogService;
     private serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
 
     /* @ngInject */
     constructor($http: ng.IHttpService, $log: ng.ILogService) {
       this.$http = $http;
+      this.$log = $log;
     }
 
     callServer (word: string) {
@@ -32,7 +30,8 @@ module tagIt {
     // save tagging information
     // Params: email, tagging, sentence
     storeTaggingInformation (tag : Object) {
-      storeTagData();
+      this.$log.debug('storeTaggingInformation() was called');
+      this.$log.debug(tag);
     }
 
     private createQuery (word: string) {
