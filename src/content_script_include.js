@@ -1,6 +1,6 @@
 // Code used by both the local web prototype as well as the plugin.
 
-function injectScripts () {
+function injectScripts (tagIt) {
 
   // Save a copy of existing angular js and jquery
   // Source: http://www.mattburkedev.com/multiple-angular-versions-on-the-same-page/
@@ -14,14 +14,13 @@ function injectScripts () {
 
   function loadAngular () {
     console.log('loading angular');
+    window.name = 'NG_DEFER_BOOTSTRAP!';
     loadScript('vendor/angular/angular.js', loadPluginCode);
   }
 
   function loadPluginCode () {
     console.log('loading tagit');
-    loadScript('bundle.js', function () {
-      tagIt.init(restoreOldAngularAndJquery);
-    });
+    tagIt.init(restoreOldAngularAndJquery);
   }
 
   function restoreOldAngularAndJquery () {

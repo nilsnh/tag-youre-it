@@ -13,12 +13,11 @@ var tsProject = $.typescript.createProject('tsconfig.json', {
 });
 
 gulp.task('scripts', function() {
-  var tsResult = gulp.src('src/*.ts')
+  var tsResult = gulp.src('src/**/*.ts')
   .pipe($.sourcemaps.init())
   .pipe($.typescript(tsProject));
 
   return tsResult.js
-    .pipe($.concat('bundle.js'))
     .pipe($.ngAnnotate())
     .pipe($.sourcemaps.write()) // Now the sourcemaps are added to the .js file
     .pipe(gulp.dest('tmp'));
@@ -66,7 +65,8 @@ gulp.task('dist-node-modules', function () {
     'node_modules/bootstrap/**/*',
     'node_modules/angular/**/*',
     'node_modules/jquery/**/*',
-    'node_modules/lodash/**/*'
+    'node_modules/lodash/**/*',
+    'node_modules/requirejs/**/*'
     ], {base: 'node_modules'})
   .pipe(gulp.dest('tmp/vendor'));
 });
@@ -89,11 +89,20 @@ gulp.task('serve', ['tmp'], function () {
 
   // add browserSync.reload to the tasks array to make
   // all browsers reload after tasks are complete.
-  gulp.watch("src/**/*.ts", ['scripts']);
+  gulp.watch("src/**/*.ts", ['serve-reload-scripts']);
   gulp.watch([
     "src/**/*.html",
     "src/**/*.css",
     "src/**/*.js"
-    ], ['tmp']);
-  gulp.watch("tmp/**/*").on("change", browserSync.reload);
+    ], ['serve-reload-other']);
+});
+
+gulp.task('serve-reload-scripts', ['scripts'], function (done) {
+  browserSync.reload;
+  done();
+});
+
+gulp.task('serve-reload-other', ['tmp'], function (done) {
+  browserSync.reload;
+  done();
 });
