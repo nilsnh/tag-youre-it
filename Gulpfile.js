@@ -29,7 +29,7 @@ gulp.task('tmp', ['scripts', 'dist-node-modules'], function () {
   return gulp.src([
     'src/**/*.html',
     'src/**/*.css',
-    'src/content_script_web.js'
+    'src/load-menu-for-web-testing.js'
     ], {base: 'src'})
   .pipe($.flatten())
   .pipe($.fileInclude({
@@ -44,7 +44,7 @@ gulp.task('dist', ['tmp'], function () {
   var tmp = gulp.src([
     'tmp/**/*',
     '!tmp/index.html',
-    '!tmp/content_script_web.js'
+    '!tmp/load-menu-for-web-testing.js'
   ], {base: 'tmp'});
   var imageAssets = gulp.src('src/plugin-specific/*.png').pipe($.flatten());
   var chromePluginResources = gulp.src([

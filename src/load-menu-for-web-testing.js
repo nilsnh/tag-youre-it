@@ -1,4 +1,13 @@
-// Code used by both the local web prototype as well as the plugin.
+
+// Script loader for local web page testing
+injectScripts();
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  document.getElementById('js-show-menu')
+  .addEventListener('click', function () {
+    if (!document.getElementById('tagit-menu')) injectScripts();
+  });
+});
 
 function injectScripts () {
 
@@ -33,16 +42,8 @@ function injectScripts () {
   }
 
   function loadScript (relativeScriptPath, callback) {
-    function translateToPluginPath (relativeScriptPath) {
-      // if "chrome" present, we deduce that we're running as a plugin
-      if (chrome && chrome.extension) {
-        return chrome.extension.getURL(relativeScriptPath);
-      } else {
-        return relativeScriptPath;
-      }
-    }
     var s = document.createElement('script');
-    s.src = translateToPluginPath(relativeScriptPath);
+    s.src = relativeScriptPath;
     s.onload = function() {
       this.parentNode.removeChild(this);
       if (callback) callback();

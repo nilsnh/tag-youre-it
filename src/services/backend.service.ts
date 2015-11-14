@@ -27,10 +27,9 @@ module tagIt {
       return synsets.data.senses;
     }
 
-    // save tagging information
-    // Params: email, tagging, sentence
-    storeTaggingInformation (sense: ISense, range: Range, selectedWord: string, userEmail: string) {
-      this.$log.debug('storeTaggingInformation() was called');
+    sendTaggedDataToServer (sense: ISense, range: Range,
+      selectedWord: string, userEmail: string) {
+      this.$log.debug('sendTaggedDataToServer() was called');
       var messageToSendToServer = {
         sense: sense,
         range: range,

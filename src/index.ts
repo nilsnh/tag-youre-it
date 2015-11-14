@@ -26,7 +26,7 @@ module tagIt {
       if(chrome && chrome.extension) {
         return chrome.extension.getURL(relativeUrl);
       } else {
-        relativeUrl;
+        return relativeUrl;
       }
     }
   }

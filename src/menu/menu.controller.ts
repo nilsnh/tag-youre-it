@@ -31,7 +31,7 @@ module tagIt {
 
     onSenseSelect (sense: ISense) {
       this.webPageService.addTagToPage(sense);
-      this.backendService.storeTaggingInformation(
+      this.backendService.sendTaggedDataToServer(
         sense,
         this.webPageService.currentSelectionRange,
         this.selectedWord,
