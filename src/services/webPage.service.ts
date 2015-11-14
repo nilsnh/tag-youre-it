@@ -8,6 +8,8 @@ module tagIt {
   export class WebPageService {
 
     $log : ng.ILogService;
+    // when clicking the menu to select a synset
+    // we need to remember what the currently selected word was
     currentSelectionRange : any;
 
     /* @ngInject */
@@ -23,24 +25,40 @@ module tagIt {
         if (!document.hasFocus()) {
           return true;
         }
-        var selection = that.findSelection();
-        if(selection) {
-          this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
-          callbackOnSelectFunc(joinLongWords(selection.toString()));
+        // call callbackOnSelectFunc if there was a word selected
+        if(this.findSelectedText()) {
+          this.currentSelectionRange = this.getClonedSelectionRange();
+          callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
+        // call callbackOnDeSelectFunc if there was a word selected
         } else {
           callbackOnDeSelectFunc();
         }
-        // clicks should propagate upwards to other things
-        // evt.stopPropagation();
-        // evt.preventDefault();
       }, false);
       function joinLongWords (possiblyLongWord: string) {
         return possiblyLongWord.replace(" ","_");
       }
     }
 
+    getClonedSelectionRange () {
+      return this.findSelection().getRangeAt(0).cloneRange();
+    }
+
+    findSelection () {
+      return window.getSelection();
+    }
+
+    findSelectedText () {
+      var selectedText = this.findSelection().toString();
+      if (selectedText) {
+        this.$log.debug('text that was selected: ' + selectedText);
+        return selectedText;
+      } else {
+        return;
+      }
+    }
+
     // place spans around a tagged word.
-    addTagToPage (sense : ISense) {
+    addTagToPage = (sense : ISense) => {
       var windowSelection = window.getSelection();
       var range = this.currentSelectionRange;
       var span : HTMLSpanElement = document.createElement('span');
@@ -51,31 +69,6 @@ module tagIt {
       windowSelection.removeAllRanges();
       // windowSelection.addRange(range);
       this.$log.debug('addTagToPage');
-    }
-
-    private findSelection () {
-      var focused : any = document.activeElement;
-      var selectedText : string;
-      // try grabbing text from an input or textarea field
-      // commenting this until we need to figure out tagging of editable fields
-      // if (focused) {
-      //   try {
-      //     selectedText = focused.value.substring(
-      //       focused.selectionStart, focused.selectionEnd);
-      //   } catch (err) {
-      //   }
-      // }
-      // if previous method did not work ask window for selection
-      if (selectedText == undefined) {
-        var currentSelection : Selection = window.getSelection();
-        var selectedText = currentSelection.toString();
-      }
-      if (selectedText) {
-        this.$log.debug('text that was selected: ' + selectedText);
-        return currentSelection;
-      } else {
-        return;
-      }
     }
   }
 }

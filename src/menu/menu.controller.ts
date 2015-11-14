@@ -8,7 +8,7 @@ module tagIt {
     selectedWord = "";
     senses : Object[];
     backendService : BackendService;
-    selectedWordService : WebPageService;
+    webPageService : WebPageService;
     $log : ng.ILogService;
     $scope: ng.IScope;
 
@@ -20,15 +20,16 @@ module tagIt {
       this.$log = $log;
       this.$scope = $scope;
       this.backendService = BackendService;
-      this.selectedWordService = WebPageService;
+      this.webPageService = WebPageService;
 
       // Wire up clicklistener
-      this.selectedWordService.wireUpListener(this.onWordSelected,
+      this.webPageService.wireUpListener(this.onWordSelected,
         this.onWordDeSelected);
     }
 
     onTagSelect (sense: ISense) {
-      this.selectedWordService.addTagToPage(sense);
+      this.webPageService.addTagToPage(sense);
+      this.clearMenuVariables();
       this.backendService.storeTaggingInformation({});
     }
 
@@ -43,9 +44,16 @@ module tagIt {
 
     onWordDeSelected = () => {
       this.$log.debug("onWordDeSelected");
+      this.clearMenuVariables()
+      // since the click did not originate from
+      // an ng-click or the like we need to
+      // do an explicit view refresh
+      this.$scope.$apply();
+    }
+
+    clearMenuVariables = () {
       this.selectedWord = "";
       this.senses = [];
-      this.$scope.$apply();
     }
 
     selectWord (sense : ISense) {
