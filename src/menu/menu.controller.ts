@@ -32,12 +32,12 @@ module tagIt {
       );
 
       // Reload existing tags
-      // var tagsToLoad = this.tagStorageService.loadTags();
+      var tagsToLoad = this.tagStorageService.loadTags();
 
       this.$log.debug('these tags were found in storage');
-      this.$log.debug(this.tagStorageService.loadTags());
+      this.$log.debug(tagsToLoad);
 
-      // this.webPageService.readdTagsToPage(tagsToLoad);
+      this.webPageService.readdTagsToPage(tagsToLoad);
     }
 
     onSenseSelect (sense: ISense) {
@@ -68,6 +68,11 @@ module tagIt {
     clearMenuVariables () {
       this.selectedWord = "";
       this.senses = [];
+    }
+
+    deleteTags () {
+      this.tagStorageService.deleteTags();
+      location.reload();
     }
 
     removeMenu() {

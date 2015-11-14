@@ -62,15 +62,23 @@ gulp.task('dist', ['tmp'], function () {
 });
 
 gulp.task('dist-node-modules', function () {
-  return gulp.src([
-    'node_modules/bootstrap/**/*',
-    'node_modules/angular/**/*',
-    'node_modules/jquery/**/*',
-    'node_modules/lodash/**/*',
-    'node_modules/ngstorage/**/*'
-    'node_modules/rangy/**/*'
+  var cssDeps = gulp.src([
+    'node_modules/bootstrap/**/*'
+    ], {base: 'node_modules'});
+  var jsDeps = gulp.src([
+    'node_modules/angular/angular.js',
+    'node_modules/jquery/dist/jquery.js',
+    'node_modules/lodash/index.js',
+    'node_modules/ngstorage/ngStorage.js',
+    'node_modules/rangy/lib/rangy-core.js',
+    'node_modules/rangy/lib/rangy-serializer.js'
     ], {base: 'node_modules'})
-  .pipe(gulp.dest('tmp/vendor'));
+  .pipe($.sourcemaps.init())
+  .pipe($.concat('vendor.js'))
+  .pipe($.sourcemaps.write());
+
+  return $.merge([cssDeps, jsDeps])
+    .pipe(gulp.dest('tmp/vendor'));
 });
 
 gulp.task('clean', function () {

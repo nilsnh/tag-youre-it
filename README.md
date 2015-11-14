@@ -6,7 +6,7 @@ A chrome extension for tagging words with semantic information.
 1. To try it out, just [download this plugin](https://github.com/nilsnh/tag-youre-it/archive/master.zip).
 2. You'll need to have installed [node.js](https://nodejs.org/en/).
 3. Go inside the unzipped folder and run `npm install && npm install -g gulp`. In addition to installing development dependencies it will also install Gulp which is useful for active development.
-4. ~~Run `gulp serve` to serve up the prototype for live development.~~ In need of a bugfix.
+4. Run `gulp serve` to serve up the prototype for live development.
 5. Run `gulp dist` to build the chrome plugin in the `dist/` folder.
 
 ## Chrome testing

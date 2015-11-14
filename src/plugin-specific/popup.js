@@ -14,28 +14,18 @@ function injectScripts () {
   // Prevent immediate automatic bootstrapping
   chrome.tabs.executeScript(null, {
     code: 'window.name = "NG_DEFER_BOOTSTRAP!" + window.name;'
-  }, loadJquery);
+  }, loadPluginDeps);
 
-  function loadJquery () {
+  function loadPluginDeps () {
     chrome.tabs.executeScript(null, {
-      file: 'vendor/jquery/dist/jquery.js'
-    }, loadAngular);
+      file: 'vendor/vendor.js'
+    }, loadPlugin);
   }
 
-  function loadAngular () {
+  function loadPlugin () {
     chrome.tabs.executeScript(null, {
-      file: 'vendor/angular/angular.js'
-    }, loadAngularDependency);
-  }
-
-  function loadAngularDependency () {
-    chrome.tabs.executeScript(null, {
-      file: 'vendor/ngstorage/ngStorage.js'
-    }, loadMainCode);
-  }
-
-  function loadMainCode () {
-    chrome.tabs.executeScript(null, {file: 'bundle.js'}, loadCss);
+      file: 'bundle.js'
+    }, loadCss);
   }
 
   function loadCss () {

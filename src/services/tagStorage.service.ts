@@ -18,6 +18,12 @@ module tagIt {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
+      // this.deleteTags(); // reset tag storage
+    }
+
+    deleteTags () {
+      this.$log.debug('deleting all tags from localstorage');
+      delete this.$localStorage.tagStorage;
     }
 
     saveTag (tagToSave: ISenseTag) {

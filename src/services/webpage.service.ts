@@ -5,6 +5,9 @@ module tagIt {
    * Takes care of figuring out what word
    * is selected.
    */
+
+  declare var rangy: any;
+
   export class WebPageService {
 
     $log : ng.ILogService;
@@ -63,8 +66,10 @@ module tagIt {
     addNewTagToPage = (sense : ISense) : ISenseTag => {
       this.$log.debug('addNewTagToPage');
       var range = this.currentSelectionRange;
-      var serializedRange = angular.toJson(range);
+      var serializedRange = rangy.serializeRange(
+        range, false, document.getElementById('tagit-body'));
       this.surroundRangeWithSpan(sense, range);
+
       return {
         userEmail: 'testEmail',
         sense: sense,
@@ -82,13 +87,13 @@ module tagIt {
 
     private readdTagToPage (tagToLoad: ISenseTag) {
       this.$log.debug('addNewTagToPage');
-      var savedRange : Range = angular.fromJson(tagToLoad.serializedSelectionRange);
+      var savedRange : Range = rangy.deserializeRange(
+        tagToLoad.serializedSelectionRange,
+        document.getElementById('tagit-body'));
       var selection = window.getSelection();
 
       //remove any present selections
       selection.removeAllRanges();
-
-      debugger;
 
       //select text on page
       var rangeToLoad = document.createRange();

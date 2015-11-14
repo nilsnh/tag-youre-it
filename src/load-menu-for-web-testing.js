@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
   .addEventListener('click', function () {
     if (!document.getElementById('tagit-menu')) injectScripts();
   });
+  document.getElementById('js-reset-tags')
+  .addEventListener('click', function () {
+    // nothing here yet
+  });
 });
 
 function injectScripts () {
@@ -18,23 +22,8 @@ function injectScripts () {
   // angular.js to load itself into
   var angular = (window.angular = {});
 
-  console.log('loading jquery');
-  loadScript('vendor/jquery/dist/jquery.js', loadAngular);
-
-  function loadAngular () {
-    console.log('loading angular');
-    loadScript('vendor/angular/angular.js', loadAngularDependency);
-  }
-
-  function loadAngularDependency () {
-    console.log('loading angular');
-    loadScript('vendor/ngstorage/ngStorage.js', loadRangy);
-  }
-
-  function loadRangy () {
-    console.log('loading angular');
-    loadScript('vendor/rangy/rangy-core.js', loadPluginCode);
-  }
+  console.log('loading dependencies');
+  loadScript('vendor/vendor.js', loadPluginCode);
 
   function loadPluginCode () {
     console.log('loading tagit');
