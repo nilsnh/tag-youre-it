@@ -7,20 +7,20 @@ module tagIt {
 
     selectedWord = "";
     senses : Object[];
-    dataService : DataService;
-    selectedWordService : SelectedWordService;
+    backendService : BackendService;
+    selectedWordService : WebPageService;
     $log : ng.ILogService;
     $scope: ng.IScope;
 
     /* @ngInject */
     constructor ($scope: IVMScope, $log: angular.ILogService,
-      DataService: DataService,
-      SelectedWordService: SelectedWordService) {
+      BackendService: BackendService,
+      WebPageService: WebPageService) {
       $scope.vm = this;
       this.$log = $log;
       this.$scope = $scope;
-      this.dataService = DataService;
-      this.selectedWordService = SelectedWordService;
+      this.backendService = BackendService;
+      this.selectedWordService = WebPageService;
 
       // Wire up clicklistener
       this.selectedWordService.wireUpListener(this.onWordSelected,
@@ -29,15 +29,15 @@ module tagIt {
 
     onTagSelect (sense: ISense) {
       this.selectedWordService.addTagToPage(sense);
-      this.dataService.storeTaggingInformation({});
+      this.backendService.storeTaggingInformation({});
     }
 
     onWordSelected = (newWord : string) => {
       this.selectedWord = newWord;
-      this.dataService.callServer(newWord)
+      this.backendService.callServer(newWord)
         .then((synsets : Object) => {
           this.$log.debug(synsets);
-          this.senses = this.dataService.processSynsets(<ISynset> synsets);
+          this.senses = this.backendService.processSynsets(<ISynset> synsets);
         });
     }
 
@@ -49,7 +49,7 @@ module tagIt {
     }
 
     selectWord (sense : ISense) {
-      this.dataService.storeTaggingInformation({
+      this.backendService.storeTaggingInformation({
         mail: "mail@nilsnh.no",
         sentence: "whole sentence",
         senseid: sense.senseid,

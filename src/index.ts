@@ -1,14 +1,14 @@
 /// <reference path="../typings/tsd.d.ts" />
 
 /// <reference path="menu/menu.controller.ts" />
-/// <reference path="services/data.service.ts" />
-/// <reference path="services/selectedWord.service.ts" />
+/// <reference path="services/backend.service.ts" />
+/// <reference path="services/webPage.service.ts" />
 
 module tagIt {
 
   angular.module('tagit', [])
-    .service('DataService', DataService)
-    .service('SelectedWordService', SelectedWordService)
+    .service('BackendService', BackendService)
+    .service('WebPageService', WebPageService)
     .controller('MenuCtrl', MenuCtrl);
 
   export function init (callback: () => void) {

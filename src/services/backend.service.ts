@@ -4,7 +4,7 @@
 
 module tagIt {
 
-  export class DataService {
+  export class BackendService {
 
     $http : ng.IHttpService;
     $log : ng.ILogService;

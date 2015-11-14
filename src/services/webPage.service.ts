@@ -5,7 +5,7 @@ module tagIt {
    * Takes care of figuring out what word
    * is selected.
    */
-  export class SelectedWordService {
+  export class WebPageService {
 
     $log : ng.ILogService;
     currentSelectionRange : any;
