@@ -28,7 +28,12 @@ function injectScripts () {
 
   function loadAngularDependency () {
     console.log('loading angular');
-    loadScript('vendor/ngstorage/ngStorage.js', loadPluginCode);
+    loadScript('vendor/ngstorage/ngStorage.js', loadRangy);
+  }
+
+  function loadRangy () {
+    console.log('loading angular');
+    loadScript('vendor/rangy/rangy-core.js', loadPluginCode);
   }
 
   function loadPluginCode () {

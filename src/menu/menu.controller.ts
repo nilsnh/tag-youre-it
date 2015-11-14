@@ -9,34 +9,41 @@ module tagIt {
     senses : Object[];
     backendService : BackendService;
     webPageService : WebPageService;
+    tagStorageService : TagStorageService;
     $log : ng.ILogService;
     $scope: ng.IScope;
 
     /* @ngInject */
     constructor ($scope: IVMScope, $log: angular.ILogService,
       BackendService: BackendService,
-      WebPageService: WebPageService) {
+      WebPageService: WebPageService,
+      TagStorageService: TagStorageService) {
       $scope.vm = this;
       this.$log = $log;
       this.$scope = $scope;
       this.backendService = BackendService;
       this.webPageService = WebPageService;
+      this.tagStorageService = TagStorageService;
 
       // Wire up clicklistener
       this.webPageService.wireUpListener(
         this.onWordSelected,
         this.onWordDeSelected
       );
+
+      // Reload existing tags
+      // var tagsToLoad = this.tagStorageService.loadTags();
+
+      this.$log.debug('these tags were found in storage');
+      this.$log.debug(this.tagStorageService.loadTags());
+
+      // this.webPageService.readdTagsToPage(tagsToLoad);
     }
 
     onSenseSelect (sense: ISense) {
-      this.webPageService.addTagToPage(sense);
-      this.backendService.sendTaggedDataToServer(
-        sense,
-        this.webPageService.currentSelectionRange,
-        this.selectedWord,
-        "useremail@example.org"
-      );
+      var senseTag = this.webPageService.addNewTagToPage(sense);
+      this.tagStorageService.saveTag(senseTag)
+      this.backendService.sendTaggedDataToServer(senseTag);
       this.clearMenuVariables();
     }
 

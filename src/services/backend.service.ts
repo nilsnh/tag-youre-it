@@ -29,21 +29,14 @@ module tagIt {
       return synsets.data.senses;
     }
 
-    sendTaggedDataToServer (sense: ISense, range: Range,
-      selectedWord: string, userEmail: string) {
+    sendTaggedDataToServer (senseTag: ISenseTag) {
       this.$log.debug('sendTaggedDataToServer() was called');
-      var messageToSendToServer = {
-        sense: sense,
-        range: range,
-        selectedWord: selectedWord,
-        userEmail: userEmail
-      }
 
       this.$log.debug('would have sent this to the server:');
-      this.$log.debug(messageToSendToServer);
+      this.$log.debug(senseTag);
       this.$log.debug('please uncomment code for actually sending to server');
 
-      // this.$http.post("example.org", messageToSendToServer)
+      // this.$http.post("example.org", senseTag)
       //   .then((response) => {
       //     this.$log.debug('successfully posted to server. Response:');
       //     this.$log.debug(response);

@@ -23,14 +23,13 @@ module tagIt {
   }
 
   /*
-  sentence: represents everything contained by punctuations.
-  context: represents ten chars "in both directions" from the word.
+  context: represents the text context of the tag
+  selectionRange: selectionRangeObject
    */
   export interface ISenseTag {
-    userEmail: string,
-    senseid: string,
-    sentence: string,
-    context: string
+    userEmail: string;
+    sense: ISense;
+    context: string;
+    serializedSelectionRange: string;
   }
 }
-

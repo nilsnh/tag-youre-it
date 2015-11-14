@@ -68,6 +68,7 @@ gulp.task('dist-node-modules', function () {
     'node_modules/jquery/**/*',
     'node_modules/lodash/**/*',
     'node_modules/ngstorage/**/*'
+    'node_modules/rangy/**/*'
     ], {base: 'node_modules'})
   .pipe(gulp.dest('tmp/vendor'));
 });

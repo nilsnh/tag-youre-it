@@ -4,7 +4,7 @@
 /// <reference path="menu/menu.controller.ts" />
 /// <reference path="services/backend.service.ts" />
 /// <reference path="services/webpage.service.ts" />
-/// <reference path="services/tag.service.ts" />
+/// <reference path="services/tagStorage.service.ts" />
 
 module tagIt {
 
@@ -13,7 +13,7 @@ module tagIt {
     .service('AppConfigService', AppConfigService)
     .service('BackendService', BackendService)
     .service('WebPageService', WebPageService)
-    .service('TagService', TagService)
+    .service('TagStorageService', TagStorageService)
     .controller('MenuCtrl', MenuCtrl);
 
   export function init (callback: () => void) {
