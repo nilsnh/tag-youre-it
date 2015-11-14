@@ -1,4 +1,5 @@
 /// <reference path="../index.interfaces.ts" />
+/// <reference path="../index.appConfig.ts" />
 
 'use strict';
 
@@ -8,12 +9,13 @@ module tagIt {
 
     $http : ng.IHttpService;
     $log : ng.ILogService;
-    private serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
+    private serverUrl : string = null;
 
     /* @ngInject */
-    constructor($http: ng.IHttpService, $log: ng.ILogService) {
+    constructor($http: ng.IHttpService, $log: ng.ILogService, AppConfigService: AppConfigService) {
       this.$http = $http;
       this.$log = $log;
+      this.serverUrl = AppConfigService.serverUrl;
     }
 
     callServer (word: string) {
