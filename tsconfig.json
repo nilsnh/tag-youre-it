@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "module": "amd",
     "noImplicitAny": true,
-    "target": "es5"
+    "out": "output.js"
     },
     "files": [
       "src/index.ts"

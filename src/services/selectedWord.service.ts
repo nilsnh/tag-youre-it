@@ -1,44 +1,43 @@
-import { ISense } from '../index.interfaces';
-
 'use strict';
 
-/**
- * Takes care of figuring out what word
- * is selected.
- */
-export class SelectedWordService {
+module tagIt {
+  /**
+   * Takes care of figuring out what word
+   * is selected.
+   */
+  export class SelectedWordService {
 
-  $log : ng.ILogService;
-  currentSelectionRange : any;
+    $log : ng.ILogService;
+    currentSelectionRange : any;
 
-  /* @ngInject */
-  constructor($log: ng.ILogService) {
-    this.$log = $log;
-  }
+    /* @ngInject */
+    constructor($log: ng.ILogService) {
+      this.$log = $log;
+    }
 
-  wireUpListener (callbackOnSelectFunc : (result : Object) => void,
-    callbackOnDeSelectFunc : () => void) {
-    var that = this;
-    document.getElementById('tagit-body')
-    .addEventListener('click', (evt : any) => {
-      if (!document.hasFocus()) {
-        return true;
-      }
-      var selection = that.findSelection();
-      if(selection) {
-        this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
-        callbackOnSelectFunc(joinLongWords(selection.toString()));
+    wireUpListener (callbackOnSelectFunc : (result : Object) => void,
+        callbackOnDeSelectFunc : () => void) {
+      var that = this;
+      document.getElementById('tagit-body')
+      .addEventListener('click', (evt : any) => {
+        if (!document.hasFocus()) {
+          return true;
+        }
+        var selection = that.findSelection();
+        if(selection) {
+          this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
+          callbackOnSelectFunc(joinLongWords(selection.toString()));
         } else {
           callbackOnDeSelectFunc();
         }
         // clicks should propagate upwards to other things
         // evt.stopPropagation();
         // evt.preventDefault();
-        }, false);
-    function joinLongWords (possiblyLongWord: string) {
-      return possiblyLongWord.replace(" ","_");
+      }, false);
+      function joinLongWords (possiblyLongWord: string) {
+        return possiblyLongWord.replace(" ","_");
+      }
     }
-  }
 
     // place spans around a tagged word.
     addTagToPage (sense : ISense) {
@@ -74,8 +73,9 @@ export class SelectedWordService {
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
         return currentSelection;
-        } else {
-          return;
-        }
+      } else {
+        return;
       }
+    }
+  }
 }

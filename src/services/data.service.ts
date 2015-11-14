@@ -1,29 +1,31 @@
+/// <reference path="../index.interfaces.ts" />
+
 'use strict';
 
-import { ISynset } from '../index.interfaces';
+module tagIt {
 
-export class DataService {
+  export class DataService {
 
-  $http : ng.IHttpService;
-  $log : ng.ILogService;
-  private serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
+    $http : ng.IHttpService;
+    $log : ng.ILogService;
+    private serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
 
-  /* @ngInject */
-  constructor($http: ng.IHttpService, $log: ng.ILogService) {
-    this.$http = $http;
-    this.$log = $log;
-  }
+    /* @ngInject */
+    constructor($http: ng.IHttpService, $log: ng.ILogService) {
+      this.$http = $http;
+      this.$log = $log;
+    }
 
-  callServer (word: string) {
-    if (!word) {
-      return;
-    };
-    return this.$http.get(this.serverUrl + this.createQuery(word));
-  }
+    callServer (word: string) {
+      if (!word) {
+        return;
+      };
+      return this.$http.get(this.serverUrl + this.createQuery(word));
+    }
 
-  processSynsets (synsets: ISynset) : string[] {
-    return synsets.data.senses;
-  }
+    processSynsets (synsets: ISynset) : string[] {
+      return synsets.data.senses;
+    }
 
     // save tagging information
     // Params: email, tagging, sentence
@@ -34,6 +36,7 @@ export class DataService {
 
     private createQuery (word: string) {
       return '{"word":"QUERYTOREPLACE"}'
-      .replace(/QUERYTOREPLACE/, word);
+        .replace(/QUERYTOREPLACE/, word);
     }
   }
+}

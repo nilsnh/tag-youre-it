@@ -1,65 +1,65 @@
-'use strict';
+/// <reference path="../index.ts" />
 
-import { DataService } from '../services/data.service';
-import { SelectedWordService } from '../services/selectedWord.service';
-import { ISense, IVMScope, ISynset } from '../index.interfaces';
+module tagIt {
+  'use strict';
 
-export class MenuCtrl {
+  export class MenuCtrl {
 
-  selectedWord = "";
-  senses : Object[];
-  dataService : DataService;
-  selectedWordService : SelectedWordService;
-  $log : ng.ILogService;
-  $scope: ng.IScope;
+    selectedWord = "";
+    senses : Object[];
+    dataService : DataService;
+    selectedWordService : SelectedWordService;
+    $log : ng.ILogService;
+    $scope: ng.IScope;
 
-  /* @ngInject */
-  constructor ($scope: IVMScope, $log: angular.ILogService,
-    DataService: DataService,
-    SelectedWordService: SelectedWordService) {
-    $scope.vm = this;
-    this.$log = $log;
-    this.$scope = $scope;
-    this.dataService = DataService;
-    this.selectedWordService = SelectedWordService;
+    /* @ngInject */
+    constructor ($scope: IVMScope, $log: angular.ILogService,
+      DataService: DataService,
+      SelectedWordService: SelectedWordService) {
+      $scope.vm = this;
+      this.$log = $log;
+      this.$scope = $scope;
+      this.dataService = DataService;
+      this.selectedWordService = SelectedWordService;
 
-    // Wire up clicklistener
-    this.selectedWordService.wireUpListener(this.onWordSelected,
-      this.onWordDeSelected);
-  }
+      // Wire up clicklistener
+      this.selectedWordService.wireUpListener(this.onWordSelected,
+        this.onWordDeSelected);
+    }
 
-  onTagSelect (sense: ISense) {
-    this.selectedWordService.addTagToPage(sense);
-    this.dataService.storeTaggingInformation({});
-  }
+    onTagSelect (sense: ISense) {
+      this.selectedWordService.addTagToPage(sense);
+      this.dataService.storeTaggingInformation({});
+    }
 
-  onWordSelected = (newWord : string) => {
-    this.selectedWord = newWord;
-    this.dataService.callServer(newWord)
-      .then((synsets : Object) => {
-        this.$log.debug(synsets);
-        this.senses = this.dataService.processSynsets(<ISynset> synsets);
+    onWordSelected = (newWord : string) => {
+      this.selectedWord = newWord;
+      this.dataService.callServer(newWord)
+        .then((synsets : Object) => {
+          this.$log.debug(synsets);
+          this.senses = this.dataService.processSynsets(<ISynset> synsets);
+        });
+    }
+
+    onWordDeSelected = () => {
+      this.$log.debug("onWordDeSelected");
+      this.selectedWord = "";
+      this.senses = [];
+      this.$scope.$apply();
+    }
+
+    selectWord (sense : ISense) {
+      this.dataService.storeTaggingInformation({
+        mail: "mail@nilsnh.no",
+        sentence: "whole sentence",
+        senseid: sense.senseid,
       });
-  }
+    }
 
-  onWordDeSelected = () => {
-    this.$log.debug("onWordDeSelected");
-    this.selectedWord = "";
-    this.senses = [];
-    this.$scope.$apply();
-  }
+    removeMenu() {
+      $('.tagit-body').children().unwrap();
+      $('.tagit-menu').remove();
+    }
 
-  selectWord (sense : ISense) {
-    this.dataService.storeTaggingInformation({
-      mail: "mail@nilsnh.no",
-      sentence: "whole sentence",
-      senseid: sense.senseid,
-    });
   }
-
-  removeMenu() {
-    $('.tagit-body').children().unwrap();
-    $('.tagit-menu').remove();
-  }
-
 }
