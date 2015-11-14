@@ -1,6 +1,6 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-import { DataService } from './services/data.service';
+import { BackendService } from './services/backend.service';
 import { SelectedWordService } from './services/selectedWord.service';
 import { MenuCtrl } from './menu/menu.controller';
 
@@ -8,7 +8,7 @@ export function init (callback: () => void) {
   var $ = jQuery;
 
   angular.module('tagit', [])
-    .service('DataService', DataService)
+    .service('BackendService', BackendService)
     .service('SelectedWordService', SelectedWordService)
     .controller('MenuCtrl', MenuCtrl);
 
