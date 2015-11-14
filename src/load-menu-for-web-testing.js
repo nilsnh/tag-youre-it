@@ -23,7 +23,12 @@ function injectScripts () {
 
   function loadAngular () {
     console.log('loading angular');
-    loadScript('vendor/angular/angular.js', loadPluginCode);
+    loadScript('vendor/angular/angular.js', loadAngularDependency);
+  }
+
+  function loadAngularDependency () {
+    console.log('loading angular');
+    loadScript('vendor/ngstorage/ngStorage.js', loadPluginCode);
   }
 
   function loadPluginCode () {

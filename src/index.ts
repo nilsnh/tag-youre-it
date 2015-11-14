@@ -8,7 +8,7 @@
 
 module tagIt {
 
-  angular.module('tagit', [])
+  angular.module('tagit', ['ngStorage'])
     .config(AppConfigInitializer)
     .service('AppConfigService', AppConfigService)
     .service('BackendService', BackendService)

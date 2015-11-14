@@ -25,6 +25,12 @@ function injectScripts () {
   function loadAngular () {
     chrome.tabs.executeScript(null, {
       file: 'vendor/angular/angular.js'
+    }, loadAngularDependency);
+  }
+
+  function loadAngularDependency () {
+    chrome.tabs.executeScript(null, {
+      file: 'vendor/ngstorage/ngStorage.js'
     }, loadMainCode);
   }
 
