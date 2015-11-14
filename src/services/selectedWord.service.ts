@@ -24,16 +24,17 @@ export class SelectedWordService {
       if (!document.hasFocus()) {
         return true;
       }
-      if(this.getSelection()) {
-        this.currentSelectionRange = this.getClonedSelectionRange();
-        callbackOnSelectFunc(joinLongWords(this.getSelection().toString()));
-      } else {
-        callbackOnDeSelectFunc();
-      }
-      // clicks should propagate upwards to other things
-      // evt.stopPropagation();
-      // evt.preventDefault();
-    }, false);
+      var selection = that.findSelection();
+      if(selection) {
+        this.currentSelectionRange = selection.getRangeAt(0).cloneRange();
+        callbackOnSelectFunc(joinLongWords(selection.toString()));
+        } else {
+          callbackOnDeSelectFunc();
+        }
+        // clicks should propagate upwards to other things
+        // evt.stopPropagation();
+        // evt.preventDefault();
+        }, false);
     function joinLongWords (possiblyLongWord: string) {
       return possiblyLongWord.replace(" ","_");
     }
@@ -41,28 +42,16 @@ export class SelectedWordService {
 
   // place spans around a tagged word.
   addTagToPage (sense : ISense) {
-    function createSpan () {
-      var span : HTMLSpanElement = document.createElement('span');
-      span.id = sense.senseid;
-      span.title = sense.explanation;
-      span.className = 'tagit-tag';
-      return span;
-    }
-
     var windowSelection = window.getSelection();
-    var originalRange = this.getClonedSelectionRange();
-    var rangeToChange = this.getClonedSelectionRange();
-    rangeToChange.surroundContents(createSpan());
-    windowSelection.removeAllRanges(); // unselect from page
+    var range = this.currentSelectionRange;
+    var span : HTMLSpanElement = document.createElement('span');
+    span.id = sense.senseid;
+    span.title = sense.explanation;
+    span.className = 'tagit-tag';
+    range.surroundContents(span);
+    windowSelection.removeAllRanges();
+    // windowSelection.addRange(range);
     this.$log.debug('addTagToPage');
-  }
-
-  public getSelection () {
-    return this.findSelection();
-  }
-
-  public getClonedSelectionRange () {
-    return this.findSelection().getRangeAt(0).cloneRange();
   }
 
   private findSelection () {

@@ -1,6 +1,6 @@
 'use strict';
 
-import { BackendService } from '../services/backend.service';
+import { DataService } from '../services/data.service';
 import { SelectedWordService } from '../services/selectedWord.service';
 import { ISense, IVMScope, ISynset } from '../index.interfaces';
 
@@ -8,19 +8,19 @@ export class MenuCtrl {
 
   selectedWord = "";
   senses : Object[];
-  backendService : BackendService;
+  dataService : DataService;
   selectedWordService : SelectedWordService;
   $log : ng.ILogService;
   $scope: ng.IScope;
 
   /* @ngInject */
   constructor ($scope: IVMScope, $log: angular.ILogService,
-    BackendService: BackendService,
+    DataService: DataService,
     SelectedWordService: SelectedWordService) {
     $scope.vm = this;
     this.$log = $log;
     this.$scope = $scope;
-    this.backendService = BackendService;
+    this.dataService = DataService;
     this.selectedWordService = SelectedWordService;
 
     // Wire up clicklistener
@@ -30,16 +30,15 @@ export class MenuCtrl {
 
   onTagSelect (sense: ISense) {
     this.selectedWordService.addTagToPage(sense);
-    this.backendService.storeTaggingInformation(
-      sense, this.selectedWordService.getClonedSelectionRange());
+    this.dataService.storeTaggingInformation({});
   }
 
   onWordSelected = (newWord : string) => {
     this.selectedWord = newWord;
-    this.backendService.callServer(newWord)
+    this.dataService.callServer(newWord)
       .then((synsets : Object) => {
         this.$log.debug(synsets);
-        this.senses = this.backendService.processSynsets(<ISynset> synsets);
+        this.senses = this.dataService.processSynsets(<ISynset> synsets);
       });
   }
 
@@ -48,6 +47,14 @@ export class MenuCtrl {
     this.selectedWord = "";
     this.senses = [];
     this.$scope.$apply();
+  }
+
+  selectWord (sense : ISense) {
+    this.dataService.storeTaggingInformation({
+      mail: "mail@nilsnh.no",
+      sentence: "whole sentence",
+      senseid: sense.senseid,
+    });
   }
 
   removeMenu() {
