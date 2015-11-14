@@ -29,9 +29,28 @@ module tagIt {
 
     // save tagging information
     // Params: email, tagging, sentence
-    storeTaggingInformation (tag : Object) {
+    storeTaggingInformation (sense: ISense, range: Range, selectedWord: string, userEmail: string) {
       this.$log.debug('storeTaggingInformation() was called');
-      this.$log.debug(tag);
+      var messageToSendToServer = {
+        sense: sense,
+        range: range,
+        selectedWord: selectedWord,
+        userEmail: userEmail
+      }
+
+      this.$log.debug('would have sent this to the server:');
+      this.$log.debug(messageToSendToServer);
+      this.$log.debug('please uncomment code for actually sending to server');
+
+      // this.$http.post("example.org", messageToSendToServer)
+      //   .then((response) => {
+      //     this.$log.debug('successfully posted to server. Response:');
+      //     this.$log.debug(response);
+      //   })
+      //   .catch((error) => {
+      //     this.$log.error('something went wrong when posting to server');
+      //     this.$log.error(error);
+      //   });
     }
 
     private createQuery (word: string) {

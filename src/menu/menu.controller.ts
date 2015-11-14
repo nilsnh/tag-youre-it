@@ -23,14 +23,21 @@ module tagIt {
       this.webPageService = WebPageService;
 
       // Wire up clicklistener
-      this.webPageService.wireUpListener(this.onWordSelected,
-        this.onWordDeSelected);
+      this.webPageService.wireUpListener(
+        this.onWordSelected,
+        this.onWordDeSelected
+      );
     }
 
-    onTagSelect (sense: ISense) {
+    onSenseSelect (sense: ISense) {
       this.webPageService.addTagToPage(sense);
+      this.backendService.storeTaggingInformation(
+        sense,
+        this.webPageService.currentSelectionRange,
+        this.selectedWord,
+        "useremail@example.org"
+      );
       this.clearMenuVariables();
-      this.backendService.storeTaggingInformation({});
     }
 
     onWordSelected = (newWord : string) => {
@@ -51,17 +58,9 @@ module tagIt {
       this.$scope.$apply();
     }
 
-    clearMenuVariables = () {
+    clearMenuVariables () {
       this.selectedWord = "";
       this.senses = [];
-    }
-
-    selectWord (sense : ISense) {
-      this.backendService.storeTaggingInformation({
-        mail: "mail@nilsnh.no",
-        sentence: "whole sentence",
-        senseid: sense.senseid,
-      });
     }
 
     removeMenu() {
