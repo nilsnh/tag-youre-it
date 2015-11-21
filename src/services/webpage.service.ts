@@ -30,17 +30,33 @@ module tagIt {
         if (!document.hasFocus()) {
           return true;
         }
-        // call callbackOnSelectFunc if there was a word selected
-        if(this.findSelectedText()) {
+        else if (wasRemoveTagButtonClicked(evt)) {
+          this.$log.debug('remove tag button was clicked');
+          removeTagFromText(evt);
+        }
+        else if(this.findSelectedText()) {
           this.currentSelectionRange = this.getClonedSelectionRange();
           callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
-        // call callbackOnDeSelectFunc if there was a word selected
         } else {
           callbackOnDeSelectFunc();
         }
       }, false);
       function joinLongWords (possiblyLongWord: string) {
         return possiblyLongWord.replace(" ","_");
+      }
+      function wasRemoveTagButtonClicked (evt : any) {
+        return evt.target.className === 'js-tagit-remove-tag';
+      }
+      function removeTagFromText (evt) {
+        debugger;
+
+        //get text
+
+        //replace span with text
+
+        //notify tag storage of removal
+
+
       }
     }
 
@@ -101,19 +117,28 @@ module tagIt {
       rangeToLoad.setEnd(savedRange.endContainer, savedRange.endOffset);
       selection.addRange(rangeToLoad);
 
-      //tag that text with a span
+      //tag that text with a span and a remove button.
       this.surroundRangeWithSpan(tagToLoad.sense,
         selection.getRangeAt(0).cloneRange());
     }
 
     private surroundRangeWithSpan (sense: ISense, range: Range) {
-      var windowSelection = window.getSelection();
+      // add span around content
       var span : HTMLSpanElement = document.createElement('span');
       span.id = sense.senseid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
       range.surroundContents(span);
-      windowSelection.removeAllRanges();
+
+      // add a button for removing the tag.
+      var btn = document.createElement("BUTTON");
+      btn.className = 'js-tagit-remove-tag';
+      btn.appendChild(document.createTextNode("X"));
+      span.appendChild(btn);
+
+      //unselect everything
+      window.getSelection()
+      .removeAllRanges();
     }
 
   }
