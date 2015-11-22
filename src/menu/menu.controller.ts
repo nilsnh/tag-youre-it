@@ -33,17 +33,14 @@ module tagIt {
 
       // Reload existing tags
       var tagsToLoad = this.tagStorageService.loadTags();
-
       this.$log.debug('these tags were found in storage');
       this.$log.debug(tagsToLoad);
-
       this.webPageService.readdTagsToPage(tagsToLoad);
     }
 
-    onSenseSelect (sense: ISense) {
+    onSenseSelected (sense: ISense) {
       var senseTag = this.webPageService.addNewTagToPage(sense);
-      this.tagStorageService.saveTag(senseTag)
-      this.backendService.sendTaggedDataToServer(senseTag);
+      this.tagStorageService.saveTag(senseTag);
       this.clearMenuVariables();
     }
 

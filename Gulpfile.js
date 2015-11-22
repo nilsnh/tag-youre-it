@@ -72,7 +72,10 @@ gulp.task('dist-node-modules', function () {
     'node_modules/ngstorage/ngStorage.js',
     'node_modules/node-uuid/uuid.js',
     'node_modules/rangy/lib/rangy-core.js',
-    'node_modules/rangy/lib/rangy-serializer.js'
+    'node_modules/rangy/lib/rangy-textrange.js',
+    'node_modules/rangy/lib/rangy-serializer.js',
+    'node_modules/rangy/lib/rangy-classapplier.js',
+    'node_modules/rangy/lib/rangy-highlighter.js'
     ], {base: 'node_modules'})
   .pipe($.sourcemaps.init())
   .pipe($.concat('vendor.js'))
