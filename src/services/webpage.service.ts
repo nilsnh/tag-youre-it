@@ -7,6 +7,7 @@ module tagIt {
    */
 
   declare var rangy: any;
+  declare var uuid: any;
 
   export class WebPageService {
 
@@ -32,7 +33,8 @@ module tagIt {
         }
         else if (wasRemoveTagButtonClicked(evt)) {
           this.$log.debug('remove tag button was clicked');
-          removeTagFromText(evt);
+          removeTagFromWebpage(evt);
+          this.tagStorageService.deleteTagById(evt.target.parentElement.id);
         }
         else if(this.findSelectedText()) {
           this.currentSelectionRange = this.getClonedSelectionRange();
@@ -47,16 +49,11 @@ module tagIt {
       function wasRemoveTagButtonClicked (evt : any) {
         return evt.target.className === 'js-tagit-remove-tag';
       }
-      function removeTagFromText (evt) {
-        debugger;
-
-        //get text
-
-        //replace span with text
-
-        //notify tag storage of removal
-
-
+      function removeTagFromWebpage (evt: any) {
+        var theOriginalTextNode = evt.target.previousSibling;
+        var theSurroundingSpanElement = evt.target.parentElement;
+        theSurroundingSpanElement.parentNode
+          .replaceChild(theOriginalTextNode, theSurroundingSpanElement);
       }
     }
 
@@ -84,9 +81,11 @@ module tagIt {
       var range = this.currentSelectionRange;
       var serializedRange = rangy.serializeRange(
         range, false, document.getElementById('tagit-body'));
-      this.surroundRangeWithSpan(sense, range);
+      var generatedUuid : string = uuid.v4();
+      this.surroundRangeWithSpan(sense, range, generatedUuid);
 
       return {
+        id: generatedUuid,
         userEmail: 'testEmail',
         sense: sense,
         context: range.commonAncestorContainer.innerText,
@@ -119,13 +118,13 @@ module tagIt {
 
       //tag that text with a span and a remove button.
       this.surroundRangeWithSpan(tagToLoad.sense,
-        selection.getRangeAt(0).cloneRange());
+        selection.getRangeAt(0).cloneRange(), tagToLoad.id);
     }
 
-    private surroundRangeWithSpan (sense: ISense, range: Range) {
+    private surroundRangeWithSpan (sense: ISense, range: Range, uuid: string) {
       // add span around content
       var span : HTMLSpanElement = document.createElement('span');
-      span.id = sense.senseid;
+      span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
       range.surroundContents(span);

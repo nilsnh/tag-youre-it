@@ -27,6 +27,7 @@ module tagIt {
   selectionRange: selectionRangeObject
    */
   export interface ISenseTag {
+    id: string,
     userEmail: string;
     sense: ISense;
     context: string;

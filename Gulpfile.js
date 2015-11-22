@@ -70,6 +70,7 @@ gulp.task('dist-node-modules', function () {
     'node_modules/jquery/dist/jquery.js',
     'node_modules/lodash/index.js',
     'node_modules/ngstorage/ngStorage.js',
+    'node_modules/node-uuid/uuid.js',
     'node_modules/rangy/lib/rangy-core.js',
     'node_modules/rangy/lib/rangy-serializer.js'
     ], {base: 'node_modules'})

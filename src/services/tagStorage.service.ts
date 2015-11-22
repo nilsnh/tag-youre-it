@@ -21,6 +21,17 @@ module tagIt {
       // this.deleteTags(); // reset tag storage
     }
 
+    deleteTagById (uuid: string) {
+      this.$log.debug('deleting tag from localstorage with uuid: ' + uuid);
+      var newList : ISenseTag[] = [];
+      angular.forEach(this.$localStorage.tagStorage, function(element) {
+        if(element.id !== uuid) {
+          this.push(element);
+        }
+      }, newList);
+      this.$localStorage.tagStorage = newList;
+    }
+
     deleteTags () {
       this.$log.debug('deleting all tags from localstorage');
       delete this.$localStorage.tagStorage;
