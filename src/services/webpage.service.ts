@@ -102,10 +102,18 @@ module tagIt {
 
     private readdTagToPage (tagToLoad: ISenseTag) {
       this.$log.debug('addNewTagToPage');
-      var savedRange : Range = rangy.deserializeRange(
-        tagToLoad.serializedSelectionRange,
-        document.getElementById('tagit-body'));
+      var savedRange : Range = undefined
       var selection = window.getSelection();
+      try {
+        savedRange = rangy.deserializeRange(
+          tagToLoad.serializedSelectionRange,
+          document.getElementById('tagit-body'));
+      } catch (e) {
+        this.$log.error('Error in rangy.js: Was not able to deserialize range.');
+        this.$log.error('In other words: The page might have changed. Is not able ');
+        this.$log.error('to determine where this tag should have been placed.');
+        this.$log.error(e);
+      }
 
       //remove any present selections
       selection.removeAllRanges();
