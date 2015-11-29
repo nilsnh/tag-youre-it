@@ -72,7 +72,8 @@ gulp.task('dist-node-modules', function () {
     'node_modules/ngstorage/ngStorage.js',
     'node_modules/node-uuid/uuid.js',
     'node_modules/rangy/lib/rangy-core.js',
-    'node_modules/rangy/lib/rangy-serializer.js'
+    'node_modules/rangy/lib/rangy-serializer.js',
+    'node_modules/rangy/lib/rangy-selectionsaverestore.js'
     ], {base: 'node_modules'})
   .pipe($.sourcemaps.init())
   .pipe($.concat('vendor.js'))
@@ -94,8 +95,9 @@ gulp.task('serve', ['tmp'], function () {
   // Serve files from the root of this project
   browserSync.init({
     server: {
-      baseDir: "./tmp",
-    }
+      baseDir: "./tmp"
+    },
+    notify: false
   });
 
   // add browserSync.reload to the tasks array to make

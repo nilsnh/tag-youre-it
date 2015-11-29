@@ -19,11 +19,11 @@ module tagIt {
       this.$log = $log;
       this.$localStorage = $localStorage;
       
+      // this.deleteTags(); // reset tag storage
+      
       if (!this.$localStorage.tagStorage) {
         this.$localStorage.tagStorage = [];
       }
-      
-      // this.deleteTags(); // reset tag storage
     }
 
     deleteTagById(uuid: string) {
@@ -49,11 +49,11 @@ module tagIt {
       this.$log.debug(tagToSave);
       this.$localStorage.tagStorage.push(tagToSave);
     }
-    
+
     loadTags() {
       this.$log.debug('loadTags');
       return this.$localStorage.tagStorage;
     }
-    
+
   }
 }
