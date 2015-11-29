@@ -3,8 +3,7 @@
 module tagIt {
   /**
    * Takes care of figuring out what word
-   * is selected on the web page as well as
-   * performing page edits.
+   * is selected.
    */
 
   declare var rangy: any;
@@ -17,37 +16,11 @@ module tagIt {
     // we need to remember what the currently selected word was
     currentSelectionRange : any;
     tagStorageService: TagStorageService;
-    highlighter: any;
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
       this.$log = $log;
       this.tagStorageService = TagStorageService;
-      this.initializeRangy();
-    }
-
-    initializeRangy () {
-      rangy.init();
-      this.highlighter = rangy.createHighlighter();
-      this.highlighter.addClassApplier(rangy.createClassApplier("tagit-tag", {
-        ignoreWhiteSpace: true,
-        tagNames: ["span", "a"]
-      }));
-
-      // this.highlighter.addClassApplier(rangy.createClassApplier("note", {
-      //   ignoreWhiteSpace: true,
-      //   elementTagName: "a",
-      //   elementProperties: {
-      //     href: "#",
-      //     onclick: function() {
-      //       var highlight = this.highlighter.getHighlightForElement(this);
-      //       if (window.confirm("Delete this note (ID " + highlight.id + ")?")) {
-      //           this.highlighter.removeHighlights( [highlight] );
-      //       }
-      //       return false;
-      //     }
-      //   }
-      // }));
     }
 
     wireUpListener (callbackOnSelectFunc : (result : Object) => void,
@@ -64,8 +37,7 @@ module tagIt {
           this.tagStorageService.deleteTagById(evt.target.parentElement.id);
         }
         else if(this.findSelectedText()) {
-          // this.currentSelectionRange = this.getClonedSelectionRange();
-          this.currentSelectionRange = rangy.getSelection().getRangeAt(0);
+          this.currentSelectionRange = this.getClonedSelectionRange();
           callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
         } else {
           callbackOnDeSelectFunc();
@@ -107,8 +79,8 @@ module tagIt {
     addNewTagToPage = (sense : ISense) : ISenseTag => {
       this.$log.debug('addNewTagToPage');
       var range = this.currentSelectionRange;
-      // var serializedRange = rangy.serializeRange(
-      //   range, false, document.getElementById('tagit-body'));
+      var serializedRange = rangy.serializeRange(
+        range, false, document.getElementById('tagit-body'));
       var generatedUuid : string = uuid.v4();
       this.surroundRangeWithSpan(sense, range, generatedUuid);
 
@@ -117,7 +89,7 @@ module tagIt {
         userEmail: 'testEmail',
         sense: sense,
         context: range.commonAncestorContainer.innerText,
-        serializedSelectionRange: null
+        serializedSelectionRange: serializedRange
       }
     };
 
@@ -157,29 +129,23 @@ module tagIt {
         selection.getRangeAt(0).cloneRange(), tagToLoad.id);
     }
 
-    private surroundRangeWithSpan (sense: ISense, range: any, uuid: string) {
-      debugger;
-      this.highlighter.highlightSelection('tagit-tag', {
-        selection: range,
-        containerElementId: 'tagit-body'
-      });
+    private surroundRangeWithSpan (sense: ISense, range: Range, uuid: string) {
+      // add span around content
+      var span : HTMLSpanElement = document.createElement('span');
+      span.id = uuid;
+      span.title = sense.explanation;
+      span.className = 'tagit-tag';
+      range.surroundContents(span);
 
-      // // add span around content
-      // var span : HTMLSpanElement = document.createElement('span');
-      // span.id = uuid;
-      // span.title = sense.explanation;
-      // span.className = 'tagit-tag';
-      // range.surroundContents(span);
+      // add a button for removing the tag.
+      var btn = document.createElement("BUTTON");
+      btn.className = 'js-tagit-remove-tag';
+      btn.appendChild(document.createTextNode("X"));
+      span.appendChild(btn);
 
-      // // add a button for removing the tag.
-      // var btn = document.createElement("BUTTON");
-      // btn.className = 'js-tagit-remove-tag';
-      // btn.appendChild(document.createTextNode("X"));
-      // span.appendChild(btn);
-
-      // //unselect everything
-      // window.getSelection()
-      // .removeAllRanges();
+      //unselect everything
+      window.getSelection()
+      .removeAllRanges();
     }
 
   }

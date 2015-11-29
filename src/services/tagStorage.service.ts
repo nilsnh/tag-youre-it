@@ -11,16 +11,14 @@ module tagIt {
     $http : ng.IHttpService;
     $log : ng.ILogService;
     $localStorage : any;
-    backendService : BackendService;
 
     /* @ngInject */
     constructor($http: ng.IHttpService, $log: ng.ILogService,
-      $localStorage: any, BackendService: BackendService) {
+      $localStorage: any) {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
-      this.backendService = BackendService;
-      this.deleteTags(); // reset tag storage
+      // this.deleteTags(); // reset tag storage
     }
 
     deleteTagById (uuid: string) {
@@ -46,7 +44,6 @@ module tagIt {
        this.$log.debug('saving tag in localstorage:');
        this.$log.debug(tagToSave);
        this.$localStorage.tagStorage.push(tagToSave);
-       this.backendService.sendTaggedDataToServer(tagToSave);
     }
 
     loadTags () {
