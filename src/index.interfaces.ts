@@ -32,5 +32,6 @@ module tagIt {
     sense: ISense;
     context: string;
     serializedSelectionRange: string;
+    deSerializedSelectionRange?: Range;
   }
 }

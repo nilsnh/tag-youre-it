@@ -62,7 +62,7 @@ module tagIt {
       // since the click did not originate from
       // an ng-click or the like we need to
       // do an explicit view refresh
-      this.$scope.$apply();
+      this.$scope.$digest;
     }
 
     clearMenuVariables () {

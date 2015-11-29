@@ -8,9 +8,9 @@ module tagIt {
 
   export class TagStorageService {
 
-    $http : ng.IHttpService;
-    $log : ng.ILogService;
-    $localStorage : any;
+    $http: ng.IHttpService;
+    $log: ng.ILogService;
+    $localStorage: any;
 
     /* @ngInject */
     constructor($http: ng.IHttpService, $log: ng.ILogService,
@@ -18,37 +18,42 @@ module tagIt {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
+      
+      if (!this.$localStorage.tagStorage) {
+        this.$localStorage.tagStorage = [];
+      }
+      
       // this.deleteTags(); // reset tag storage
     }
 
-    deleteTagById (uuid: string) {
+    deleteTagById(uuid: string) {
       this.$log.debug('deleting tag from localstorage with uuid: ' + uuid);
-      var newList : ISenseTag[] = [];
-      angular.forEach(this.$localStorage.tagStorage, function(element) {
-        if(element.id !== uuid) {
-          this.push(element);
+      var newList: ISenseTag[] = [];
+      var tag: ISenseTag;
+      for (var i = 0; i < this.$localStorage.tagStorage.length; i++) {
+        tag = this.$localStorage.tagStorage[i];
+        if (tag.id !== uuid) {
+          newList.push(tag);
         }
-      }, newList);
+      }
       this.$localStorage.tagStorage = newList;
     }
 
-    deleteTags () {
+    deleteTags() {
       this.$log.debug('deleting all tags from localstorage');
       delete this.$localStorage.tagStorage;
     }
 
-    saveTag (tagToSave: ISenseTag) {
-       if(!this.$localStorage.tagStorage) {
-         this.$localStorage.tagStorage = [];
-       }
-       this.$log.debug('saving tag in localstorage:');
-       this.$log.debug(tagToSave);
-       this.$localStorage.tagStorage.push(tagToSave);
+    saveTag(tagToSave: ISenseTag) {
+      this.$log.debug('saving tag in localstorage:');
+      this.$log.debug(tagToSave);
+      this.$localStorage.tagStorage.push(tagToSave);
     }
-
-    loadTags () {
+    
+    loadTags() {
       this.$log.debug('loadTags');
       return this.$localStorage.tagStorage;
     }
+    
   }
 }

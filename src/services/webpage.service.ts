@@ -11,10 +11,10 @@ module tagIt {
 
   export class WebPageService {
 
-    $log : ng.ILogService;
+    $log: ng.ILogService;
     // when clicking the menu to select a synset
     // we need to remember what the currently selected word was
-    currentSelectionRange : any;
+    currentSelectionRange: any;
     tagStorageService: TagStorageService;
 
     /* @ngInject */
@@ -23,33 +23,33 @@ module tagIt {
       this.tagStorageService = TagStorageService;
     }
 
-    wireUpListener (callbackOnSelectFunc : (result : Object) => void,
-        callbackOnDeSelectFunc : () => void) {
+    wireUpListener(callbackOnSelectFunc: (result: Object) => void,
+      callbackOnDeSelectFunc: () => void) {
       var that = this;
       document.getElementById('tagit-body')
-      .addEventListener('click', (evt : any) => {
-        if (!document.hasFocus()) {
-          return true;
-        }
-        else if (wasRemoveTagButtonClicked(evt)) {
-          this.$log.debug('remove tag button was clicked');
-          removeTagFromWebpage(evt);
-          this.tagStorageService.deleteTagById(evt.target.parentElement.id);
-        }
-        else if(this.findSelectedText()) {
-          this.currentSelectionRange = this.getClonedSelectionRange();
-          callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
-        } else {
-          callbackOnDeSelectFunc();
-        }
-      }, false);
-      function joinLongWords (possiblyLongWord: string) {
-        return possiblyLongWord.replace(" ","_");
+        .addEventListener('click', (evt: any) => {
+          if (!document.hasFocus()) {
+            return true;
+          }
+          else if (wasRemoveTagButtonClicked(evt)) {
+            this.$log.debug('remove tag button was clicked');
+            removeTagFromWebpage(evt);
+            this.tagStorageService.deleteTagById(evt.target.parentElement.id);
+          }
+          else if (this.findSelectedText()) {
+            this.currentSelectionRange = this.getClonedSelectionRange();
+            callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
+          } else {
+            callbackOnDeSelectFunc();
+          }
+        }, false);
+      function joinLongWords(possiblyLongWord: string) {
+        return possiblyLongWord.replace(" ", "_");
       }
-      function wasRemoveTagButtonClicked (evt : any) {
+      function wasRemoveTagButtonClicked(evt: any) {
         return evt.target.className === 'js-tagit-remove-tag';
       }
-      function removeTagFromWebpage (evt: any) {
+      function removeTagFromWebpage(evt: any) {
         var theOriginalTextNode = evt.target.previousSibling;
         var theSurroundingSpanElement = evt.target.parentElement;
         theSurroundingSpanElement.parentNode
@@ -57,15 +57,15 @@ module tagIt {
       }
     }
 
-    getClonedSelectionRange () {
+    getClonedSelectionRange() {
       return this.findSelection().getRangeAt(0).cloneRange();
     }
 
-    findSelection () {
+    findSelection() {
       return window.getSelection();
     }
 
-    findSelectedText () {
+    findSelectedText() {
       var selectedText = this.findSelection().toString();
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
@@ -76,12 +76,12 @@ module tagIt {
     }
 
     // place spans around a tagged word.
-    addNewTagToPage = (sense : ISense) : ISenseTag => {
+    addNewTagToPage = (sense: ISense): ISenseTag => {
       this.$log.debug('addNewTagToPage');
       var range = this.currentSelectionRange;
       var serializedRange = rangy.serializeRange(
         range, false, document.getElementById('tagit-body'));
-      var generatedUuid : string = uuid.v4();
+      var generatedUuid: string = uuid.v4();
       this.surroundRangeWithSpan(sense, range, generatedUuid);
 
       return {
@@ -93,16 +93,52 @@ module tagIt {
       }
     };
 
-    readdTagsToPage (tagsToLoad: ISenseTag[]) {
+    readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
-      angular.forEach(tagsToLoad, function (tag, key) {
-        this.readdTagToPage(tag);
-      }, this);
+      
+      //first deselect before we go to work
+      window.getSelection().removeAllRanges();
+
+      var tag: ISenseTag;
+      for (var i = 0; i < tagsToLoad.length; i++) {
+        tag = tagsToLoad[i];
+        tag.deSerializedSelectionRange = deserializeRange(tag);
+        if (tag.deSerializedSelectionRange) {
+          this.surroundRangeWithSpan(tag.sense,
+            tag.deSerializedSelectionRange, tag.id);
+        }
+      }
+
+      window.getSelection().removeAllRanges();
+      
+      // deserializes previously saved selection
+      // and connects it to the active page 
+      function deserializeRange(tagToLoad: ISenseTag) {
+        var savedRange: Range = undefined
+        var selection = window.getSelection();
+        try {
+          savedRange = rangy.deserializeRange(
+            tagToLoad.serializedSelectionRange,
+            document.getElementById('tagit-body'));
+        } catch (e) {
+          var errorMsg = `Error in rangy.js: Was not able to deserialize range.
+            In other words: The page might have changed. Is not able
+            to determine where this tag should have been placed.`
+          console.log(errorMsg);
+          console.log(e);
+          return;
+        }
+        //select text on page
+        var deserializedRange = document.createRange();
+        deserializedRange.setStart(savedRange.startContainer, savedRange.startOffset)
+        deserializedRange.setEnd(savedRange.endContainer, savedRange.endOffset);
+        return deserializedRange;
+      }
     }
 
-    private readdTagToPage (tagToLoad: ISenseTag) {
+    private readdTagToPage(tagToLoad: ISenseTag) {
       this.$log.debug('addNewTagToPage');
-      var savedRange : Range = undefined
+      var savedRange: Range = undefined
       var selection = window.getSelection();
       try {
         savedRange = rangy.deserializeRange(
@@ -129,9 +165,9 @@ module tagIt {
         selection.getRangeAt(0).cloneRange(), tagToLoad.id);
     }
 
-    private surroundRangeWithSpan (sense: ISense, range: Range, uuid: string) {
+    private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
       // add span around content
-      var span : HTMLSpanElement = document.createElement('span');
+      var span: HTMLSpanElement = document.createElement('span');
       span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
@@ -144,8 +180,8 @@ module tagIt {
       span.appendChild(btn);
 
       //unselect everything
-      window.getSelection()
-      .removeAllRanges();
+      // window.getSelection()
+      // .removeAllRanges();
     }
 
   }
