@@ -38,7 +38,7 @@ module tagIt {
             this.tagStorageService.deleteTagById(evt.target.parentElement.id);
           }
           else if (this.findSelectedText()) {
-            this.savedSelection = rangy.saveSelection();
+            this.updateSavedSelection();
             callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
           } else {
             callbackOnDeSelectFunc();
@@ -83,7 +83,7 @@ module tagIt {
       rangy.removeMarkers(this.savedSelection);
       var range = rangy.getSelection().getRangeAt(0);
       var serializedRange = rangy.serializeRange(
-        range, false, document.getElementById('tagit-body'));
+        range, true, document.getElementById('tagit-body'));
       var generatedUuid: string = uuid.v4();
       
       // this.surroundRangeWithSpan(sense, range, generatedUuid);
@@ -96,7 +96,7 @@ module tagIt {
         serializedSelectionRange: serializedRange
       }
     };
-
+    
     removeAllTagsFromPage() {
       // find all tags
       var elements = document.getElementsByClassName('tagit-tag');
@@ -160,6 +160,13 @@ module tagIt {
         deserializedRange.setEnd(savedRange.endContainer, savedRange.endOffset);
         return deserializedRange;
       }
+    }
+    
+    private updateSavedSelection() {
+      if (this.savedSelection) {
+        rangy.removeMarkers(this.savedSelection);
+      }
+      this.savedSelection = rangy.saveSelection();
     }
 
     private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
