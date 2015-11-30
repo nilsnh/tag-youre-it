@@ -25,6 +25,8 @@ module tagIt {
       rangy.init();
     }
 
+    //this allows the menu controller to bind to the service so that it may
+    //notify the menu. TODO refactor to use events on $rootScope instead.
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
       var that = this;
@@ -39,7 +41,7 @@ module tagIt {
             this.tagStorageService.deleteTagById(evt.target.parentElement.id);
           }
           else if (this.findSelectedText()) {
-            this.updateSavedSelection();
+            updateSavedSelection();
             callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
           } else {
             callbackOnDeSelectFunc();
@@ -57,18 +59,16 @@ module tagIt {
         theSurroundingSpanElement.parentNode
           .replaceChild(theOriginalTextNode, theSurroundingSpanElement);
       }
-    }
-
-    getClonedSelectionRange() {
-      return this.findSelection().getRangeAt(0).cloneRange();
-    }
-
-    findSelection() {
-      return window.getSelection();
+      function updateSavedSelection() {
+        if (this.savedSelection) {
+          rangy.removeMarkers(this.savedSelection);
+        }
+        this.savedSelection = rangy.saveSelection();
+      }
     }
 
     findSelectedText() {
-      var selectedText = this.findSelection().toString();
+      var selectedText = window.getSelection().toString();
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
         return selectedText;
@@ -84,12 +84,14 @@ module tagIt {
       var serializedRange = rangy.serializeRange(
         range, true, document.getElementById('tagit-body'));
       var generatedUuid: string = uuid.v4();
+      var parentElement = <HTMLElement>range.commonAncestorContainer;
       
       return {
         id: generatedUuid,
         userEmail: 'testEmail',
         sense: sense,
-        context: range.commonAncestorContainer.innerText,
+        wordThatWasTagged: this.findSelectedText(),
+        context: parentElement.innerText,
         serializedSelectionRange: serializedRange
       }
     };
@@ -116,7 +118,7 @@ module tagIt {
       
       //deserialize ranges
       _.map(tagsToLoad, deserializeRange);
-      
+
       this.$log.debug('finished deserializing tags');
       
       //sort tags by ascending so that they can be properly inserted
@@ -136,7 +138,7 @@ module tagIt {
       this.$log.debug('finished adding tags to page');
 
       window.getSelection().removeAllRanges();
-      
+
       function deserializeRange(tagToLoad: ISenseTag) {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
@@ -151,13 +153,6 @@ module tagIt {
           console.log(e);
         }
       }
-    }
-
-    private updateSavedSelection() {
-      if (this.savedSelection) {
-        rangy.removeMarkers(this.savedSelection);
-      }
-      this.savedSelection = rangy.saveSelection();
     }
 
     private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
