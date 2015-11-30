@@ -8,6 +8,7 @@ module tagIt {
 
   declare var rangy: any;
   declare var uuid: any;
+  declare var _: any;
 
   export class WebPageService {
 
@@ -76,18 +77,14 @@ module tagIt {
       }
     }
 
-    // place spans around a tagged word.
     initializeNewTag = (sense: ISense): ISenseTag => {
       this.$log.debug('addNewTagToPage');
       rangy.restoreSelection(this.savedSelection);
-      rangy.removeMarkers(this.savedSelection);
-      var range = rangy.getSelection().getRangeAt(0);
+      var range: Range = rangy.getSelection().getRangeAt(0);
       var serializedRange = rangy.serializeRange(
         range, true, document.getElementById('tagit-body'));
       var generatedUuid: string = uuid.v4();
       
-      // this.surroundRangeWithSpan(sense, range, generatedUuid);
-
       return {
         id: generatedUuid,
         userEmail: 'testEmail',
@@ -96,19 +93,19 @@ module tagIt {
         serializedSelectionRange: serializedRange
       }
     };
-    
-    removeAllTagsFromPage() {
-      // find all tags
-      var elements = document.getElementsByClassName('tagit-tag');
-      // remove them from page
-      for (var i = 0; i < elements.length; i++) {
-        var tagElement = elements[i];
-        var tagElementParentNode = tagElement.parentNode;
-        tagElementParentNode.replaceChild(
-          tagElement.previousSibling,
-          tagElement);
-        tagElementParentNode.normalize();
+
+    removeAllTagsFromPage(callback: () => void) {
+      //loop that will keep asking for spans to remove
+      //until they are all gone.
+      while (document.getElementsByClassName('tagit-tag').length > 0) {
+        var spanElement = document.getElementsByClassName('tagit-tag')[0];
+        var spanElementParent = spanElement.parentNode;
+        spanElementParent.replaceChild(
+          spanElement.firstChild,
+          spanElement);
+        spanElementParent.normalize();
       }
+      callback();
     }
 
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
@@ -116,34 +113,33 @@ module tagIt {
       
       //first deselect before we go to work
       window.getSelection().removeAllRanges();
-
-      var selection = rangy.getSelection();
-
-      for (var i = 0; i < tagsToLoad.length; i++) {
-        var tag = tagsToLoad[i];
-        tag.deSerializedSelectionRange = deserializeRange(tag);
-      }
+      
+      //deserialize ranges
+      _.map(tagsToLoad, deserializeRange);
       
       this.$log.debug('finished deserializing tags');
-
-      for (var i = 0; i < tagsToLoad.length; i++) {
-        var tag = tagsToLoad[i];
-        if (tag.deSerializedSelectionRange) {
-          this.surroundRangeWithSpan(tag.sense,
-            tag.deSerializedSelectionRange, tag.id);
-        }
-      }
       
+      //sort tags by ascending so that they can be properly inserted
+      tagsToLoad = _.sortBy(tagsToLoad, (tag: ISenseTag) => {
+        return tag.deserializedRange.startOffset;
+      });
+
+      this.$log.debug('finished sorting tags');
+
+      _.map(tagsToLoad, (tag: ISenseTag) => {
+        if (tag.deserializedRange) {
+          this.surroundRangeWithSpan(tag.sense,
+            tag.deserializedRange, tag.id);
+        }
+      });
+
       this.$log.debug('finished adding tags to page');
 
       window.getSelection().removeAllRanges();
       
-      // deserializes previously saved selection
-      // and connects it to the active page 
       function deserializeRange(tagToLoad: ISenseTag) {
-        var savedRange: Range = undefined
         try {
-          savedRange = rangy.deserializeRange(
+          tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
             document.getElementById('tagit-body'));
         } catch (e) {
@@ -151,17 +147,12 @@ module tagIt {
             In other words: The page might have changed. Is not able
             to determine where this tag should have been placed.`
           console.log(errorMsg);
+          console.log("Couldn't load: " + tagToLoad.sense.word);
           console.log(e);
-          return;
         }
-        //select text on page
-        var deserializedRange = document.createRange();
-        deserializedRange.setStart(savedRange.startContainer, savedRange.startOffset)
-        deserializedRange.setEnd(savedRange.endContainer, savedRange.endOffset);
-        return deserializedRange;
       }
     }
-    
+
     private updateSavedSelection() {
       if (this.savedSelection) {
         rangy.removeMarkers(this.savedSelection);
@@ -175,6 +166,7 @@ module tagIt {
       span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
+
       range.surroundContents(span);
 
       // add a button for removing the tag.
@@ -182,11 +174,6 @@ module tagIt {
       btn.className = 'js-tagit-remove-tag';
       btn.appendChild(document.createTextNode("X"));
       span.appendChild(btn);
-
-      //unselect everything
-      // window.getSelection()
-      // .removeAllRanges();
     }
-
   }
 }

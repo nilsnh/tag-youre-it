@@ -68,12 +68,12 @@ gulp.task('dist-node-modules', function () {
   var jsDeps = gulp.src([
     'node_modules/angular/angular.js',
     'node_modules/jquery/dist/jquery.js',
-    'node_modules/lodash/index.js',
     'node_modules/ngstorage/ngStorage.js',
     'node_modules/node-uuid/uuid.js',
     'node_modules/rangy/lib/rangy-core.js',
     'node_modules/rangy/lib/rangy-serializer.js',
-    'node_modules/rangy/lib/rangy-selectionsaverestore.js'
+    'node_modules/rangy/lib/rangy-selectionsaverestore.js',
+    'src/lodash.js'
     ], {base: 'node_modules'})
   .pipe($.sourcemaps.init())
   .pipe($.concat('vendor.js'))
