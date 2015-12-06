@@ -32,33 +32,22 @@ gulp.task('tmp', ['scripts', 'dist-node-modules'], function () {
     'src/load-menu-for-web-testing.js'
     ], {base: 'src'})
   .pipe($.flatten())
-  .pipe($.fileInclude({
-    prefix: '@@',
-    basePath: '@file'
-  }))
   .pipe(gulp.dest('tmp'));
 });
 
 // build project for loading up in Chrome
 gulp.task('dist', ['tmp'], function () {
-  var tmp = gulp.src([
-    'tmp/**/*',
-    '!tmp/index.html',
-    '!tmp/load-menu-for-web-testing.js'
-  ], {base: 'tmp'});
-  var imageAssets = gulp.src('src/plugin-specific/*.png').pipe($.flatten());
-  var chromePluginResources = gulp.src([
-    'src/plugin-specific/**/*',
-    '!src/plugin-specific/*.png',
-  ])
-  .pipe($.flatten())
-  .pipe($.fileInclude({
-    prefix: '@@',
-    basePath: '@file'
-  }));
-
-  return $.merge([tmp, chromePluginResources, imageAssets])
-  .pipe(gulp.dest('dist'));
+  return $.merge([
+    gulp.src([
+      'tmp/**/*',
+      '!tmp/index.html',
+      '!tmp/load-menu-for-web-testing.js'
+    ], {base: 'tmp'}),
+    gulp.src(
+      'src/plugin-specific/**/*',
+      {base: 'src/plugin-specific'})
+    ])
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('dist-node-modules', function () {

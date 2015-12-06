@@ -17,7 +17,6 @@ module tagIt {
     .controller('MenuCtrl', MenuCtrl);
 
   export function init (callback: () => void) {
-    var $ = jQuery;
     $.get(chromeUrlTranslator('menu.tpl.html'), function (htmlData) {
       $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
       $('.tagit-body').before(htmlData);
