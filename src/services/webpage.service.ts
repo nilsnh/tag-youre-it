@@ -8,7 +8,6 @@ module tagIt {
 
   declare var rangy: any;
   declare var uuid: any;
-  declare var _: any;
 
   export class WebPageService {
 
@@ -106,15 +105,15 @@ module tagIt {
 
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
-      
+
       //first deselect before we go to work
       window.getSelection().removeAllRanges();
-      
+
       //deserialize ranges
       _.map(tagsToLoad, deserializeRange);
 
       this.$log.debug('finished deserializing tags');
-      
+
       //sort tags by ascending so that they can be properly inserted
       tagsToLoad = _.sortBy(tagsToLoad, (tag: ISenseTag) => {
         return tag.deserializedRange.startOffset;
@@ -148,7 +147,7 @@ module tagIt {
         }
       }
     }
-    
+
     private updateSavedSelection() {
       if (this.savedSelection) {
         rangy.removeMarkers(this.savedSelection);

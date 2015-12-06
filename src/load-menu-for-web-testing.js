@@ -15,29 +15,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 function injectScripts () {
 
-  // Save a copy of existing angular js and jquery
-  // Source: http://www.mattburkedev.com/multiple-angular-versions-on-the-same-page/
-  var existingWindowDotAngular = window['angular'];
-  // create a new window.angular and a closure variable for
-  // angular.js to load itself into
-  var angular = (window.angular = {});
-
   console.log('loading dependencies');
   loadScript('vendor/vendor.js', loadPluginCode);
 
   function loadPluginCode () {
     console.log('loading tagit');
     loadScript('bundle.js', function () {
-      tagIt.init(restoreOldAngularAndJquery);
+      tagIt.init(function () {console.log('tagIt init!')});
     });
-  }
-
-  function restoreOldAngularAndJquery () {
-    // restore old angular
-    if (existingWindowDotAngular) {
-      window.angular = existingWindowDotAngular; // restore the old angular version
-    }
-    $.noConflict();
   }
 
   function loadScript (relativeScriptPath, callback) {

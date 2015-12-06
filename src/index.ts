@@ -28,10 +28,10 @@ module tagIt {
     });
 
     function chromeUrlTranslator(relativeUrl : string) {
-      if(chrome && chrome.extension) {
-        return chrome.extension.getURL(relativeUrl);
-      } else {
+      if(typeof chrome === 'undefined' ) {
         return relativeUrl;
+      } else {
+        return chrome.extension.getURL(relativeUrl);
       }
     }
   }
