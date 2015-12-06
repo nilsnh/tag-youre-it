@@ -9,23 +9,14 @@
   position: fixed;
   overflow-y: auto;
   width: 30%;
-  height: 100%;
-  top: 0;
   left: 0;
-  bottom: 0;
-  background-color: #ccc;
   padding: 10px;
 }
 
+.tagit-iframe,
 .tagit-menu {
-  position: fixed;
-  overflow-y: auto;
-  width: 30%;
-  top: 0;
-  left: 0;
-  bottom: 0;
   background-color: #ccc;
-  padding: 10px;
+  height: 100%;
 }
 
 .tagit-menu ul {

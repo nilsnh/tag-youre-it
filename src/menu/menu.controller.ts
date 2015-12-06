@@ -42,14 +42,14 @@ module tagIt {
 
     onSenseSelect(sense: ISense) {
       //remove all tags so that new tag range is serialized
-      //based on a document without any highlights 
+      //based on a document without any highlights
       this.webPageService.removeAllTagsFromPage(() => {
         //initialize and save the new tag
         var senseTag = this.webPageService.initializeNewTag(sense);
         this.tagStorageService.saveTag(senseTag);
         this.backendService.sendTaggedDataToServer(senseTag);
 
-        //re-add tags, with new tag. Clear menu options.        
+        //re-add tags, with new tag. Clear menu options.
         this.webPageService.readdTagsToPage(
           this.tagStorageService.loadTags()
         );

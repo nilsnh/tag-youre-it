@@ -4,9 +4,11 @@
   <title>This will be an iframe programmatically included into a parent page.</title>
   <script src="vendor/vendor.js"></script>
   <script src="bundle.js"></script>
+  <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
 </head>
-<body ng-app="tagit">
-  <div id="tagit-menu" class="tagit-menu" ng-controller="MenuCtrl">
+<body id="tagit-menu" ng-app="tagit" class="tagit-menu">
+  <div ng-controller="MenuCtrl">
 
     <br/>
 
