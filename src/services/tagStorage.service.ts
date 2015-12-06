@@ -18,9 +18,9 @@ module tagIt {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
-      
+
       // this.deleteTags(); // reset tag storage
-      
+
       if (!this.$localStorage.tagStorage) {
         this.$localStorage.tagStorage = [];
       }

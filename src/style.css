@@ -5,6 +5,18 @@
   padding: 10px;
 }
 
+.tagit-iframe {
+  position: fixed;
+  overflow-y: auto;
+  width: 30%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #ccc;
+  padding: 10px;
+}
+
 .tagit-menu {
   position: fixed;
   overflow-y: auto;

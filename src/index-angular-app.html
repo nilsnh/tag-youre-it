@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>This will be an iframe programmatically included into a parent page.</title>
+  <script src="vendor/vendor.js"></script>
+  <script src="bundle.js"></script>
+</head>
+<body ng-app="tagit">
+  <div id="tagit-menu" class="tagit-menu" ng-controller="MenuCtrl">
+
+    <br/>
+
+    <button ng-click="vm.removeMenu()" class="btn btn-default">
+      Close menu
+    </button>
+
+    <h2>Tag you're it</h2>
+
+    <p>Select a word to tag with a semantic tag.</p>
+
+    <p>
+      Currently selected word: <strong>{{vm.selectedWord}}</strong>
+    </p>
+
+    <input type="text" ng-model="wordToFilterBy" class="form-control" placeholder="Filter tags" />
+
+    <ul id="senses">
+      <li ng-click="vm.onSenseSelect(sense)" id="sense.senseid" ng-repeat="sense in vm.senses | filter:wordToFilterBy" class="list-unstyled">
+        <strong>{{sense.word}}</strong> {{sense.explanation}}
+      </li>
+    </ul>
+  </div>
+</body>
+</html>

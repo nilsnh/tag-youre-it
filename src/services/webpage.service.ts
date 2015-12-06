@@ -29,9 +29,9 @@ module tagIt {
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
       var that = this;
-      document.getElementById('tagit-body')
+      parent.document.getElementById('tagit-body')
         .addEventListener('click', (evt: any) => {
-          if (!document.hasFocus()) {
+          if (!parent.document.hasFocus()) {
             return true;
           }
           else if (wasRemoveTagButtonClicked(evt)) {
@@ -61,7 +61,7 @@ module tagIt {
     }
 
     findSelectedText() {
-      var selectedText = window.getSelection().toString();
+      var selectedText = parent.getSelection().toString();
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
         return selectedText;

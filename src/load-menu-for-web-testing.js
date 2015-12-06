@@ -1,37 +1,31 @@
 
 // Script loader for local web page testing
-injectScripts();
-
 document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById('js-show-menu')
   .addEventListener('click', function () {
-    if (!document.getElementById('tagit-menu')) injectScripts();
+    if (!document.getElementById('tagit-menu')) injectIframe();
   });
   document.getElementById('js-reset-tags')
   .addEventListener('click', function () {
     // nothing here yet
   });
+  injectIframe();
 });
 
-function injectScripts () {
+function injectIframe () {
+  console.log('injectIframe()');
+  var iframe = document.createElement('iframe');
+  iframe.src = 'index-angular-app.html';
+  iframe.className = 'tagit-iframe';
+  $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
+  $('.tagit-body').before(iframe);
+}
 
-  console.log('loading dependencies');
-  loadScript('vendor/vendor.js', loadPluginCode);
+// Todo: Setup listener that will call angular code
+// on new text selections and deselections
 
-  function loadPluginCode () {
-    console.log('loading tagit');
-    loadScript('bundle.js', function () {
-      tagIt.init(function () {console.log('tagIt init!')});
-    });
-  }
+// Todo: Add functions that give access to window object.
 
-  function loadScript (relativeScriptPath, callback) {
-    var s = document.createElement('script');
-    s.src = relativeScriptPath;
-    s.onload = function() {
-      this.parentNode.removeChild(this);
-      if (callback) callback();
-    };
-    (document.head||document.documentElement).appendChild(s);
-  }
+function getParentWindowObject () {
+  return window;
 }
