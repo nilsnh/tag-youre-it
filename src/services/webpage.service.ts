@@ -71,11 +71,11 @@ module tagIt {
     }
 
     initializeNewTag = (sense: ISense): ISenseTag => {
-      this.$log.debug('addNewTagToPage');
+      this.$log.debug('initializeNewTag');
       rangy.restoreSelection(this.savedSelection);
-      var range: Range = rangy.getSelection().getRangeAt(0);
+      var range: Range = rangy.getSelection(parent).getRangeAt(0);
       var serializedRange = rangy.serializeRange(
-        range, true, document.getElementById('tagit-body'));
+        range, true, parent.document.getElementById('tagit-body'));
       var generatedUuid: string = uuid.v4();
       var parentElement = <HTMLElement>range.commonAncestorContainer;
 
@@ -92,8 +92,8 @@ module tagIt {
     removeAllTagsFromPage(callback: () => void) {
       //loop that will keep asking for spans to remove
       //until they are all gone.
-      while (document.getElementsByClassName('tagit-tag').length > 0) {
-        var spanElement = document.getElementsByClassName('tagit-tag')[0];
+      while (parent.document.getElementsByClassName('tagit-tag').length > 0) {
+        var spanElement = parent.document.getElementsByClassName('tagit-tag')[0];
         var spanElementParent = spanElement.parentNode;
         spanElementParent.replaceChild(
           spanElement.firstChild,
@@ -107,7 +107,7 @@ module tagIt {
       this.$log.debug('readdTagsToPage()');
 
       //first deselect before we go to work
-      window.getSelection().removeAllRanges();
+      parent.getSelection().removeAllRanges();
 
       //deserialize ranges
       _.map(tagsToLoad, deserializeRange);
@@ -130,13 +130,13 @@ module tagIt {
 
       this.$log.debug('finished adding tags to page');
 
-      window.getSelection().removeAllRanges();
+      parent.getSelection().removeAllRanges();
 
       function deserializeRange(tagToLoad: ISenseTag) {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
-            document.getElementById('tagit-body'));
+            parent.document.getElementById('tagit-body'));
         } catch (e) {
           var errorMsg = `Error in rangy.js: Was not able to deserialize range.
             In other words: The page might have changed. Is not able
@@ -152,12 +152,12 @@ module tagIt {
       if (this.savedSelection) {
         rangy.removeMarkers(this.savedSelection);
       }
-      this.savedSelection = rangy.saveSelection();
+      this.savedSelection = rangy.saveSelection(parent);
     }
 
     private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
       // add span around content
-      var span: HTMLSpanElement = document.createElement('span');
+      var span: HTMLSpanElement = parent.document.createElement('span');
       span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
@@ -165,7 +165,7 @@ module tagIt {
       range.surroundContents(span);
 
       // add a button for removing the tag.
-      var btn = document.createElement("BUTTON");
+      var btn = parent.document.createElement("BUTTON");
       btn.className = 'js-tagit-remove-tag';
       btn.appendChild(document.createTextNode("X"));
       span.appendChild(btn);
