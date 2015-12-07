@@ -52,7 +52,8 @@ gulp.task('dist', ['tmp'], function () {
 
 gulp.task('dist-node-modules', function () {
   var cssDeps = gulp.src([
-    'node_modules/bootstrap/**/*'
+    'node_modules/bootstrap/**/*',
+    'node_modules/jquery/**/*'
     ], {base: 'node_modules'});
   var jsDeps = gulp.src([
     'node_modules/angular/angular.js',

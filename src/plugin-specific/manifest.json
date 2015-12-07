@@ -19,6 +19,7 @@
   },
   "web_accessible_resources": [
     "*.html",
+    "*.css",
     "vendor/**/*.js",
     "bundle.js"
   ],

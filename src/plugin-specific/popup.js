@@ -5,8 +5,50 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 function openMenu () {
   logToBG('open menu was clicked');
-  // chrome.tabs.executeScript(null, {file: 'content_script.js'});
-  injectScripts();
+  injectIframe();
+}
+
+function injectIframe () {
+  loadJquery(function () {
+    logToBG('jquery was loaded');
+    chrome.tabs.executeScript(null, {
+      file: 'add-iframe-to-page.js'
+    }, loadPluginDeps);
+  });
+
+  function loadPluginDeps () {
+    chrome.tabs.executeScript(null, {
+      file: 'vendor/vendor.js',
+      allFrames: true
+    }, loadPlugin);
+  }
+
+  function loadPlugin () {
+    chrome.tabs.executeScript(null, {
+      file: 'bundle.js',
+      allFrames: true
+    }, loadCss);
+  }
+
+  function loadCss () {
+    chrome.tabs.insertCSS(null, {
+      file: 'style.css',
+      allFrames: true
+    }, initPlugin);
+  }
+
+  function initPlugin () {
+    chrome.tabs.executeScript(null, {
+      code: 'tagIt.init();'
+    });
+  }
+
+  function loadJquery (callback) {
+    chrome.tabs.executeScript(null, {
+      file: 'vendor/jquery/dist/jquery.js',
+      allFrames: true
+    }, callback);
+  }
 }
 
 function injectScripts () {

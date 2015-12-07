@@ -16,8 +16,13 @@ module tagIt {
     .service('TagStorageService', TagStorageService)
     .controller('MenuCtrl', MenuCtrl);
 
-  // angular.bootstrap(document.getElementById("tagit-menu"), ['tagit']);
-  console.log('TagIt menu loaded');
+  export function init (callback: () => void) {
+    angular.bootstrap(
+      document.getElementById("tagit-iframe")
+        .contentDocument.getElementById("tagit-menu")
+      , ['tagit']);
+    console.log('TagIt menu loaded');
+  }
 
   // export function init (callback: () => void) {
   //   $.get(chromeUrlTranslator('menu.tpl.html'), function (htmlData) {

@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 function injectIframe () {
   console.log('injectIframe()');
   var iframe = document.createElement('iframe');
-  iframe.src = 'index-angular-app.html';
+  iframe.src = 'index-angular-app-web.html';
   iframe.className = 'tagit-iframe';
   $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
   $('.tagit-body').before(iframe);
