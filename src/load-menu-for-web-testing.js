@@ -16,6 +16,8 @@ function injectIframe () {
   console.log('injectIframe()');
   var iframe = document.createElement('iframe');
   iframe.src = 'index-angular-app-web.html';
+  iframe.seamless = 'seamless';
+  iframe.frameBorder = "0";
   iframe.className = 'tagit-iframe';
   $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
   $('.tagit-body').before(iframe);
