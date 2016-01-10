@@ -1,3 +1,8 @@
+
+/*
+  This javascript is injected to page by background.js.
+*/
+ 
 $.get(chrome.extension.getURL('index-angular-app.html'), function (htmlData) {
   var iframe = document.createElement('iframe');
   iframe.id = 'tagit-iframe';

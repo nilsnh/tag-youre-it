@@ -24,8 +24,6 @@
     "bundle.js"
   ],
   "browser_action": {
-    "default_title": "Tag you're it! Click to enable or disable tagging of web content.",
-    "default_icon": "icon48.png",
-    "default_popup": "popup.html"
+    "default_icon": "icon48.png"
   }
 }
