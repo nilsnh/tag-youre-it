@@ -39,24 +39,6 @@ module tagIt {
       }
     );
   }
-
-  // export function init (callback: () => void) {
-  //   $.get(chromeUrlTranslator('menu.tpl.html'), function (htmlData) {
-  //     $('body').children().wrapAll('<div id="tagit-body" class="tagit-body" />');
-  //     $('.tagit-body').before(htmlData);
-  //     window.name = '';
-  //     angular.bootstrap(document.getElementById("tagit-menu"), ['tagit']);
-  //     console.log('TagIt menu loaded');
-  //     if(callback) callback();
-  //   });
-
-  //   function chromeUrlTranslator(relativeUrl : string) {
-  //     if(typeof chrome === 'undefined' ) {
-  //       return relativeUrl;
-  //     } else {
-  //       return chrome.extension.getURL(relativeUrl);
-  //     }
-  //   }
-  // }
+  
 }
 
