@@ -85,10 +85,5 @@ module tagIt {
       location.reload();
     }
 
-    removeMenu() {
-      $('.tagit-body').children().unwrap();
-      $('.tagit-menu').remove();
-    }
-
   }
 }

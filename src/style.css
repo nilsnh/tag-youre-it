@@ -1,6 +1,7 @@
 .tagit-body {
   width: 70%;
   position: absolute;
+  overflow-y: auto;
   right: 0;
   padding: 10px;
 }
@@ -9,7 +10,6 @@
   position: fixed;
   overflow-y: auto;
   width: 30%;
-  left: 0;
   top: 0;
   bottom: 0;
   padding: 10px;
