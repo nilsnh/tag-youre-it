@@ -8,6 +8,11 @@ $.get(chrome.extension.getURL('index-angular-app.html'), function (htmlData) {
   iframeMainContent.id = 'tagit-body';
   iframeMainContent.className = 'tagit-body';
   iframeMainContent.src = window.location.href;
+  iframeMainContent.seamless = 'seamless';
+  iframeMainContent.frameBorder = "0";
+  
+  //add a helper class to aid in styling later.
+  $('html').addClass('tagit-top-wrapper');
   
   //empty the page
   $('body').children().remove();
