@@ -16,6 +16,8 @@ module tagIt {
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
     savedSelection: Object;
+    iframeDocument: Document;
+    iframeWindow: Window;
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
@@ -29,23 +31,25 @@ module tagIt {
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
       var that = this;
-      parent.document.getElementById('tagit-body')
-        .addEventListener('click', (evt: any) => {
-          if (!parent.document.hasFocus()) {
-            return true;
-          }
-          else if (wasRemoveTagButtonClicked(evt)) {
-            this.$log.debug('remove tag button was clicked');
-            removeTagFromWebpage(evt);
-            this.tagStorageService.deleteTagById(evt.target.parentElement.id);
-          }
-          else if (this.findSelectedText()) {
-            this.updateSavedSelection();
-            callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
-          } else {
-            callbackOnDeSelectFunc();
-          }
-        }, false);
+      var iframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
+      this.iframeDocument = iframe.contentDocument;
+      this.iframeWindow = iframe.contentWindow;
+      this.iframeDocument.addEventListener('click', (evt: any) => {
+        if (!this.iframeDocument.hasFocus()) {
+          return true;
+        }
+        else if (wasRemoveTagButtonClicked(evt)) {
+          this.$log.debug('remove tag button was clicked');
+          removeTagFromWebpage(evt);
+          this.tagStorageService.deleteTagById(evt.target.parentElement.id);
+        }
+        else if (this.findSelectedText()) {
+          this.updateSavedSelection();
+          callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
+        } else {
+          callbackOnDeSelectFunc();
+        }
+      }, false);
       function joinLongWords(possiblyLongWord: string) {
         return possiblyLongWord.replace(" ", "_");
       }
@@ -61,7 +65,7 @@ module tagIt {
     }
 
     findSelectedText() {
-      var selectedText = parent.getSelection().toString();
+      var selectedText = this.iframeDocument.getSelection().toString();
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
         return selectedText;
@@ -70,30 +74,11 @@ module tagIt {
       }
     }
 
-    initializeNewTag = (sense: ISense): ISenseTag => {
-      this.$log.debug('initializeNewTag');
-      rangy.restoreSelection(this.savedSelection);
-      var range: Range = rangy.getSelection(parent).getRangeAt(0);
-      var serializedRange = rangy.serializeRange(
-        range, true, parent.document.getElementById('tagit-body'));
-      var generatedUuid: string = uuid.v4();
-      var parentElement = <HTMLElement>range.commonAncestorContainer;
-
-      return {
-        id: generatedUuid,
-        userEmail: 'testEmail',
-        sense: sense,
-        wordThatWasTagged: this.findSelectedText(),
-        context: parentElement.innerText,
-        serializedSelectionRange: serializedRange
-      }
-    };
-
     removeAllTagsFromPage(callback: () => void) {
       //loop that will keep asking for spans to remove
       //until they are all gone.
-      while (parent.document.getElementsByClassName('tagit-tag').length > 0) {
-        var spanElement = parent.document.getElementsByClassName('tagit-tag')[0];
+      while (this.iframeDocument.getElementsByClassName('tagit-tag').length > 0) {
+        var spanElement = this.iframeDocument.getElementsByClassName('tagit-tag')[0];
         var spanElementParent = spanElement.parentNode;
         spanElementParent.replaceChild(
           spanElement.firstChild,
@@ -105,12 +90,27 @@ module tagIt {
 
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
-
+      
       //first deselect before we go to work
-      parent.getSelection().removeAllRanges();
+      this.iframeDocument.getSelection().removeAllRanges();
 
       //deserialize ranges
-      _.map(tagsToLoad, deserializeRange);
+      _.map(tagsToLoad, (tagToLoad) => {
+        try {
+          tagToLoad.deserializedRange = rangy.deserializeRange(
+            tagToLoad.serializedSelectionRange,
+            this.iframeDocument.documentElement,
+            this.iframeWindow
+          );
+        } catch (e) {
+          var errorMsg = `Error in rangy.js: Was not able to deserialize range.
+            In other words: The page might have changed. Is not able
+            to determine where this tag should have been placed.`
+          this.$log.debug(errorMsg);
+          this.$log.debug("Couldn't load: " + tagToLoad.sense.word);
+          this.$log.debug(e);
+        }
+      });
 
       this.$log.debug('finished deserializing tags');
 
@@ -129,35 +129,39 @@ module tagIt {
       });
 
       this.$log.debug('finished adding tags to page');
-
-      parent.getSelection().removeAllRanges();
-
-      function deserializeRange(tagToLoad: ISenseTag) {
-        try {
-          tagToLoad.deserializedRange = rangy.deserializeRange(
-            tagToLoad.serializedSelectionRange,
-            parent.document.getElementById('tagit-body'));
-        } catch (e) {
-          var errorMsg = `Error in rangy.js: Was not able to deserialize range.
-            In other words: The page might have changed. Is not able
-            to determine where this tag should have been placed.`
-          console.log(errorMsg);
-          console.log("Couldn't load: " + tagToLoad.sense.word);
-          console.log(e);
-        }
-      }
+      this.iframeDocument.getSelection().removeAllRanges();
     }
+
+    initializeNewTag = (sense: ISense): ISenseTag => {
+      this.$log.debug('initializeNewTag');
+      rangy.restoreSelection(this.savedSelection);
+
+      var range: Range = rangy.getSelection(this.iframeDocument).getRangeAt(0);
+      var serializedRange = rangy.serializeRange(range, true, this.iframeDocument.documentElement);
+      var generatedUuid: string = uuid.v4();
+      var parentElement = <HTMLElement>range.commonAncestorContainer;
+
+      return {
+        id: generatedUuid,
+        userEmail: 'testEmail',
+        sense: sense,
+        wordThatWasTagged: this.findSelectedText(),
+        context: parentElement.innerText,
+        serializedSelectionRange: serializedRange
+      }
+    };
 
     private updateSavedSelection() {
       if (this.savedSelection) {
         rangy.removeMarkers(this.savedSelection);
       }
-      this.savedSelection = rangy.saveSelection(parent);
+      this.savedSelection = rangy.saveSelection(this.iframeWindow);
     }
 
     private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
+      
       // add span around content
-      var span: HTMLSpanElement = parent.document.createElement('span');
+      var span: HTMLSpanElement = this.iframeDocument.createElement('span');
       span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
@@ -165,9 +169,9 @@ module tagIt {
       range.surroundContents(span);
 
       // add a button for removing the tag.
-      var btn = parent.document.createElement("BUTTON");
+      var btn = this.iframeDocument.createElement("BUTTON");
       btn.className = 'js-tagit-remove-tag';
-      btn.appendChild(document.createTextNode("X"));
+      btn.appendChild(this.iframeDocument.createTextNode("X"));
       span.appendChild(btn);
     }
   }

@@ -4,6 +4,7 @@
   overflow-y: auto;
   right: 0;
   padding: 10px;
+  height: 100%;
 }
 
 .tagit-iframe {
