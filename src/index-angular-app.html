@@ -3,60 +3,9 @@
 <head>
   <title>This will be an iframe programmatically included into a parent page.</title>
 
-  <style type="text/css">
-
-    .tagit-body {
-      width: 70%;
-      position: absolute;
-      right: 0;
-      padding: 10px;
-    }
-
-    .tagit-iframe {
-      position: fixed;
-      overflow-y: auto;
-      width: 30%;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      padding: 10px;
-    }
-
-    .tagit-iframe,
-    .tagit-menu {
-      background-color: #ccc;
-      height: 100%;
-    }
-
-    .tagit-menu ul {
-      padding-left: 0px;
-      margin-top: 10px;
-    }
-
-    .tagit-menu li {
-      padding: 5px;
-    }
-
-    .tagit-menu li:hover {
-      background-color: #eee;
-      cursor: pointer;
-    }
-
-    .tagit-tag {
-      background-color: #EDDE45;
-      padding: 3px;
-    }
-
-  </style>
 </head>
 <body id="tagit-menu" class="tagit-menu">
   <div ng-controller="MenuCtrl">
-
-    <br/>
-
-    <button ng-click="vm.removeMenu()" class="btn btn-default">
-      Close menu
-    </button>
 
     <h2>Tag you're it</h2>
 
