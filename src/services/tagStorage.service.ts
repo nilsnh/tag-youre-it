@@ -18,8 +18,11 @@ module tagIt {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
-
-      // this.deleteTags(); // reset tag storage
+      
+      if (window.location.href.indexOf("tagitreset") !== -1) {
+        this.deleteTags(); // reset tag storage
+        this.$log.debug("Resetting tags for this page");  
+      } 
 
       if (!this.$localStorage.tagStorage) {
         this.$localStorage.tagStorage = [];

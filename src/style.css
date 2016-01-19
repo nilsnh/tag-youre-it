@@ -17,26 +17,6 @@ html.tagit-top-wrapper {
   width: 70%;
 }
 
-.tagit-iframe,
-.tagit-menu {
-  background-color: #ccc;
-  height: 100%;
-}
-
-.tagit-menu ul {
-  padding-left: 0px;
-  margin-top: 10px;
-}
-
-.tagit-menu li {
-  padding: 5px;
-}
-
-.tagit-menu li:hover {
-  background-color: #eee;
-  cursor: pointer;
-}
-
 .tagit-tag {
   background-color: #EDDE45;
   padding: 3px;

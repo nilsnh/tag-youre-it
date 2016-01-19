@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>This will be an iframe programmatically included into a parent page.</title>
-
+  
+  <style>
+    .tagit-menu {
+      background-color: #FFF;
+    }
+    
+    .tagit-menu ul {
+      padding-left: 0px;
+      margin-top: 10px;
+    }
+    
+    .tagit-menu li {
+      padding: 5px;
+    }
+    
+    .tagit-menu li:hover {
+      background-color: #eee;
+      cursor: pointer;
+    }
+  </style>
+  
 </head>
+
 <body id="tagit-menu" class="tagit-menu">
   <div ng-controller="MenuCtrl">
 
     <h2>Tag you're it</h2>
 
-    <p>Select a word to tag with a semantic tag.</p>
+    <p>
+      Mark one or two words on the page to the right. And we'll supply you with possible definitions. Select a definition and the
+      word will be tagged.
+    </p>
 
     <p>
       Currently selected word: <strong>{{vm.selectedWord}}</strong>
@@ -24,4 +49,5 @@
     </ul>
   </div>
 </body>
+
 </html>
