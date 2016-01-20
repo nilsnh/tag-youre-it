@@ -58,12 +58,29 @@ module tagIt {
     }
 
     onWordSelected = (newWord: string) => {
-      this.selectedWord = newWord;
-      this.backendService.callServer(newWord)
-        .then((synsets: Object) => {
-          this.$log.debug(synsets);
-          this.senses = this.backendService.processSynsets(<ISynset>synsets);
-        });
+      function countWords(wordWithUnderscores: string) {
+        return wordWithUnderscores.split("_").length;
+      }
+
+      if (countWords(newWord) > 2) {
+        this.selectedWord = "Wops! Plugin can't handle more than two words.";
+        this.senses = [];
+      } 
+      else if (newWord.length === 0) {
+        this.clearMenuVariables();
+      } 
+      else {
+        this.selectedWord = newWord;
+        this.backendService.callServer(newWord)
+          .then((synsets: Object) => {
+            this.$log.debug(synsets);
+            this.senses = this.backendService.processSynsets(<ISynset>synsets);
+          });
+      }
+      
+      //call for a digest because clicklistener that triggers this
+      //function is unknown to Angular. 
+      this.$scope.$apply(); 
     }
 
     onWordDeSelected = () => {

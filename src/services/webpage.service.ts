@@ -51,7 +51,7 @@ module tagIt {
         }
       }, false);
       function joinLongWords(possiblyLongWord: string) {
-        return possiblyLongWord.replace(" ", "_");
+        return possiblyLongWord.trim().split(" ").join("_");
       }
       function wasRemoveTagButtonClicked(evt: any) {
         return evt.target.className === 'js-tagit-remove-tag';
