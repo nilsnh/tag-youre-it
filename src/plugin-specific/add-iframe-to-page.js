@@ -16,8 +16,6 @@ $.get(chrome.extension.getURL('index-angular-app.html'), function (htmlData) {
   
   //empty the page
   $('body').children().remove();
-  //remove style sheets
-  $('link[rel=stylesheet]').remove();
   //reinsert page this time inside an iframe
   $('body').append(iframeMainContent);
   
