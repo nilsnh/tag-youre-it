@@ -8,15 +8,16 @@
 
 module tagIt {
 
-  angular.module('tagit', ['ngStorage'])
+  export function init(callback: () => void) {
+    
+    angular.module('tagit', ['ngStorage'])
     .config(AppConfigInitializer)
     .service('AppConfigService', AppConfigService)
     .service('BackendService', BackendService)
     .service('WebPageService', WebPageService)
     .service('TagStorageService', TagStorageService)
     .controller('MenuCtrl', MenuCtrl);
-
-  export function init(callback: () => void) {
+    
     var iframe = <HTMLIFrameElement>document.getElementById("tagit-iframe")
     angular.bootstrap(iframe.contentDocument.getElementById("tagit-menu"), ['tagit']);
     console.log('TagIt menu loaded');
