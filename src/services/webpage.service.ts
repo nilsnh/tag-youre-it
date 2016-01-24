@@ -16,8 +16,6 @@ module tagIt {
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
     savedSelection: Object;
-    iframeDocument: Document;
-    iframeWindow: Window;
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
@@ -31,25 +29,36 @@ module tagIt {
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
       var that = this;
-      var iframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
-      this.iframeDocument = iframe.contentDocument;
-      this.iframeWindow = iframe.contentWindow;
-      this.iframeDocument.addEventListener('click', (evt: any) => {
-        if (!this.iframeDocument.hasFocus()) {
-          return true;
-        }
-        else if (wasRemoveTagButtonClicked(evt)) {
-          this.$log.debug('remove tag button was clicked');
-          removeTagFromWebpage(evt);
-          this.tagStorageService.deleteTagById(evt.target.parentElement.id);
-        }
-        else if (this.findSelectedText()) {
-          this.updateSavedSelection();
-          callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
-        } else {
-          callbackOnDeSelectFunc();
-        }
-      }, false);
+      var listOfFramesToListenTo: any[] = [];
+      if ($('#tagit-body').find('frameset').length > 0) {
+        $('#tagit-body').find('frame').each((index, elem) => {
+          listOfFramesToListenTo.push(elem);
+        });
+      } else {
+        listOfFramesToListenTo.push(parent.document.getElementById('tagit-body'));
+      }
+
+      _.map(listOfFramesToListenTo, (frame: HTMLIFrameElement) => {
+        frame.contentDocument.addEventListener('click', (evt: Event) => {
+          var documentThatWasClicked = evt.srcElement.ownerDocument;
+          if (!documentThatWasClicked.hasFocus()) {
+            return true;
+          }
+          else if (wasRemoveTagButtonClicked(evt)) {
+            this.$log.debug('remove tag button was clicked');
+            removeTagFromWebpage(evt);
+            var elementClicked = <HTMLElement> evt.target;
+            this.tagStorageService.deleteTagById(elementClicked.parentElement.id);
+          }
+          else if (this.findSelectedText()) {
+            this.updateSavedSelection();
+            callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
+          } else {
+            callbackOnDeSelectFunc();
+          }
+        }, false);
+      });
+
       function joinLongWords(possiblyLongWord: string) {
         return possiblyLongWord.trim().split(" ").join("_");
       }
@@ -64,8 +73,8 @@ module tagIt {
       }
     }
 
-    findSelectedText() {
-      var selectedText = this.iframeDocument.getSelection().toString();
+    findSelectedText(evt: Event) {
+      var selectedText = evt.srcElement.ownerDocument.getSelection().toString();
       if (selectedText) {
         this.$log.debug('text that was selected: ' + selectedText);
         return selectedText;
@@ -110,7 +119,7 @@ module tagIt {
           this.$log.debug(errorMsg);
           this.$log.debug("Couldn't load: " + tagToLoad.sense.word);
           this.$log.debug(e);
-          return false; 
+          return false;
         }
       })
 
