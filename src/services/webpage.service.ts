@@ -94,14 +94,15 @@ module tagIt {
       //first deselect before we go to work
       this.iframeDocument.getSelection().removeAllRanges();
 
-      //deserialize ranges
-      _.map(tagsToLoad, (tagToLoad) => {
+      //deserialize ranges, remove the ones that fail.
+      tagsToLoad = _.filter(tagsToLoad, (tagToLoad) => {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
             this.iframeDocument.documentElement,
             this.iframeWindow
           );
+          return true;
         } catch (e) {
           var errorMsg = `Error in rangy.js: Was not able to deserialize range.
             In other words: The page might have changed. Is not able
@@ -109,8 +110,9 @@ module tagIt {
           this.$log.debug(errorMsg);
           this.$log.debug("Couldn't load: " + tagToLoad.sense.word);
           this.$log.debug(e);
+          return false; 
         }
-      });
+      })
 
       this.$log.debug('finished deserializing tags');
 
