@@ -13,9 +13,20 @@ $.get(chrome.extension.getURL('index-angular-app.html'), function (htmlData) {
   
   //add a helper class to aid in styling later.
   $('html').addClass('tagit-top-wrapper');
+
+  /**
+   * If the page is using a frameset
+   * we'll need to remove it and
+   * insert a new body tag instead.  
+   */
+  if ($('frameset').length > 0) {
+    $('frameset').remove();
+    var newbody = document.createElement("body");
+    $('html').append(newbody);
+  } else {
+    $('body').children().remove();
+  }
   
-  //empty the page
-  $('body').children().remove();
   //reinsert page this time inside an iframe
   $('body').append(iframeMainContent);
   
