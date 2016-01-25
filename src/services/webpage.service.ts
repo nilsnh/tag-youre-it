@@ -82,7 +82,7 @@ module tagIt {
         return evt.target.className === 'js-tagit-remove-tag';
       }
       function removeTagFromWebAndStorage(evt: Event, tagStorageService: TagStorageService) {
-        var target = <HTMLElement> evt.target;
+        var target = <HTMLElement>evt.target;
         var theOriginalTextNode = target.previousSibling;
         var theSurroundingSpanElement = target.parentElement;
         tagStorageService.deleteTagById(theSurroundingSpanElement.id);
@@ -139,7 +139,7 @@ module tagIt {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
-            this.listOfFramesWithContent[tagToLoad.iframeIndex].contentDocument,
+            this.listOfFramesWithContent[tagToLoad.iframeIndex].contentDocument.documentElement,
             this.listOfFramesWithContent[tagToLoad.iframeIndex]
           );
           return true;
@@ -190,7 +190,8 @@ module tagIt {
       const selection = iframeOfInterest.contentDocument.getSelection();
 
       var range: Range = selection.getRangeAt(0);
-      var serializedRange = rangy.serializeRange(range, true, iframeOfInterest.contentDocument);
+      var serializedRange = rangy.serializeRange(range, true,
+        iframeOfInterest.contentDocument.documentElement);
       var generatedUuid: string = uuid.v4();
       var parentElement = <HTMLElement>range.commonAncestorContainer;
 
