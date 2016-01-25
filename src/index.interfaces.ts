@@ -31,6 +31,7 @@ module tagIt {
     userEmail: string;
     sense: ISense;
     context: string;
+    iframeIndex: number;
     wordThatWasTagged: string;
     serializedSelectionRange: string;
     deserializedRange?: Range;

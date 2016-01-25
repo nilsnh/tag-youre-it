@@ -16,6 +16,7 @@ module tagIt {
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
     savedSelection: Object;
+    listOfFramesWithContent: HTMLIFrameElement[] = [];
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
@@ -29,16 +30,17 @@ module tagIt {
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
       var that = this;
-      var listOfFramesToListenTo: any[] = [];
       if ($('#tagit-body').find('frameset').length > 0) {
         $('#tagit-body').find('frame').each((index, elem) => {
-          listOfFramesToListenTo.push(elem);
+          this.listOfFramesWithContent.push(<HTMLIFrameElement>elem);
         });
       } else {
-        listOfFramesToListenTo.push(parent.document.getElementById('tagit-body'));
+        this.listOfFramesWithContent.push(
+          <HTMLIFrameElement>parent.document.getElementById('tagit-body')
+        );
       }
 
-      _.map(listOfFramesToListenTo, (frame: HTMLIFrameElement) => {
+      _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
         frame.contentDocument.addEventListener('click', (evt: Event) => {
           var documentThatWasClicked = evt.srcElement.ownerDocument;
           if (!documentThatWasClicked.hasFocus()) {
@@ -46,18 +48,31 @@ module tagIt {
           }
           else if (wasRemoveTagButtonClicked(evt)) {
             this.$log.debug('remove tag button was clicked');
-            removeTagFromWebpage(evt);
-            var elementClicked = <HTMLElement> evt.target;
-            this.tagStorageService.deleteTagById(elementClicked.parentElement.id);
+            removeTagFromWebAndStorage(evt);
           }
-          else if (this.findSelectedText()) {
-            this.updateSavedSelection();
-            callbackOnSelectFunc(joinLongWords(this.findSelectedText()));
+          else if (documentThatWasClicked.getSelection()) {
+            resetSavedSelection();
+            this.savedSelection = rangy.saveSelection(documentThatWasClicked);
+            callbackOnSelectFunc(
+              joinLongWords(
+                documentThatWasClicked.getSelection().toString()
+              )
+            );
           } else {
             callbackOnDeSelectFunc();
           }
         }, false);
       });
+
+      /**
+       * Remove markers to ensure a clean page before
+       * adding markers for a new page.
+       */
+      function resetSavedSelection() {
+        if (this.savedSelection) {
+          rangy.removeMarkers(this.savedSelection);
+        }
+      }
 
       function joinLongWords(possiblyLongWord: string) {
         return possiblyLongWord.trim().split(" ").join("_");
@@ -65,11 +80,15 @@ module tagIt {
       function wasRemoveTagButtonClicked(evt: any) {
         return evt.target.className === 'js-tagit-remove-tag';
       }
-      function removeTagFromWebpage(evt: any) {
+      function removeTagFromWebAndStorage(evt: any) {
         var theOriginalTextNode = evt.target.previousSibling;
         var theSurroundingSpanElement = evt.target.parentElement;
         theSurroundingSpanElement.parentNode
           .replaceChild(theOriginalTextNode, theSurroundingSpanElement);
+        
+        //need to remove tag 
+        var elementClicked = <HTMLElement>evt.target;
+        this.tagStorageService.deleteTagById(elementClicked.parentElement.id);
       }
     }
 
@@ -83,33 +102,46 @@ module tagIt {
       }
     }
 
+    /**
+     * Will loop through all content iframes and empty them for
+     * tags added by us. This is because we need to position a 
+     * new tag in relation to a clean DOM.  
+     * */
     removeAllTagsFromPage(callback: () => void) {
       //loop that will keep asking for spans to remove
       //until they are all gone.
-      while (this.iframeDocument.getElementsByClassName('tagit-tag').length > 0) {
-        var spanElement = this.iframeDocument.getElementsByClassName('tagit-tag')[0];
-        var spanElementParent = spanElement.parentNode;
-        spanElementParent.replaceChild(
-          spanElement.firstChild,
-          spanElement);
-        spanElementParent.normalize();
+      const done = _.after(this.listOfFramesWithContent.length, callback);
+
+      _.map(this.listOfFramesWithContent, (iframe) => {
+        removeTagsFromIframe(iframe, done);
+      });
+
+      function removeTagsFromIframe(iframe: any, callback: () => void) {
+        while (iframe.getElementsByClassName('tagit-tag').length > 0) {
+          var spanElement = this.iframeDocument.getElementsByClassName('tagit-tag')[0];
+          var spanElementParent = spanElement.parentNode;
+          spanElementParent.replaceChild(
+            spanElement.firstChild,
+            spanElement);
+          spanElementParent.normalize();
+        }
+        callback();
       }
-      callback();
     }
 
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
       
-      //first deselect before we go to work
-      this.iframeDocument.getSelection().removeAllRanges();
+      //first deselect all places before we go to work
+      this.removeAllRanges();
 
       //deserialize ranges, remove the ones that fail.
       tagsToLoad = _.filter(tagsToLoad, (tagToLoad) => {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
-            this.iframeDocument.documentElement,
-            this.iframeWindow
+            this.listOfFramesWithContent[tagToLoad.iframeIndex].ownerDocument,
+            this.listOfFramesWithContent[tagToLoad.iframeIndex]
           );
           return true;
         } catch (e) {
@@ -134,21 +166,30 @@ module tagIt {
 
       _.map(tagsToLoad, (tag: ISenseTag) => {
         if (tag.deserializedRange) {
-          this.surroundRangeWithSpan(tag.sense,
-            tag.deserializedRange, tag.id);
+          this.surroundRangeWithSpan(
+            this.listOfFramesWithContent[tag.iframeIndex].ownerDocument,
+            tag.sense,
+            tag.deserializedRange,
+            tag.id);
         }
       });
 
       this.$log.debug('finished adding tags to page');
-      this.iframeDocument.getSelection().removeAllRanges();
+      this.removeAllRanges();
     }
 
     initializeNewTag = (sense: ISense): ISenseTag => {
       this.$log.debug('initializeNewTag');
-      rangy.restoreSelection(this.savedSelection);
+      
+      /**
+       * first eliminate all selections to avoid confusion
+       * with other iframes.
+       */
+      this.removeAllRanges();
+      var selection: Selection = rangy.restoreSelection(this.savedSelection);
 
-      var range: Range = rangy.getSelection(this.iframeDocument).getRangeAt(0);
-      var serializedRange = rangy.serializeRange(range, true, this.iframeDocument.documentElement);
+      var range: Range = selection.getRangeAt(0);
+      var serializedRange = rangy.serializeRange(range, true, selection.anchorNode.ownerDocument);
       var generatedUuid: string = uuid.v4();
       var parentElement = <HTMLElement>range.commonAncestorContainer;
 
@@ -156,23 +197,38 @@ module tagIt {
         id: generatedUuid,
         userEmail: 'testEmail',
         sense: sense,
-        wordThatWasTagged: this.findSelectedText(),
+        wordThatWasTagged: selection.toString(),
+        iframeIndex: getIframeIndex(this.listOfFramesWithContent, selection),
         context: parentElement.innerText,
         serializedSelectionRange: serializedRange
       }
+
+      /**
+       * Some pages might have many frames with content. Thus we
+       * need to loop through them, identify which document contains the current
+       * selection and then save its index in our list.
+       */
+      function getIframeIndex(iframeList: HTMLIFrameElement[], selection: Selection) {
+        for (var i = 0; i < iframeList.length; i++) {
+          var iframe = iframeList[i];
+          if (iframe.ownerDocument === selection.anchorNode.ownerDocument) {
+            return i;
+          }
+        }
+        return 0;
+      }
     };
 
-    private updateSavedSelection() {
-      if (this.savedSelection) {
-        rangy.removeMarkers(this.savedSelection);
-      }
-      this.savedSelection = rangy.saveSelection(this.iframeWindow);
+    private removeAllRanges = () => {
+      _.map(this.listOfFramesWithContent, (iframe) => {
+        iframe.contentDocument.getSelection().removeAllRanges();
+      });
     }
 
-    private surroundRangeWithSpan(sense: ISense, range: Range, uuid: string) {
+    private surroundRangeWithSpan(documentToManipulate: HTMLDocument, sense: ISense, range: Range, uuid: string) {
       
       // add span around content
-      var span: HTMLSpanElement = this.iframeDocument.createElement('span');
+      var span: HTMLSpanElement = documentToManipulate.createElement('span');
       span.id = uuid;
       span.title = sense.explanation;
       span.className = 'tagit-tag';
@@ -180,9 +236,9 @@ module tagIt {
       range.surroundContents(span);
 
       // add a button for removing the tag.
-      var btn = this.iframeDocument.createElement("BUTTON");
+      var btn = documentToManipulate.createElement("BUTTON");
       btn.className = 'js-tagit-remove-tag';
-      btn.appendChild(this.iframeDocument.createTextNode("X"));
+      btn.appendChild(documentToManipulate.createTextNode("X"));
       span.appendChild(btn);
     }
   }
