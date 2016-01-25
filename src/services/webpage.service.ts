@@ -16,7 +16,7 @@ module tagIt {
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
     savedSelection: Object;
-    listOfFramesWithContent: HTMLIFrameElement[] = [];
+    listOfFramesWithContent: HTMLFrameElement[] = [];
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
@@ -29,19 +29,18 @@ module tagIt {
     //notify the menu. TODO refactor to use events on $rootScope instead.
     wireUpListener(callbackOnSelectFunc: (result: Object) => void,
       callbackOnDeSelectFunc: () => void) {
-      var that = this;
-      if ($('#tagit-body').find('frameset').length > 0) {
-        $('#tagit-body').find('frame').each((index, elem) => {
-          this.listOfFramesWithContent.push(<HTMLIFrameElement>elem);
-        });
-      } else {
-        this.listOfFramesWithContent.push(
-          <HTMLIFrameElement>parent.document.getElementById('tagit-body')
-        );
-      }
+      const tagitBodyIframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
+      const tagitBodyIframeDoc = tagitBodyIframe.contentDocument;
+
+      if (tagitBodyIframeDoc.getElementsByTagName('frameset').length > 0) {
+        _.map(tagitBodyIframeDoc.getElementsByTagName('frame'),
+          (frame) => { this.listOfFramesWithContent.push(frame) });
+      } else { }
+
 
       _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
         frame.contentDocument.addEventListener('click', (evt: Event) => {
+          this.$log.debug('A click happened!');
           var documentThatWasClicked = evt.srcElement.ownerDocument;
           if (!documentThatWasClicked.hasFocus()) {
             return true;
