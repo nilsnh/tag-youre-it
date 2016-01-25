@@ -16,7 +16,7 @@ module tagIt {
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
     savedSelection: Object;
-    listOfFramesWithContent: HTMLFrameElement[] = [];
+    listOfFramesWithContent: (HTMLFrameElement | HTMLIFrameElement)[] = [];
 
     /* @ngInject */
     constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
@@ -35,8 +35,9 @@ module tagIt {
       if (tagitBodyIframeDoc.getElementsByTagName('frameset').length > 0) {
         _.map(tagitBodyIframeDoc.getElementsByTagName('frame'),
           (frame) => { this.listOfFramesWithContent.push(frame) });
-      } else { }
-
+      } else {
+        this.listOfFramesWithContent.push(tagitBodyIframe);
+      }
 
       _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
         frame.contentDocument.addEventListener('click', (evt: Event) => {
@@ -47,11 +48,12 @@ module tagIt {
           }
           else if (wasRemoveTagButtonClicked(evt)) {
             this.$log.debug('remove tag button was clicked');
-            removeTagFromWebAndStorage(evt);
+            removeTagFromWebAndStorage(evt, this.tagStorageService);
           }
-          else if (documentThatWasClicked.getSelection()) {
+          else if (documentThatWasClicked.getSelection().toString() !== '') {
             resetSavedSelection();
             this.savedSelection = rangy.saveSelection(documentThatWasClicked);
+
             callbackOnSelectFunc(
               joinLongWords(
                 documentThatWasClicked.getSelection().toString()
@@ -79,15 +81,13 @@ module tagIt {
       function wasRemoveTagButtonClicked(evt: any) {
         return evt.target.className === 'js-tagit-remove-tag';
       }
-      function removeTagFromWebAndStorage(evt: any) {
-        var theOriginalTextNode = evt.target.previousSibling;
-        var theSurroundingSpanElement = evt.target.parentElement;
+      function removeTagFromWebAndStorage(evt: Event, tagStorageService: TagStorageService) {
+        var target = <HTMLElement> evt.target;
+        var theOriginalTextNode = target.previousSibling;
+        var theSurroundingSpanElement = target.parentElement;
+        tagStorageService.deleteTagById(theSurroundingSpanElement.id);
         theSurroundingSpanElement.parentNode
           .replaceChild(theOriginalTextNode, theSurroundingSpanElement);
-        
-        //need to remove tag 
-        var elementClicked = <HTMLElement>evt.target;
-        this.tagStorageService.deleteTagById(elementClicked.parentElement.id);
       }
     }
 
@@ -139,7 +139,7 @@ module tagIt {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
-            this.listOfFramesWithContent[tagToLoad.iframeIndex].ownerDocument,
+            this.listOfFramesWithContent[tagToLoad.iframeIndex].contentDocument,
             this.listOfFramesWithContent[tagToLoad.iframeIndex]
           );
           return true;
@@ -166,7 +166,7 @@ module tagIt {
       _.map(tagsToLoad, (tag: ISenseTag) => {
         if (tag.deserializedRange) {
           this.surroundRangeWithSpan(
-            this.listOfFramesWithContent[tag.iframeIndex].ownerDocument,
+            this.listOfFramesWithContent[tag.iframeIndex].contentDocument,
             tag.sense,
             tag.deserializedRange,
             tag.id);
@@ -185,10 +185,12 @@ module tagIt {
        * with other iframes.
        */
       this.removeAllRanges();
-      var selection: Selection = rangy.restoreSelection(this.savedSelection);
+      rangy.restoreSelection(this.savedSelection);
+      var iframeOfInterest = getFrameContainingSelection(this.listOfFramesWithContent);
+      const selection = iframeOfInterest.contentDocument.getSelection();
 
       var range: Range = selection.getRangeAt(0);
-      var serializedRange = rangy.serializeRange(range, true, selection.anchorNode.ownerDocument);
+      var serializedRange = rangy.serializeRange(range, true, iframeOfInterest.contentDocument);
       var generatedUuid: string = uuid.v4();
       var parentElement = <HTMLElement>range.commonAncestorContainer;
 
@@ -197,7 +199,7 @@ module tagIt {
         userEmail: 'testEmail',
         sense: sense,
         wordThatWasTagged: selection.toString(),
-        iframeIndex: getIframeIndex(this.listOfFramesWithContent, selection),
+        iframeIndex: getIframeIndex(this.listOfFramesWithContent, iframeOfInterest),
         context: parentElement.innerText,
         serializedSelectionRange: serializedRange
       }
@@ -207,15 +209,23 @@ module tagIt {
        * need to loop through them, identify which document contains the current
        * selection and then save its index in our list.
        */
-      function getIframeIndex(iframeList: HTMLIFrameElement[], selection: Selection) {
+      function getIframeIndex(iframeList: (HTMLFrameElement | HTMLIFrameElement)[],
+        iframeToFind: (HTMLFrameElement | HTMLIFrameElement)) {
         for (var i = 0; i < iframeList.length; i++) {
-          var iframe = iframeList[i];
-          if (iframe.ownerDocument === selection.anchorNode.ownerDocument) {
+          var iframeInlist = iframeList[i];
+          if (iframeInlist === iframeToFind) {
             return i;
           }
         }
         return 0;
       }
+
+      function getFrameContainingSelection(iframeList: (HTMLFrameElement | HTMLIFrameElement)[]) {
+        return _.find(iframeList, (frame) => {
+          return frame.contentDocument.getSelection().toString() !== '';
+        });
+      }
+
     };
 
     private removeAllRanges = () => {
