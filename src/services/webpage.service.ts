@@ -1,70 +1,60 @@
 'use strict';
 
 module tagIt {
-  /**
-   * Takes care of figuring out what word
-   * is selected.
-   */
 
   declare var rangy: any;
   declare var uuid: any;
 
+  /**
+   * This service is responsible for interfacing with the content 
+   * that we want to tag. It injects/removes tags and listens for clicks. 
+   */
   export class WebPageService {
 
     $log: ng.ILogService;
     // when clicking the menu to select a synset
     // we need to remember what the currently selected word was
     tagStorageService: TagStorageService;
+    rootScopeService: ng.IRootScopeService;
     savedSelection: Object;
+    savedText: string;
     listOfFramesWithContent: (HTMLFrameElement | HTMLIFrameElement)[] = [];
 
     /* @ngInject */
-    constructor($log: ng.ILogService, TagStorageService: TagStorageService) {
+    constructor($log: ng.ILogService, TagStorageService: TagStorageService, $rootScope: ng.IRootScopeService) {
       this.$log = $log;
       this.tagStorageService = TagStorageService;
+      this.rootScopeService = $rootScope;
+      this.wireUpListener();
       rangy.init();
     }
 
-    //this allows the menu controller to bind to the service so that it may
-    //notify the menu. TODO refactor to use events on $rootScope instead.
-    wireUpListener(callbackOnSelectFunc: (result: Object) => void,
-      callbackOnDeSelectFunc: () => void) {
-      const tagitBodyIframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
-      const tagitBodyIframeDoc = tagitBodyIframe.contentDocument;
-
-      if (tagitBodyIframeDoc.getElementsByTagName('frameset').length > 0) {
-        _.map(tagitBodyIframeDoc.getElementsByTagName('frame'),
-          (frame) => { this.listOfFramesWithContent.push(frame) });
-      } else {
-        this.listOfFramesWithContent.push(tagitBodyIframe);
+    /**
+     * The click listening function placed on each of the iframes
+     * we capture. We then listen for clicks and check if a word
+     * was selected.
+     */
+    clickhandler = (evt: Event) => {
+      this.$log.debug('A click happened!');
+      var documentThatWasClicked = evt.srcElement.ownerDocument;
+      if (!documentThatWasClicked.hasFocus()) {
+        return true;
       }
-
-      _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
-        frame.contentDocument.addEventListener('click', (evt: Event) => {
-          this.$log.debug('A click happened!');
-          var documentThatWasClicked = evt.srcElement.ownerDocument;
-          if (!documentThatWasClicked.hasFocus()) {
-            return true;
-          }
-          else if (wasRemoveTagButtonClicked(evt)) {
-            this.$log.debug('remove tag button was clicked');
-            removeTagFromWebAndStorage(evt, this.tagStorageService);
-          }
-          else if (documentThatWasClicked.getSelection().toString() !== '') {
-            resetSavedSelection();
-            this.savedSelection = rangy.saveSelection(documentThatWasClicked);
-
-            callbackOnSelectFunc(
-              joinLongWords(
-                documentThatWasClicked.getSelection().toString()
-              )
-            );
-          } else {
-            callbackOnDeSelectFunc();
-          }
-        }, false);
-      });
-
+      else if (wasRemoveTagButtonClicked(evt)) {
+        this.$log.debug('remove tag button was clicked');
+        removeTagFromWebAndStorage(evt, this.tagStorageService);
+      }
+      else if (documentThatWasClicked.getSelection().toString() !== '') {
+        resetSavedSelection();
+        this.savedSelection = rangy.saveSelection(documentThatWasClicked);
+        this.savedText = joinLongWords(documentThatWasClicked.getSelection().toString());
+        this.rootScopeService.$broadcast('wordWasSelected', this.savedText);
+      } else {
+        resetSavedSelection();
+        this.savedText = '';
+        this.rootScopeService.$broadcast('wordWasDeSelected', null);
+      }
+      
       /**
        * Remove markers to ensure a clean page before
        * adding markers for a new page.
@@ -78,9 +68,11 @@ module tagIt {
       function joinLongWords(possiblyLongWord: string) {
         return possiblyLongWord.trim().split(" ").join("_");
       }
+
       function wasRemoveTagButtonClicked(evt: any) {
         return evt.target.className === 'js-tagit-remove-tag';
       }
+
       function removeTagFromWebAndStorage(evt: Event, tagStorageService: TagStorageService) {
         var target = <HTMLElement>evt.target;
         var theOriginalTextNode = target.previousSibling;
@@ -91,14 +83,24 @@ module tagIt {
       }
     }
 
-    findSelectedText(evt: Event) {
-      var selectedText = evt.srcElement.ownerDocument.getSelection().toString();
-      if (selectedText) {
-        this.$log.debug('text that was selected: ' + selectedText);
-        return selectedText;
+    /**
+     * Find one or more iframes in which content has been captured.
+     * We then place click listeners on each of the frames. 
+     */
+    wireUpListener() {
+      const tagitBodyIframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
+      const tagitBodyIframeDoc = tagitBodyIframe.contentDocument;
+      
+      if (tagitBodyIframeDoc.getElementsByTagName('frameset').length > 0) {
+        _.map(tagitBodyIframeDoc.getElementsByTagName('frame'),
+          (frame) => { this.listOfFramesWithContent.push(frame) });
       } else {
-        return;
+        this.listOfFramesWithContent.push(tagitBodyIframe);
       }
+      
+      _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
+        frame.contentDocument.addEventListener('click', this.clickhandler, false);
+      });
     }
 
     /**
@@ -109,32 +111,49 @@ module tagIt {
     removeAllTagsFromPage(callback: () => void) {
       //loop that will keep asking for spans to remove
       //until they are all gone.
-      const done = _.after(this.listOfFramesWithContent.length, callback);
+      const done = _.after(this.listOfFramesWithContent.length, () => {
+        callback();
+      });
 
       _.map(this.listOfFramesWithContent, (iframe) => {
         removeTagsFromIframe(iframe, done);
       });
 
-      function removeTagsFromIframe(iframe: any, callback: () => void) {
-        while (iframe.getElementsByClassName('tagit-tag').length > 0) {
-          var spanElement = this.iframeDocument.getElementsByClassName('tagit-tag')[0];
+      function removeTagsFromIframe(iframe: HTMLFrameElement | HTMLIFrameElement, 
+        callback: () => void) {
+        while (iframe.contentDocument.getElementsByClassName('tagit-tag').length > 0) {
+          var spanElement = iframe.contentDocument.getElementsByClassName('tagit-tag')[0];
           var spanElementParent = spanElement.parentNode;
           spanElementParent.replaceChild(
             spanElement.firstChild,
             spanElement);
+          /**
+           * call normalize on the parent element so that it will join up
+           * any text nodes that might have become chopped up by
+           * tags and selection markers.
+           *  */ 
           spanElementParent.normalize();
         }
         callback();
       }
     }
 
+    /**
+     * Handles adding tags to page which needs to happen in a 
+     * bottom up order, so that all the tags find their right place.
+     */
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
       
       //first deselect all places before we go to work
       this.removeAllRanges();
 
-      //deserialize ranges, remove the ones that fail.
+      /**
+       * The tags need to be loaded (deserialized) so that 
+       * they can be inserted properly. Deserialization might
+       * fail if the page has changed since it was tagged. Thus
+       * we remove tags that fail to load. 
+       */
       tagsToLoad = _.filter(tagsToLoad, (tagToLoad) => {
         try {
           tagToLoad.deserializedRange = rangy.deserializeRange(
@@ -156,13 +175,18 @@ module tagIt {
 
       this.$log.debug('finished deserializing tags');
 
-      //sort tags by ascending so that they can be properly inserted
+      /**
+       * sort tags descending (highest number = furthest down on page). 
+       */
       tagsToLoad = _.sortBy(tagsToLoad, (tag: ISenseTag) => {
         return tag.deserializedRange.startOffset;
       });
 
       this.$log.debug('finished sorting tags');
 
+      /**
+       * Loop through loaded tags and insert them to the page. 
+       */
       _.map(tagsToLoad, (tag: ISenseTag) => {
         if (tag.deserializedRange) {
           this.surroundRangeWithSpan(

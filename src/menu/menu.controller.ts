@@ -25,11 +25,15 @@ module tagIt {
       this.webPageService = WebPageService;
       this.tagStorageService = TagStorageService;
 
-      // Wire up clicklistener
-      this.webPageService.wireUpListener(
-        this.onWordSelected,
-        this.onWordDeSelected
-      );
+      this.$scope.$on('wordWasSelected', (event, selectedWord) => {
+        this.$log.debug('a word was selected' + selectedWord);
+        this.onWordSelectedEvent(selectedWord);
+      });
+      
+      this.$scope.$on('wordWasSelected', (event, selectedWord) => {
+        this.$log.debug('a word was selected' + selectedWord);
+        this.onWordSelectedEvent(selectedWord);
+      });
 
       // Reload existing tags
       var tagsToLoad = this.tagStorageService.loadTags();
@@ -40,6 +44,10 @@ module tagIt {
       this.webPageService.readdTagsToPage(tagsToLoad);
     }
 
+    /**
+     * Fired when user selects a sense amongst the senses
+     * returned from the backend.
+     */
     onSenseSelect(sense: ISense) {
       //remove all tags so that new tag range is serialized
       //based on a document without any highlights
@@ -57,11 +65,10 @@ module tagIt {
       });
     }
 
-    onWordSelected = (newWord: string) => {
-      function countWords(wordWithUnderscores: string) {
-        return wordWithUnderscores.split("_").length;
-      }
-
+    /**
+     * 
+     */
+    onWordSelectedEvent = (newWord: string) => {
       if (countWords(newWord) > 2) {
         this.selectedWord = "Wops! Plugin can't handle more than two words.";
         this.senses = [];
@@ -72,24 +79,20 @@ module tagIt {
       else {
         this.selectedWord = newWord;
         this.backendService.callServer(newWord)
-          .then((synsets: Object) => {
+          .then((synsets: any) => {
             this.$log.debug(synsets);
-            this.senses = this.backendService.processSynsets(<ISynset>synsets);
+            this.senses = synsets.data.senses;;
           });
       }
       
-      //call for a digest because clicklistener that triggers this
-      //function is unknown to Angular. 
-      this.$scope.$apply(); 
+      function countWords(wordWithUnderscores: string) {
+        return wordWithUnderscores.split("_").length;
+      }
     }
 
-    onWordDeSelected = () => {
+    onWordDeSelectedEvent = () => {
       this.$log.debug("onWordDeSelected");
       this.clearMenuVariables()
-      // since the click did not originate from
-      // an ng-click or the like we need to
-      // do an explicit view refresh
-      this.$scope.$digest;
     }
 
     clearMenuVariables() {

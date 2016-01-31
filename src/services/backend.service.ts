@@ -25,10 +25,6 @@ module tagIt {
       return this.$http.get(this.serverUrl + this.createQuery(word));
     }
 
-    processSynsets (synsets: ISynset) : string[] {
-      return synsets.data.senses;
-    }
-
     sendTaggedDataToServer (senseTag: ISenseTag) {
       this.$log.debug('sendTaggedDataToServer() was called');
 
