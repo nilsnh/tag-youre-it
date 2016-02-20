@@ -8,7 +8,8 @@ module tagIt {
   }
 
   export class AppConfigService {
-    serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
+    // serverUrl = 'http://lexitags.dyndns.org/server/lexitags2/Semtags?data=';
+    serverUrl = 'https://imdb.uib.no/lexitags/lexitags/';
   }
 }
 

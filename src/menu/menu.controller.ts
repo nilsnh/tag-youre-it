@@ -26,7 +26,7 @@ module tagIt {
       this.tagStorageService = TagStorageService;
 
       this.$scope.$on('wordWasSelected', (event, selectedWord) => {
-        this.$log.debug('a word was selected' + selectedWord);
+        this.$log.debug(`Menucontroller received wordWasSelected event for: ${selectedWord}`);
         this.onWordSelectedEvent(selectedWord);
       });
       

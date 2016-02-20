@@ -3,26 +3,40 @@
 
 'use strict';
 
+/**
+ * Service that is responsible for talking to the 
+ * backend server.
+ */
 module tagIt {
 
   export class BackendService {
 
     $http : ng.IHttpService;
     $log : ng.ILogService;
+    $q: ng.IQService;
     private serverUrl : string = null;
+    private previousCall: string;
 
     /* @ngInject */
-    constructor($http: ng.IHttpService, $log: ng.ILogService, AppConfigService: AppConfigService) {
+    constructor($http: ng.IHttpService, $q: ng.IQService, $log: ng.ILogService, AppConfigService: AppConfigService) {
       this.$http = $http;
       this.$log = $log;
+      this.$q = $q;
       this.serverUrl = AppConfigService.serverUrl;
     }
 
     callServer (word: string) {
       if (!word) {
-        return;
-      };
-      return this.$http.get(this.serverUrl + this.createQuery(word));
+        return this.$q.reject('no use calling server, there is no queryword.')
+      } else if (this.previousCall === word) {
+        var errMsg = `callServer has already been called with word: ${word}`;
+        this.$log.debug(errMsg)
+        return this.$q.reject(errMsg);
+      }
+      
+      //alright let's make this query!
+      this.previousCall = word; 
+      return this.$http.get(this.serverUrl + word);
     }
 
     sendTaggedDataToServer (senseTag: ISenseTag) {
@@ -43,9 +57,5 @@ module tagIt {
       //   });
     }
 
-    private createQuery (word: string) {
-      return '{"word":"QUERYTOREPLACE"}'
-        .replace(/QUERYTOREPLACE/, word);
-    }
   }
 }
