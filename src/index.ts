@@ -5,6 +5,7 @@
 /// <reference path="services/backend.service.ts" />
 /// <reference path="services/webpage.service.ts" />
 /// <reference path="services/tagStorage.service.ts" />
+/// <reference path="services/file.service.ts" />
 
 module tagIt {
 
@@ -16,6 +17,7 @@ module tagIt {
     .service('BackendService', BackendService)
     .service('WebPageService', WebPageService)
     .service('TagStorageService', TagStorageService)
+    .service('FileService', FileService)
     .controller('MenuCtrl', MenuCtrl);
     
     var iframe = <HTMLIFrameElement>document.getElementById("tagit-iframe")

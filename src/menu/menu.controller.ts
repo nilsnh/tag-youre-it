@@ -2,7 +2,7 @@
 
 module tagIt {
   'use strict';
-
+  
   export class MenuCtrl {
 
     selectedWord = "";
@@ -10,6 +10,7 @@ module tagIt {
     backendService: BackendService;
     webPageService: WebPageService;
     tagStorageService: TagStorageService;
+    fileService: FileService;
     $log: ng.ILogService;
     $scope: ng.IScope;
 
@@ -17,13 +18,15 @@ module tagIt {
     constructor($scope: IVMScope, $log: angular.ILogService,
       BackendService: BackendService,
       WebPageService: WebPageService,
-      TagStorageService: TagStorageService) {
+      TagStorageService: TagStorageService,
+      FileService: FileService) {
       $scope.vm = this;
       this.$log = $log;
       this.$scope = $scope;
       this.backendService = BackendService;
       this.webPageService = WebPageService;
       this.tagStorageService = TagStorageService;
+      this.fileService = FileService;
 
       this.$scope.$on('wordWasSelected', (event, selectedWord) => {
         this.$log.debug(`Menucontroller received wordWasSelected event for: ${selectedWord}`);
@@ -63,6 +66,18 @@ module tagIt {
         );
         this.clearMenuVariables();
       });
+    }
+    
+    /**
+     * Enables a clickable button to download tags as a json file.
+     */
+    downloadTags() {
+        if (typeof chrome === 'undefined') {
+          this.$log.debug('Did not find chrome facilities. Can\'t download.')
+          return; //do nothing  
+        }
+        var tags : ISenseTag[] = this.tagStorageService.loadTags();
+        this.fileService.saveFile(tags);
     }
 
     onWordSelectedEvent = (newWord: string) => {
