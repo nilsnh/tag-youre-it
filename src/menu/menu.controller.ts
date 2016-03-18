@@ -29,7 +29,7 @@ module tagIt {
         this.$log.debug(`Menucontroller received wordWasSelected event for: ${selectedWord}`);
         this.onWordSelectedEvent(selectedWord);
       });
-      
+
       this.$scope.$on('wordWasSelected', (event, selectedWord) => {
         this.$log.debug('a word was selected' + selectedWord);
         this.onWordSelectedEvent(selectedWord);
@@ -65,17 +65,14 @@ module tagIt {
       });
     }
 
-    /**
-     * 
-     */
     onWordSelectedEvent = (newWord: string) => {
       if (countWords(newWord) > 2) {
         this.selectedWord = "Wops! Plugin can't handle more than two words.";
         this.senses = [];
-      } 
+      }
       else if (newWord.length === 0) {
         this.clearMenuVariables();
-      } 
+      }
       else {
         this.selectedWord = newWord;
         this.backendService.callServer(newWord)
@@ -84,7 +81,7 @@ module tagIt {
             this.senses = synsets.data.senses;;
           });
       }
-      
+
       function countWords(wordWithUnderscores: string) {
         return wordWithUnderscores.split("_").length;
       }

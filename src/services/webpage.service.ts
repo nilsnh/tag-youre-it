@@ -6,8 +6,8 @@ module tagIt {
   declare var uuid: any;
 
   /**
-   * This service is responsible for interfacing with the content 
-   * that we want to tag. It injects/removes tags and listens for clicks. 
+   * This service is responsible for interfacing with the content
+   * that we want to tag. It injects/removes tags and listens for clicks.
    */
   export class WebPageService {
 
@@ -54,7 +54,7 @@ module tagIt {
         this.savedText = '';
         this.rootScopeService.$broadcast('wordWasDeSelected', null);
       }
-      
+
       /**
        * Remove markers to ensure a clean page before
        * adding markers for a new page.
@@ -73,31 +73,33 @@ module tagIt {
         return evt.target.className === 'js-tagit-remove-tag';
       }
 
+      //todo ensure removing a tag 
       function removeTagFromWebAndStorage(evt: Event, tagStorageService: TagStorageService) {
         var target = <HTMLElement>evt.target;
         var theOriginalTextNode = target.previousSibling;
         var theSurroundingSpanElement = target.parentElement;
+        var parentElement = theSurroundingSpanElement.parentElement;
         tagStorageService.deleteTagById(theSurroundingSpanElement.id);
-        theSurroundingSpanElement.parentNode
-          .replaceChild(theOriginalTextNode, theSurroundingSpanElement);
+        parentElement.replaceChild(theOriginalTextNode, theSurroundingSpanElement);
+        parentElement.normalize();
       }
     }
 
     /**
      * Find one or more iframes in which content has been captured.
-     * We then place click listeners on each of the frames. 
+     * We then place click listeners on each of the frames.
      */
     wireUpListener() {
       const tagitBodyIframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
       const tagitBodyIframeDoc = tagitBodyIframe.contentDocument;
-      
+
       if (tagitBodyIframeDoc.getElementsByTagName('frameset').length > 0) {
         _.map(tagitBodyIframeDoc.getElementsByTagName('frame'),
           (frame) => { this.listOfFramesWithContent.push(frame) });
       } else {
         this.listOfFramesWithContent.push(tagitBodyIframe);
       }
-      
+
       _.map(this.listOfFramesWithContent, (frame: HTMLIFrameElement) => {
         frame.contentDocument.addEventListener('click', this.clickhandler, false);
       });
@@ -105,8 +107,8 @@ module tagIt {
 
     /**
      * Will loop through all content iframes and empty them for
-     * tags added by us. This is because we need to position a 
-     * new tag in relation to a clean DOM.  
+     * tags added by us. This is because we need to position a
+     * new tag in relation to a clean DOM.
      * */
     removeAllTagsFromPage(callback: () => void) {
       //loop that will keep asking for spans to remove
@@ -119,7 +121,7 @@ module tagIt {
         removeTagsFromIframe(iframe, done);
       });
 
-      function removeTagsFromIframe(iframe: HTMLFrameElement | HTMLIFrameElement, 
+      function removeTagsFromIframe(iframe: HTMLFrameElement | HTMLIFrameElement,
         callback: () => void) {
         while (iframe.contentDocument.getElementsByClassName('tagit-tag').length > 0) {
           var spanElement = iframe.contentDocument.getElementsByClassName('tagit-tag')[0];
@@ -131,7 +133,7 @@ module tagIt {
            * call normalize on the parent element so that it will join up
            * any text nodes that might have become chopped up by
            * tags and selection markers.
-           *  */ 
+           *  */
           spanElementParent.normalize();
         }
         callback();
@@ -139,20 +141,20 @@ module tagIt {
     }
 
     /**
-     * Handles adding tags to page which needs to happen in a 
+     * Handles adding tags to page which needs to happen in a
      * bottom up order, so that all the tags find their right place.
      */
     readdTagsToPage(tagsToLoad: ISenseTag[]) {
       this.$log.debug('readdTagsToPage()');
-      
+
       //first deselect all places before we go to work
       this.removeAllRanges();
 
       /**
-       * The tags need to be loaded (deserialized) so that 
+       * The tags need to be loaded (deserialized) so that
        * they can be inserted properly. Deserialization might
        * fail if the page has changed since it was tagged. Thus
-       * we remove tags that fail to load. 
+       * we remove tags that fail to load.
        */
       tagsToLoad = _.filter(tagsToLoad, (tagToLoad) => {
         try {
@@ -176,7 +178,7 @@ module tagIt {
       this.$log.debug('finished deserializing tags');
 
       /**
-       * sort tags descending (highest number = furthest down on page). 
+       * sort tags descending (highest number = furthest down on page).
        */
       tagsToLoad = _.sortBy(tagsToLoad, (tag: ISenseTag) => {
         return tag.deserializedRange.startOffset;
@@ -185,7 +187,7 @@ module tagIt {
       this.$log.debug('finished sorting tags');
 
       /**
-       * Loop through loaded tags and insert them to the page. 
+       * Loop through loaded tags and insert them to the page.
        */
       _.map(tagsToLoad, (tag: ISenseTag) => {
         if (tag.deserializedRange) {
@@ -203,7 +205,7 @@ module tagIt {
 
     initializeNewTag = (sense: ISense): ISenseTag => {
       this.$log.debug('initializeNewTag');
-      
+
       /**
        * first eliminate all selections to avoid confusion
        * with other iframes.
@@ -225,7 +227,7 @@ module tagIt {
         sense: sense,
         wordThatWasTagged: selection.toString(),
         iframeIndex: getIframeIndex(this.listOfFramesWithContent, iframeOfInterest),
-        context: parentElement.innerText,
+        context: parentElement.textContent,
         serializedSelectionRange: serializedRange
       }
 
@@ -259,8 +261,9 @@ module tagIt {
       });
     }
 
-    private surroundRangeWithSpan(documentToManipulate: HTMLDocument, sense: ISense, range: Range, uuid: string) {
-      
+    private surroundRangeWithSpan(documentToManipulate: HTMLDocument,
+      sense: ISense, range: Range, uuid: string) {
+
       // add span around content
       var span: HTMLSpanElement = documentToManipulate.createElement('span');
       span.id = uuid;
