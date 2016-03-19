@@ -39,7 +39,7 @@ module tagIt {
       });
 
       // Reload existing tags
-      var tagsToLoad = this.tagStorageService.loadTags();
+      var tagsToLoad = this.tagStorageService.loadTagsForCurrentPage();
 
       this.$log.debug('these tags were found in storage');
       this.$log.debug(tagsToLoad);
@@ -58,11 +58,13 @@ module tagIt {
         //initialize and save the new tag
         var senseTag = this.webPageService.initializeNewTag(sense);
         this.tagStorageService.saveTag(senseTag);
-        this.backendService.sendTaggedDataToServer(senseTag);
+        
+        // deactivate backendService for now.
+        // this.backendService.sendTaggedDataToServer(senseTag);
 
         //re-add tags, with new tag. Clear menu options.
         this.webPageService.readdTagsToPage(
-          this.tagStorageService.loadTags()
+          this.tagStorageService.loadTagsForCurrentPage()
         );
         this.clearMenuVariables();
       });
@@ -71,13 +73,31 @@ module tagIt {
     /**
      * Enables a clickable button to download tags as a json file.
      */
-    downloadTags() {
+    downloadTagsForPage() {
         if (typeof chrome === 'undefined') {
           this.$log.debug('Did not find chrome facilities. Can\'t download.')
           return; //do nothing  
         }
-        var tags : ISenseTag[] = this.tagStorageService.loadTags();
-        this.fileService.saveFile(tags);
+        this.fileService.saveFile(this.tagStorageService.loadTagsForCurrentPage());
+    }
+    
+    downloadAllTagsForDomain() {
+        if (typeof chrome === 'undefined') {
+          this.$log.debug('Did not find chrome facilities. Can\'t download.')
+          return; //do nothing  
+        }
+        this.fileService.saveFile(this.tagStorageService.loadAllTagsInLocalStorage());
+    }
+    
+    /**
+     * Enables clickable link for removing tags. 
+     */
+    removeTagsFromLocalStorage() {
+        if (confirm('Really delete tags from the current page?')) {
+            this.webPageService.removeAllTagsFromPage(() => {
+                this.tagStorageService.deleteTagsFromCurrentPage()
+            })
+        }
     }
 
     onWordSelectedEvent = (newWord: string) => {
@@ -93,7 +113,7 @@ module tagIt {
         this.backendService.callServer(newWord)
           .then((synsets: any) => {
             this.$log.debug(synsets);
-            this.senses = synsets.data.senses;;
+            this.senses = synsets.data.senses;
           });
       }
 
@@ -110,11 +130,6 @@ module tagIt {
     clearMenuVariables() {
       this.selectedWord = "";
       this.senses = [];
-    }
-
-    deleteTags() {
-      this.tagStorageService.deleteTags();
-      location.reload();
     }
 
   }

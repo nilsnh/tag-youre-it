@@ -228,7 +228,8 @@ module tagIt {
         wordThatWasTagged: selection.toString(),
         iframeIndex: getIframeIndex(this.listOfFramesWithContent, iframeOfInterest),
         context: parentElement.textContent,
-        serializedSelectionRange: serializedRange
+        serializedSelectionRange: serializedRange,
+        urlOfPageThatWasTagged: window.location.href
       }
 
       /**

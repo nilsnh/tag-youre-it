@@ -10,7 +10,7 @@ module tagIt {
 
     $http: ng.IHttpService;
     $log: ng.ILogService;
-    $localStorage: any;
+    $localStorage: { tagStorage: ISenseTag[] };
 
     /* @ngInject */
     constructor($http: ng.IHttpService, $log: ng.ILogService,
@@ -18,11 +18,11 @@ module tagIt {
       this.$http = $http;
       this.$log = $log;
       this.$localStorage = $localStorage;
-      
+
       if (window.location.href.indexOf("tagitreset") !== -1) {
-        this.deleteTags(); // reset tag storage
-        this.$log.debug("Resetting tags for this page");  
-      } 
+        this.deleteTagsFromCurrentPage(); // reset tag storage
+        this.$log.debug("Resetting tags for this page");
+      }
 
       if (!this.$localStorage.tagStorage) {
         this.$localStorage.tagStorage = [];
@@ -42,9 +42,11 @@ module tagIt {
       this.$localStorage.tagStorage = newList;
     }
 
-    deleteTags() {
-      this.$log.debug('deleting all tags from localstorage');
-      delete this.$localStorage.tagStorage;
+    deleteTagsFromCurrentPage() {
+      this.$log.debug('deleting tags');
+      this.$localStorage.tagStorage =
+        this.$localStorage.tagStorage.filter(
+          (tag: ISenseTag) => tag.urlOfPageThatWasTagged !== window.location.href)
     }
 
     saveTag(tagToSave: ISenseTag) {
@@ -53,9 +55,20 @@ module tagIt {
       this.$localStorage.tagStorage.push(tagToSave);
     }
 
-    loadTags() {
-      this.$log.debug('loadTags');
-      return this.$localStorage.tagStorage;
+    loadTagsForCurrentPage(): ISenseTag[] {
+      this.$log.debug('loadTagsForCurrentPage');
+      return this.$localStorage.tagStorage
+        .filter((tag: ISenseTag) =>
+          tag.urlOfPageThatWasTagged === window.location.href
+        );
+    }
+    
+    /**
+     * Loads all tags in localstorage (for the current domain).
+     */
+    loadAllTagsInLocalStorage() {
+      this.$log.debug('loadAllTagsInLocalStorage');
+      return this.$localStorage.tagStorage
     }
 
   }

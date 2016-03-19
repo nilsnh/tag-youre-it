@@ -31,7 +31,11 @@
 
     <h2>Tag you're it</h2>
     
-    <p><a href ng-click="vm.downloadTags()">Download tags</a></p>
+    <p>Menu:
+        <a href ng-click="vm.downloadTagsForPage()">Download tags (current page)</a> |
+        <a href ng-click="vm.downloadAllTagsForDomain()">Download all tags (domain)</a> |
+        <a href ng-click="vm.removeTagsFromLocalStorage()">Delete tags from current page</a>
+    </p>
 
     <p>
       Mark one or two words on the page to the right. And we'll supply you with possible definitions. Select a definition and the

@@ -35,5 +35,6 @@ module tagIt {
     wordThatWasTagged: string;
     serializedSelectionRange: string;
     deserializedRange?: Range;
+    urlOfPageThatWasTagged: string;
   }
 }
