@@ -15,7 +15,7 @@ module tagIt {
     }
 
     saveFile(content: ISenseTag[]) {
-      var json = JSON.stringify(content);
+      var json = JSON.stringify(content, null, 2);
       var blob = new Blob([json], { type: "application/json" });
       var url = URL.createObjectURL(blob);
       var a = <any> document.createElement('a');
