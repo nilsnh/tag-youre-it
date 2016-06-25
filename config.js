@@ -6,10 +6,10 @@ System.config({
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
   },
-  
+
   packages: {
-    'src': {
-      defaultExtension: 'ts'
+    "src": {
+      "defaultExtension": "ts"
     }
   },
 
@@ -18,11 +18,11 @@ System.config({
     "jquery": "npm:jquery@2.2.4",
     "lodash": "npm:lodash@4.12.0",
     "ngstorage": "npm:ngstorage@0.3.10",
-    "rangy": "npm:rangy@1.3.0",
-    "rangy-serializer": "npm:rangy@1.3.0/lib/rangy-serializer.js",
-    "rangy-selectionsaverestore": "npm:rangy@1.3.0/lib/rangy-selectionsaverestore.js",
-    "typescript": "npm:typescript@1.8.10",
     "node-uuid": "npm:uuid@2.0.2",
+    "rangy": "npm:rangy@1.3.0",
+    "rangy-selectionsaverestore": "npm:rangy@1.3.0/lib/rangy-selectionsaverestore.js",
+    "rangy-serializer": "npm:rangy@1.3.0/lib/rangy-serializer.js",
+    "typescript": "npm:typescript@1.8.10",
     "uuid": "npm:uuid@2.0.2",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.0"

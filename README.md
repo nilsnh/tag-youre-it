@@ -3,24 +3,29 @@ A chrome extension for tagging words with semantic information.
 
 ## Development
 
-1. To do active development, just [download this plugin](https://github.com/nilsnh/tag-youre-it/archive/master.zip).
-2. You'll need to have installed [node.js](https://nodejs.org/en/).
-3. Go inside the unzipped folder and run `npm install && npm install -g gulp`. In addition to installing development dependencies it will also install Gulp which is useful for active development.
-4. Run `gulp serve` to serve up the prototype for live development.
-5. Run `gulp dist` to build the chrome plugin in the `dist/` folder.
+What you need to do to get started developing this plugin. 
+
+Prerequisites:
+
+- Install [node.js](https://nodejs.org/). 
+
+1. git clone this project.
+1. Run `npm install` 
+1. Run `npm start` to serve up the prototype for live development. To configure what browser is started please see the `npm start` command found in the package.json file.  
+
+Please note: A [workaround for CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?utm_source=chrome-app-launcher-info-dialog) is needed for allowing the live development version to talk to the server.
 
 ## Chrome testing
 
+1. Run `npm run build` to generate a dist/ folder.
 1. Inside chrome go to `settings -> Extensions`.
-2. Select `Load unpacked extension` and select the project's `dist/` folder.
-3. You should now see a new browser icon. Go to a page and start tagging.
-4. In case of error: Press "f12" and have a look at the console log output.
-
-**Important** A [workaround for CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?utm_source=chrome-app-launcher-info-dialog) is currently needed to communicate with the server.
+1. Select `Load unpacked extension` and select the project's generated `dist/` folder.
+1. You should now see a new browser icon. Go to a page and start tagging.
+1. In case of error: Press "f12" and have a look at the console log output.
 
 ## What's happening under the hood?
 
-Technology stack (roughly): Angular.js, Typescript, Lodash and Rangy.js.
+Technology stack (roughly): Jspm, Typings, Angular.js, Typescript, Lodash and Rangy.js.
 
 **How is the plugin loaded?** `Manifest.json` adds an icon and defines an [event page](https://developer.chrome.com/extensions/event_pages) called `background.js`. The event page adds a click listener to the plugin's browser icon. When triggered it will first load jquery and then inject the html menu in an iframe as well as create an iframe for housing the page content. The plugin is in fact reloading the page inside an iframe on the page. It will then continue loading dependencies before finally calling `tagit.init()` on the plugin which makes angular initialize itself making it possible to interact with the injected menu. When loading the plugin it will check localstorage for previously made tags and add them to the page. The plugin will also add click listeners to the iframe(s) containing the content to be tagged. 
 
@@ -31,3 +36,26 @@ Technology stack (roughly): Angular.js, Typescript, Lodash and Rangy.js.
 **Particularities to tagging:** When tagging a selection the plugin must always relate the tag position to the original DOM object (original web page structure). Thus the plugin will remove all tags and selections before saving a word selection or saving a tag. Tags also need to be loaded in a bottom up order so that their `range.startOffset` is always in relation to the original DOM. `StartOffset` is simply a position number of where the node (html element etc.) is located within the DOM tree-structure that starts with 0 (document root). 
 
 **Even more particularities to tagging:** When a word is selected `rangy.js` adds invisible selection markers (spans) to the page which safeguards against accidentally unselecting the word we are trying to tag or accidentally tagging the wrong word. The selection markers will be removed when loading the selection again (making the right word selected in blue on the page). After loading the selection we tag the word by wrapping it in a span that contains tagging information and style information which highlights the tagged word. A button element is also added inside the span for removing the tag. 
+
+## Licensed under the MIT License
+
+Copyright (c) 2016 Nils Norman Haukås
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
