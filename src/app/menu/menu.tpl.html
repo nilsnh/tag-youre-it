@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  
+  <style>
+
+    /*
+      This styling is embedded due to the test setup.
+      When used as a Chrome plugin the main style can be
+      inserted into all the iframes. But when testing it's
+      not that easy to dynamically insert the main style into
+      this file. 
+      
+      So all the styles necessary to style the internals
+      of this menu is included here instead of the main style.css.
+    */
+
+    .tagit-menu {
+      background-color: #FFF;
+    }
+    
+    .tagit-menu ul {
+      padding-left: 0px;
+      margin-top: 10px;
+    }
+    
+    .tagit-menu li {
+      padding: 5px;
+    }
+    
+    .tagit-menu li:hover {
+      background-color: #eee;
+      cursor: pointer;
+    }
+  </style>
+  
+</head>
+
+<body id="tagit-menu" class="tagit-menu">
+  <div ng-controller="MenuCtrl">
+
+    <h2>Tag you're it</h2>
+    
+    <p>Menu:
+        <a href ng-click="vm.downloadTagsForPage()">Download tags (current page)</a> |
+        <a href ng-click="vm.downloadAllTagsForDomain()">Download all tags (domain)</a> |
+        <a href ng-click="vm.removeTagsFromLocalStorage()">Delete tags from current page</a>
+    </p>
+
+    <p>
+      Mark one or two words on the page to the right. And we'll supply you with possible definitions. Select a definition and the
+      word will be tagged.
+    </p>
+
+    <p>
+      Currently selected word: <strong>{{vm.selectedWord}}</strong>
+    </p>
+
+    <input type="text" ng-model="wordToFilterBy" class="form-control" placeholder="Filter tags" />
+
+    <ul id="senses">
+      <li ng-click="vm.onSenseSelect(sense)" id="sense.senseid" ng-repeat="sense in vm.senses | filter:wordToFilterBy" class="list-unstyled">
+        <strong>{{sense.word}}</strong> {{sense.explanation}}
+      </li>
+    </ul>
+  </div>
+</body>
+
+</html>

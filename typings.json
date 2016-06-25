@@ -1,0 +1,12 @@
+{
+  "name": "tag-youre-it",
+  "globalDependencies": {
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "chrome": "github:DefinitelyTyped/DefinitelyTyped/chrome/chrome.d.ts#3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#e5a27ea95e47b95333784f1f0d590127b4e39a89",
+    "node-uuid/node-uuid-base": "registry:dt/node-uuid/node-uuid-base#0.0.0+20160316155526",
+    "node-uuid/node-uuid-cjs": "registry:dt/node-uuid/node-uuid-cjs#0.0.0+20160316155526",
+    "rangy": "registry:dt/rangy#0.0.0+20160316155526"
+  }
+}

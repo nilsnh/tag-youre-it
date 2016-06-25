@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="tagit-top-wrapper">
+
+<head>
+  <title>Prototype page mockup</title>
+  <meta charset="UTF-8">
+  <link href="../src/app/style.css" rel="stylesheet">
+
+  <script src="../jspm_packages/system.js"></script>
+  <script src="../config.js"></script>
+  <script src="../tmp/bundle.js"></script>
+  <script>
+
+    window.tagitTestMode = true;
+
+    System.import('main');
+  </script>
+
+</head>
+
+<body>
+
+  <!--Embedd the real menu-->
+  <iframe id="tagit-iframe" seamless="seamless" frameborder="0" class="tagit-iframe" src="../src/app/menu/menu.tpl.html" frameborder="0"></iframe>
+
+  <!--Embedd dummy content page for testing-->
+  <iframe id="tagit-body" seamless="seamless" frameborder="0" class="tagit-body" src="content.html" frameborder="0"></iframe>
+
+</body>
+
+</html>
