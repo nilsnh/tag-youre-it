@@ -5,7 +5,7 @@
   "main": "Gulpfile.js",
   "scripts": {
     "clean": "rm -r dist",
-    "build": "jspm bundle-sfx src/app/main.ts dist/app.js && ./build.sh",
+    "build": "jspm bundle-sfx src/app/main.ts dist/app.js --inline-source-maps && ./build.sh",
     "start": "browser-sync start --no-notify -b google-chrome --startPath test/ --server --files 'src/**/*'",
     "postinstall": "typings install && jspm install"
   },
