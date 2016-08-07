@@ -5,9 +5,10 @@ import {
   BackendService,
   WebPageService,
   TagStorageService,
-  FileService} from './services/index';
-import {AppConfigInitializer, AppConfigService} from "./index.appConfig";
+  FileService,
+  SettingsService} from './services/index';
 import {MenuCtrl} from './menu/menu.controller';
+import {SettingsCtrl} from './menu/settings.controller';
 import {preparePage} from './pageRebuilder';
 import angular from 'angular';
 import 'rangy';
@@ -25,20 +26,13 @@ else {
 
 function loadAngular() {
   angular.module('tagit', ['ngStorage'])
-    .config(AppConfigInitializer)
-    .service('AppConfigService', AppConfigService)
+    .service('SettingsService', SettingsService)
     .service('BackendService', BackendService)
     .service('WebPageService', WebPageService)
     .service('TagStorageService', TagStorageService)
     .service('FileService', FileService)
+    .controller('SettingsCtrl', SettingsCtrl)
     .controller('MenuCtrl', MenuCtrl)
-    .controller('TestCtrl', function () {
-      var vm = this;
-      vm.test = 'hello world';
-      vm.alert = function () {
-        alert('test alert');
-      }
-    });
 
   angular.bootstrap(
     (<HTMLIFrameElement>document.getElementById("tagit-iframe"))

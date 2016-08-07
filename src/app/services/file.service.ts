@@ -5,12 +5,7 @@ import {ISenseTag} from '../index.interfaces';
 //Responsible for saving.
 export class FileService {
 
-    $log: ng.ILogService;
-
-    /* @ngInject */
-    constructor($log: ng.ILogService) {
-        this.$log = $log;
-    }
+    constructor(private $log: ng.ILogService) {}
 
     saveFile(content: ISenseTag[]) {
         var json = JSON.stringify(content, null, 2);

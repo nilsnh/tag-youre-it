@@ -13,26 +13,15 @@ export class MenuCtrl {
 
   selectedWord = "";
   senses: Object[];
-  backendService: BackendService;
-  webPageService: WebPageService;
-  tagStorageService: TagStorageService;
-  fileService: FileService;
-  $log: ng.ILogService;
-  $scope: ng.IScope;
 
-  /* @ngInject */
-  constructor($scope: IVMScope, $log: angular.ILogService,
-    BackendService: BackendService,
-    WebPageService: WebPageService,
-    TagStorageService: TagStorageService,
-    FileService: FileService) {
+  constructor(
+    private $scope: IVMScope, 
+    private $log: angular.ILogService,
+    private BackendService: BackendService,
+    private WebPageService: WebPageService,
+    private TagStorageService: TagStorageService,
+    private FileService: FileService) {
     $scope.vm = this;
-    this.$log = $log;
-    this.$scope = $scope;
-    this.backendService = BackendService;
-    this.webPageService = WebPageService;
-    this.tagStorageService = TagStorageService;
-    this.fileService = FileService;
 
     this.$scope.$on('wordWasSelected', (event, selectedWord) => {
       this.$log.debug(`Menucontroller received wordWasSelected event for: ${selectedWord}`);
@@ -45,12 +34,12 @@ export class MenuCtrl {
     });
 
     // Reload existing tags
-    var tagsToLoad = this.tagStorageService.loadTagsForCurrentPage();
+    var tagsToLoad = this.TagStorageService.loadTagsForCurrentPage();
 
     this.$log.debug('these tags were found in storage');
     this.$log.debug(tagsToLoad);
 
-    this.webPageService.readdTagsToPage(tagsToLoad);
+    this.WebPageService.readdTagsToPage(tagsToLoad);
   }
 
   /**
@@ -60,17 +49,17 @@ export class MenuCtrl {
   onSenseSelect(sense: ISense) {
     //remove all tags so that new tag range is serialized
     //based on a document without any highlights
-    this.webPageService.removeAllTagsFromPage(() => {
+    this.WebPageService.removeAllTagsFromPage(() => {
       //initialize and save the new tag
-      var senseTag = this.webPageService.initializeNewTag(sense);
-      this.tagStorageService.saveTag(senseTag);
+      var senseTag = this.WebPageService.initializeNewTag(sense);
+      this.TagStorageService.saveTag(senseTag);
 
-      // deactivate backendService for now.
-      // this.backendService.sendTaggedDataToServer(senseTag);
+      // deactivate BackendService for now.
+      this.BackendService.sendTaggedDataToServer(senseTag);
 
       //re-add tags, with new tag. Clear menu options.
-      this.webPageService.readdTagsToPage(
-        this.tagStorageService.loadTagsForCurrentPage()
+      this.WebPageService.readdTagsToPage(
+        this.TagStorageService.loadTagsForCurrentPage()
       );
       this.clearMenuVariables();
     });
@@ -84,7 +73,7 @@ export class MenuCtrl {
       this.$log.debug('Did not find chrome facilities. Can\'t download.')
       return; //do nothing
     }
-    this.fileService.saveFile(this.tagStorageService.loadTagsForCurrentPage());
+    this.FileService.saveFile(this.TagStorageService.loadTagsForCurrentPage());
   }
 
   downloadAllTagsForDomain() {
@@ -92,7 +81,7 @@ export class MenuCtrl {
       this.$log.debug('Did not find chrome facilities. Can\'t download.')
       return; //do nothing
     }
-    this.fileService.saveFile(this.tagStorageService.loadAllTagsInLocalStorage());
+    this.FileService.saveFile(this.TagStorageService.loadAllTagsInLocalStorage());
   }
 
   /**
@@ -100,23 +89,24 @@ export class MenuCtrl {
    */
   removeTagsFromLocalStorage() {
     if (confirm('Really delete tags from the current page?')) {
-      this.webPageService.removeAllTagsFromPage(() => {
-        this.tagStorageService.deleteTagsFromCurrentPage()
+      this.WebPageService.removeAllTagsFromPage(() => {
+        this.TagStorageService.deleteTagsFromCurrentPage()
       })
     }
   }
 
   onWordSelectedEvent = (newWord: string) => {
     if (countWords(newWord) > 2) {
-      this.selectedWord = "Wops! Plugin can't handle more than two words.";
-      this.senses = [];
+      this.selectedWord = "Wops! Plugin can't handle more than two words."
+      this.senses = []
     }
     else if (newWord.length === 0) {
       this.clearMenuVariables();
     }
     else {
       this.selectedWord = newWord;
-      this.backendService.callServer(newWord)
+      this.senses = []
+      this.BackendService.callServer(newWord)
         .then((synsets: any) => {
           this.$log.debug(synsets);
           this.senses = synsets.data.senses;
@@ -136,6 +126,11 @@ export class MenuCtrl {
   clearMenuVariables() {
     this.selectedWord = "";
     this.senses = [];
+  }
+
+  isLoadingSenses() {
+    // if senses var has initialized, we check length to see if they've been loaded. 
+    return this.senses && this.senses.length == 0 && this.selectedWord
   }
 
 }

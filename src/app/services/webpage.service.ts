@@ -14,20 +14,17 @@ import rangy from 'rangy';
  */
 export class WebPageService {
 
-  $log: ng.ILogService;
   // when clicking the menu to select a synset
   // we need to remember what the currently selected word was
-  tagStorageService: TagStorageService;
-  rootScopeService: ng.IRootScopeService;
   savedSelection: Object;
   savedText: string;
   listOfFramesWithContent: (HTMLFrameElement | HTMLIFrameElement)[] = [];
 
-  /* @ngInject */
-  constructor($log: ng.ILogService, TagStorageService: TagStorageService, $rootScope: ng.IRootScopeService) {
-    this.$log = $log;
-    this.tagStorageService = TagStorageService;
-    this.rootScopeService = $rootScope;
+  constructor(
+    private $log: ng.ILogService,
+    private TagStorageService: TagStorageService,
+    private $rootScope: ng.IRootScopeService) {
+
     this.wireUpListener();
     rangy.init();
   }
@@ -45,17 +42,17 @@ export class WebPageService {
     }
     else if (wasRemoveTagButtonClicked(evt)) {
       this.$log.debug('remove tag button was clicked');
-      removeTagFromWebAndStorage(evt, this.tagStorageService);
+      removeTagFromWebAndStorage(evt, this.TagStorageService);
     }
     else if (documentThatWasClicked.getSelection().toString() !== '') {
       resetSavedSelection(this.savedSelection);
       this.savedSelection = rangy.saveSelection(documentThatWasClicked);
       this.savedText = joinLongWords(documentThatWasClicked.getSelection().toString());
-      this.rootScopeService.$broadcast('wordWasSelected', this.savedText);
+      this.$rootScope.$broadcast('wordWasSelected', this.savedText);
     } else {
       resetSavedSelection(this.savedSelection);
       this.savedText = '';
-      this.rootScopeService.$broadcast('wordWasDeSelected', null);
+      this.$rootScope.$broadcast('wordWasDeSelected', null);
     }
 
     /**

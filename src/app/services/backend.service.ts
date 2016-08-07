@@ -1,6 +1,6 @@
 'use strict';
 
-import {AppConfigService} from '../index.appConfig';
+import {SettingsService} from '../services/index';
 import {ISenseTag} from '../index.interfaces';
 
 /**
@@ -9,18 +9,13 @@ import {ISenseTag} from '../index.interfaces';
  */
 export class BackendService {
 
-  $http: ng.IHttpService;
-  $log: ng.ILogService;
-  $q: ng.IQService;
-  private serverUrl: string = null;
-  private previousCall: string;
+  private previousCall: string
 
-  /* @ngInject */
-  constructor($http: ng.IHttpService, $q: ng.IQService, $log: ng.ILogService, AppConfigService: AppConfigService) {
-    this.$http = $http;
-    this.$log = $log;
-    this.$q = $q;
-    this.serverUrl = AppConfigService.serverUrl;
+  constructor(
+    private $http: ng.IHttpService,
+    private $q: ng.IQService,
+    private $log: ng.ILogService, 
+    private SettingsService: SettingsService) {
   }
 
   callServer(word: string) {
@@ -34,25 +29,12 @@ export class BackendService {
 
     //alright let's make this query!
     this.previousCall = word;
-    return this.$http.get(this.serverUrl + word);
+    return this.$http.get(`${this.SettingsService.senseQueryUrl}/${word}`);
   }
 
   sendTaggedDataToServer(senseTag: ISenseTag) {
     this.$log.debug('sendTaggedDataToServer() was called');
-
-    this.$log.debug('would have sent this to the server:');
-    this.$log.debug(senseTag);
-    this.$log.debug('please uncomment code for actually sending to server');
-
-    // this.$http.post("example.org", senseTag)
-    //   .then((response) => {
-    //     this.$log.debug('successfully posted to server. Response:');
-    //     this.$log.debug(response);
-    //   })
-    //   .catch((error) => {
-    //     this.$log.error('something went wrong when posting to server');
-    //     this.$log.error(error);
-    //   });
+    return this.$http.post(this.SettingsService.senseDestinationUrl, senseTag)
   }
 
 }

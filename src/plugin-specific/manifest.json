@@ -1,7 +1,7 @@
 {
   "name": "Tag you're it",
   "description": "A browser tool for tagging words with exact definitions.",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "manifest_version": 2,
   "icons": {
     "16": "icon16.png",
@@ -20,8 +20,7 @@
   "web_accessible_resources": [
     "*.html",
     "*.css",
-    "vendor/**/*.js",
-    "bundle.js"
+    "*.js"
   ],
   "browser_action": {
     "default_icon": "icon48.png"

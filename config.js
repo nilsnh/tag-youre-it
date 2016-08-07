@@ -14,7 +14,7 @@ System.config({
   },
 
   map: {
-    "angular": "github:angular/bower-angular@1.5.5",
+    "angular": "github:angular/bower-angular@1.5.8",
     "jquery": "npm:jquery@2.2.4",
     "lodash": "npm:lodash@4.12.0",
     "ngstorage": "npm:ngstorage@0.3.10",

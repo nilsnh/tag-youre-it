@@ -6,15 +6,12 @@ import {ISenseTag} from '../index.interfaces';
 // any tags related to the current page
 export class TagStorageService {
 
-  $http: ng.IHttpService;
-  $log: ng.ILogService;
   $localStorage: { tagStorage: ISenseTag[] };
 
-  /* @ngInject */
-  constructor($http: ng.IHttpService, $log: ng.ILogService,
+  constructor(
+    private $http: ng.IHttpService, 
+    private $log: ng.ILogService,
     $localStorage: any) {
-    this.$http = $http;
-    this.$log = $log;
     this.$localStorage = $localStorage;
 
     if (window.location.href.indexOf("tagitreset") !== -1) {
