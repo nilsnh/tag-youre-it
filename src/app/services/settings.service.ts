@@ -58,7 +58,11 @@ export class SettingsService {
     }
 
     const syncStorage = chrome.storage.sync
-    syncStorage.get(whatToFind, callback)
+    syncStorage.get(whatToFind, (loadedObject) => {
+      //the loadedObject can contain one or more loaded items.
+      //more info: https://developer.chrome.com/extensions/storage
+      callback(loadedObject[whatToFind]);
+    })
   }
 
   private saveSetting(nameOfThingToSave: string, valueToSave) {
@@ -69,7 +73,9 @@ export class SettingsService {
     }
 
     const syncStorage = chrome.storage.sync
-    syncStorage.set({ nameOfThingToSave: valueToSave })
+    syncStorage.set({ nameOfThingToSave: valueToSave }, () => {
+      this.$log.debug('saveSetting successfully saved to chrome storage.')
+    })
   }
 
   get senseQueryUrl() {

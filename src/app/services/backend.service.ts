@@ -29,7 +29,7 @@ export class BackendService {
 
     //alright let's make this query!
     this.previousCall = word;
-    return this.$http.get(`${this.SettingsService.senseQueryUrl}/${word}`);
+    return this.$http.get(`${this.SettingsService.senseQueryUrl}/${word}`)
   }
 
   sendTaggedDataToServer(senseTag: ISenseTag) {
