@@ -25,7 +25,7 @@ Please note: A [workaround for CORS](https://chrome.google.com/webstore/detail/a
 1. You should now see a new browser icon. Go to a page and start tagging.
 1. In case of error: Press "f12" and have a look at the console log output.
 
-Please note: After loading the plugin you'll see that it has a extension id in the list of loaded Extensions. Ensure that the file `dist/menu.tpl.html` point to this extension id. More info here about [how the chrome plugin refers to files](https://developer.chrome.com/extensions/overview#relative-urls).  
+Please note: After loading the plugin you'll see that it has a extension id in Chrome's list of loaded Extensions. Ensure that the file `dist/menu.tpl.html` point to this extension id. More info here about [how the chrome plugin refers to files](https://developer.chrome.com/extensions/overview#relative-urls).  
 
 ## What's happening under the hood?
 
