@@ -1,6 +1,8 @@
 # tag-youre-it
 A chrome extension for tagging words with semantic information.
 
+![Sample screenshot of the plugin in action](/screenshot.png?raw=true)
+
 ## Development
 
 What you need to do to get started developing this plugin. 
