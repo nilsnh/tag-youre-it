@@ -1,12 +1,12 @@
 
-chrome.browserAction.onClicked.addListener(function () {
+chrome.browserAction.onClicked.addListener(function (tab) {
 	isMenuOpen(function (responseIsItOpen) {
 		if (responseIsItOpen) {
 			console.log('Closing menu');
 			chrome.tabs.reload();
 		} else {
 			console.log('Opening menu');
-			injectIframe();
+			injectIframe(tab);
 		}
 	})
 });
@@ -17,13 +17,12 @@ function isMenuOpen(callback) {
 	});
 }
 
-function injectIframe() {
+function injectIframe(tab) {
 
-	chrome.tabs.executeScript(null, {
+	chrome.tabs.executeScript(tab.id, {
 		file: 'app.js'
 	}, () => {
-
-		chrome.tabs.insertCSS(null, {
+		chrome.tabs.insertCSS(tab.id, {
 			file: 'style.css',
 			allFrames: true
 		});
