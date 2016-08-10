@@ -27,13 +27,16 @@ export class SettingsCtrl {
     private SettingsService: SettingsService) {
 
     $scope.vm = this;
-    this.serverToSendTo = SettingsService.senseDestinationUrl
-    this.senseQueryUrl = SettingsService.senseQueryUrl
+    this.loadSettings()
 
     $scope.$watch('vm.serverToSendTo', (newValue: string, oldValue) => {
-      SettingsService.senseDestinationUrl = newValue;
+      SettingsService.setSenseDestinationUrl(newValue)
     })
+  }
 
+  loadSettings() {
+    this.SettingsService.getSenseDestinationUrl().then(url => this.serverToSendTo = url)
+    this.SettingsService.getSenseQueryUrl().then(url => this.senseQueryUrl = url)
   }
 
   resetDefaults() {
@@ -42,9 +45,7 @@ export class SettingsCtrl {
       return //exit if user says 'no'
     }
 
-    this.SettingsService.resetSettings(() => {
-      this.serverToSendTo = this.SettingsService.senseDestinationUrl
-    });
+    this.SettingsService.resetSettings().then(() => this.loadSettings())
   }
 
 

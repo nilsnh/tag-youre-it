@@ -1,3 +1,13 @@
+
+/**
+ * Enumerate the things we can store.
+ * 
+ * More info: https://basarat.gitbooks.io/typescript/content/docs/types/stringLiteralType.html
+ */
+type StorableSetting =
+  'tagitSenseQueryUrl' |
+  'tagitSenseDestinationUrl'
+
 /**
  * Responsible for handling persisting and retrieving
  * *select* user settings. Some settings might not be user 
@@ -6,93 +16,92 @@
 export class SettingsService {
 
   // where to query for senses
-  private _senseQueryUrl = 'https://imdb.uib.no/lexitags/lexitags'
   private _defaultSenseQueryUrl = 'https://imdb.uib.no/lexitags/lexitags'
 
   // where to send the senses
-  private _senseDestinationUrl = 'https://www.example.org/somewhere'
   private _defaultSenseDestinationUrl = 'https://www.example.org/somewhere'
 
   private _emailToTagWith = ''
 
-  constructor(private $log: ng.ILogService) {
-
-    // fall back to default value if no user defined setting
-    this.loadSetting('tagitSenseQueryUrl', (loadedSetting) => {
-      if (loadedSetting) this._senseQueryUrl = loadedSetting
-      else this._senseQueryUrl = this._defaultSenseQueryUrl
-    })
-
-    this.loadSetting('tagitSenseDestinationUrl', (loadedSetting) => {
-      if (loadedSetting) this._senseDestinationUrl = loadedSetting
-      else this._senseDestinationUrl = this._defaultSenseDestinationUrl
-    })
-
+  constructor(private $log: ng.ILogService, private $q: ng.IQService) {
   }
 
-  resetSettings(callback) {
-
-    // reset to default values
-    this._defaultSenseQueryUrl = this._defaultSenseQueryUrl
-    this._senseDestinationUrl = this._defaultSenseDestinationUrl
-
-    // delete from chrome storage
-    if (typeof chrome.storage !== 'undefined') {
-      const done = _.after(2, callback);
-      chrome.storage.sync.remove('tagitSenseDestinationUrl', done)
-      chrome.storage.sync.remove('tagitSenseQueryUrl', done)
-    }
-    // delete from localstorage (dev mode) 
-    else {
-      localStorage.removeItem('tagitSenseQueryUrl')
-      localStorage.removeItem('tagitSenseDestinationUrl')
-      callback()
-    }
+  getSenseQueryUrl() {
+    return this.loadSetting('tagitSenseQueryUrl')
+      .then((value) => this.returnDefaultValueIfMissing(value, this._defaultSenseQueryUrl))
   }
 
-  private loadSetting(whatToFind: string, callback) {
+  setSenseQueryUrl(newUrl: string) {
+    return this.saveSetting('tagitSenseQueryUrl', newUrl)
+  }
+
+  getSenseDestinationUrl() {
+    return this.loadSetting('tagitSenseDestinationUrl')
+      .then((value) => this.returnDefaultValueIfMissing(value, this._defaultSenseDestinationUrl))
+  }
+
+  setSenseDestinationUrl(newUrl: string) {
+    return this.saveSetting('tagitSenseDestinationUrl', newUrl)
+  }
+
+  private returnDefaultValueIfMissing(thingToCheck, defaultToUseIfMissingValue) {
+    if (thingToCheck) return thingToCheck
+    else return defaultToUseIfMissingValue
+  }
+
+  private loadSetting(whatToFind: StorableSetting) {
     // support for dev mode (when not loaded as a proper chrome plugin).
     if (typeof chrome.storage === 'undefined') {
-      callback(localStorage.getItem(whatToFind))
-      return // exit function
+      return this.$q.when(localStorage.getItem(whatToFind))
     }
 
     const syncStorage = chrome.storage.sync
-    syncStorage.get(whatToFind, (loadedObject) => {
-      //the loadedObject can contain one or more loaded items.
-      //more info: https://developer.chrome.com/extensions/storage
-      callback(loadedObject[whatToFind]);
+
+    return this.$q((resolve, reject) => {
+      syncStorage.get(whatToFind, (loadedObject) => {
+
+        this.$log.debug('loadedSetting()')
+        this.$log.debug(loadedObject)
+
+        resolve(loadedObject[whatToFind])
+      })
     })
   }
 
-  private saveSetting(nameOfThingToSave: string, valueToSave) {
+  private saveSetting(nameOfThingToSave: StorableSetting, valueToSave) {
     // support for dev mode (when not loaded as a proper chrome plugin).
     if (typeof chrome.storage === 'undefined') {
       localStorage.setItem(nameOfThingToSave, valueToSave)
-      return // exit function
+      return this.$q.when(valueToSave)
     }
 
     const syncStorage = chrome.storage.sync
-    syncStorage.set({ nameOfThingToSave: valueToSave }, () => {
-      this.$log.debug('saveSetting successfully saved to chrome storage.')
+    return this.$q((resolve, reject) => {
+      syncStorage.set({ nameOfThingToSave: valueToSave }, resolve)
+    }).then(() => {
+      this.$log.debug('saved setting')
+      this.$log.debug(valueToSave)
+      return valueToSave
     })
   }
 
-  get senseQueryUrl() {
-    return this._senseQueryUrl
-  }
+  resetSettings() {
 
-  set senseQueryUrl(newUrl: string) {
-    this._senseQueryUrl = newUrl
-  }
+    return this.$q((resolve, reject) => {
 
-  get senseDestinationUrl() {
-    return this._senseDestinationUrl
-  }
-
-  set senseDestinationUrl(newUrl: string) {
-    this._senseDestinationUrl = newUrl
-    this.saveSetting('tagitSenseDestinationUrl', newUrl)
+      // delete from chrome storage
+      if (typeof chrome.storage !== 'undefined') {
+        const done = _.after(2, resolve);
+        chrome.storage.sync.remove('tagitSenseDestinationUrl', done)
+        chrome.storage.sync.remove('tagitSenseQueryUrl', done)
+      }
+      // delete from localstorage (dev mode) 
+      else {
+        localStorage.removeItem('tagitSenseQueryUrl')
+        localStorage.removeItem('tagitSenseDestinationUrl')
+        resolve()
+      }
+    })
   }
 
 }
