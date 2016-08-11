@@ -1,12 +1,9 @@
 
-/**
- * Enumerate the things we can store.
- * 
- * More info: https://basarat.gitbooks.io/typescript/content/docs/types/stringLiteralType.html
- */
-type StorableSetting =
-  'tagitSenseQueryUrl' |
-  'tagitSenseDestinationUrl'
+interface saveableSettings {
+  tagitSenseQueryUrl: string
+  tagitSenseDestinationUrl: string
+  emailToTagWith: string
+}
 
 /**
  * Responsible for handling persisting and retrieving
@@ -21,67 +18,60 @@ export class SettingsService {
   // where to send the senses
   private _defaultSenseDestinationUrl = 'https://www.example.org/somewhere'
 
-  private _emailToTagWith = ''
-
   constructor(private $log: ng.ILogService, private $q: ng.IQService) {
   }
 
-  getSenseQueryUrl() {
-    return this.loadSetting('tagitSenseQueryUrl')
-      .then((value) => this.returnDefaultValueIfMissing(value, this._defaultSenseQueryUrl))
-  }
+  saveSettings(thingsToSave: saveableSettings) {
 
-  setSenseQueryUrl(newUrl: string) {
-    return this.saveSetting('tagitSenseQueryUrl', newUrl)
-  }
-
-  getSenseDestinationUrl() {
-    return this.loadSetting('tagitSenseDestinationUrl')
-      .then((value) => this.returnDefaultValueIfMissing(value, this._defaultSenseDestinationUrl))
-  }
-
-  setSenseDestinationUrl(newUrl: string) {
-    return this.saveSetting('tagitSenseDestinationUrl', newUrl)
-  }
-
-  private returnDefaultValueIfMissing(thingToCheck, defaultToUseIfMissingValue) {
-    if (thingToCheck) return thingToCheck
-    else return defaultToUseIfMissingValue
-  }
-
-  private loadSetting(whatToFind: StorableSetting) {
     // support for dev mode (when not loaded as a proper chrome plugin).
     if (typeof chrome.storage === 'undefined') {
-      return this.$q.when(localStorage.getItem(whatToFind))
+      angular.forEach(thingsToSave, (value, key) => {
+        localStorage.setItem(key, value)
+      })
+      return this.$q.when(thingsToSave)
     }
 
-    const syncStorage = chrome.storage.sync
-
     return this.$q((resolve, reject) => {
-      syncStorage.get(whatToFind, (loadedObject) => {
-
-        this.$log.debug('loadedSetting()')
-        this.$log.debug(loadedObject)
-
-        resolve(loadedObject[whatToFind])
-      })
+      chrome.storage.sync.set(thingsToSave, resolve)
+    }).then(() => {
+      this.$log.debug('saved setting')
+      this.$log.debug(thingsToSave)
+      return thingsToSave
     })
   }
 
-  private saveSetting(nameOfThingToSave: StorableSetting, valueToSave) {
-    // support for dev mode (when not loaded as a proper chrome plugin).
-    if (typeof chrome.storage === 'undefined') {
-      localStorage.setItem(nameOfThingToSave, valueToSave)
-      return this.$q.when(valueToSave)
-    }
+  loadSettings(): PromiseLike<saveableSettings> {
 
-    const syncStorage = chrome.storage.sync
     return this.$q((resolve, reject) => {
-      syncStorage.set({ nameOfThingToSave: valueToSave }, resolve)
-    }).then(() => {
-      this.$log.debug('saved setting')
-      this.$log.debug(valueToSave)
-      return valueToSave
+
+      //when backed by localStorage (dev)
+      if (typeof chrome.storage === 'undefined') {
+        resolve({
+          'tagitSenseDestinationUrl': localStorage.getItem('tagitSenseDestinationUrl'),
+          'tagitSenseQueryUrl': localStorage.getItem('tagitSenseQueryUrl'),
+          'emailToTagWith': localStorage.getItem('emailToTagWith')
+        })
+      } 
+      //when backed by chrome.storage.sync (production)      
+      else {
+        chrome.storage.sync.get(null, resolve)
+      }
+
+    })
+    //use default value if no setting specified.
+    .then((loadedSettings: saveableSettings) => {
+
+      if (!loadedSettings.tagitSenseDestinationUrl) {
+        loadedSettings.tagitSenseDestinationUrl = this._defaultSenseDestinationUrl
+      }
+      if (!loadedSettings.tagitSenseQueryUrl) {
+        loadedSettings.tagitSenseQueryUrl = this._defaultSenseQueryUrl
+      }
+      if (!loadedSettings.emailToTagWith) {
+        loadedSettings.emailToTagWith = ''
+      }
+
+      return loadedSettings
     })
   }
 
@@ -91,14 +81,13 @@ export class SettingsService {
 
       // delete from chrome storage
       if (typeof chrome.storage !== 'undefined') {
-        const done = _.after(2, resolve);
-        chrome.storage.sync.remove('tagitSenseDestinationUrl', done)
-        chrome.storage.sync.remove('tagitSenseQueryUrl', done)
+        chrome.storage.sync.clear(resolve)
       }
       // delete from localstorage (dev mode) 
       else {
         localStorage.removeItem('tagitSenseQueryUrl')
         localStorage.removeItem('tagitSenseDestinationUrl')
+        localStorage.removeItem('emailToTagWith')
         resolve()
       }
     })

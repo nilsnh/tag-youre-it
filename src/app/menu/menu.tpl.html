@@ -12,8 +12,8 @@
     Will only work when deployed as a chrome plugin
     more info: https://developer.chrome.com/extensions/overview#relative-urls
   -->
-  <link href="chrome-extension://lpjhabnmodhcjhfdlfahkncecambemoi/material.css" rel="stylesheet">
-  <script src="chrome-extension://lpjhabnmodhcjhfdlfahkncecambemoi/material.js"></script>
+  <link href="chrome-extension://lofaefnmemfjgcamajbjdoahbpoappik/material.css" rel="stylesheet">
+  <script src="chrome-extension://lofaefnmemfjgcamajbjdoahbpoappik/material.js"></script>
 
   <style>
     /*
@@ -54,14 +54,14 @@
 
     <header class="mdl-layout__header">
       <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-        <a href="#main-panel" class="mdl-layout__tab is-active">Tag you're it</a>
-        <a href="#settings-panel" class="mdl-layout__tab">Settings</a>
+        <a href="#main-panel" class="mdl-layout__tab">Tag you're it</a>
+        <a href="#settings-panel" class="mdl-layout__tab is-active">Settings</a>
       </div>
     </header>
 
     <div class="mdl-layout__content">
 
-      <div ng-controller="MenuCtrl" class="mdl-layout__tab-panel mdl-grid is-active" id="main-panel">
+      <div ng-controller="MenuCtrl" class="mdl-layout__tab-panel mdl-grid" id="main-panel">
 
         <br>
 
@@ -101,13 +101,13 @@
 
       </div>
 
-      <div ng-controller="SettingsCtrl" class="mdl-layout__tab-panel mdl-grid" id="settings-panel">
+      <div ng-controller="SettingsCtrl" class="mdl-layout__tab-panel mdl-grid is-active" id="settings-panel">
 
         <br>
 
         <p>Changes will be automatically saved.</p>
 
-        <form action="">
+        <form action="" novalidate>
 
           <p>
             <strong><label for="backend-url">Tag destination url:</label></strong>
@@ -124,6 +124,8 @@
           </p>
 
         </form>
+
+        <p><a href ng-click="vm.saveSettings()">Save settings</a> <span ng-if="vm.savedSetting">saved!</span></p>
 
         <p><a href ng-click="vm.resetDefaults()">Reset to default settings</a></p>
 

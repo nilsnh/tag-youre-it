@@ -4,7 +4,7 @@ import {
   BackendService,
   WebPageService,
   TagStorageService,
-  FileService, 
+  FileService,
   SettingsService} from '../services/index'
 import {IVMScope, ISense} from '../index.interfaces'
 
@@ -17,10 +17,13 @@ export class SettingsCtrl {
 
   serverToSendTo
   senseQueryUrl
+  emailToTagWith
+  savedSetting = false
 
   constructor(
-    private $scope: IVMScope, 
-    $log: angular.ILogService,
+    private $scope: IVMScope,
+    private $log: angular.ILogService,
+    private $timeout: angular.ITimeoutService,
     BackendService: BackendService,
     WebPageService: WebPageService,
     TagStorageService: TagStorageService,
@@ -29,14 +32,29 @@ export class SettingsCtrl {
     $scope.vm = this;
     this.loadSettings()
 
-    $scope.$watch('vm.serverToSendTo', (newValue: string, oldValue) => {
-      SettingsService.setSenseDestinationUrl(newValue)
-    })
   }
 
   loadSettings() {
-    this.SettingsService.getSenseDestinationUrl().then(url => this.serverToSendTo = url)
-    this.SettingsService.getSenseQueryUrl().then(url => this.senseQueryUrl = url)
+    this.SettingsService.loadSettings().then((settings) => {
+      this.senseQueryUrl = settings.tagitSenseQueryUrl
+      this.serverToSendTo = settings.tagitSenseDestinationUrl
+      this.emailToTagWith = settings.emailToTagWith
+    })
+  }
+
+  saveSettings() {
+    this.$log.debug('saving!')
+    this.SettingsService.saveSettings({
+      'tagitSenseDestinationUrl': this.serverToSendTo,
+      'tagitSenseQueryUrl': this.senseQueryUrl,
+      'emailToTagWith': this.emailToTagWith
+    }).then(() => {
+      // display 'saved!' for a short time before hiding it
+      this.savedSetting = true
+      this.$timeout(()=> {
+        this.savedSetting = false
+      }, 3000)
+    })
   }
 
   resetDefaults() {
