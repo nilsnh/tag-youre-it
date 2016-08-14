@@ -21,6 +21,7 @@ export class MenuCtrl {
     private WebPageService: WebPageService,
     private TagStorageService: TagStorageService,
     private FileService: FileService) {
+    
     $scope.vm = this;
 
     this.$scope.$on('wordWasSelected', (event, selectedWord) => {

@@ -6,7 +6,7 @@ export interface ISynset {
   }
 }
 
-export interface IVMScope extends angular.IScope {
+export interface IVMScope extends angular.IRootScopeService {
   vm: Object;
 }
 
