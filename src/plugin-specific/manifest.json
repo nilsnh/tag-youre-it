@@ -1,7 +1,7 @@
 {
   "name": "Tag you're it",
   "description": "A browser tool for tagging words with exact definitions.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "manifest_version": 2,
   "icons": {
     "16": "icon16.png",
@@ -17,7 +17,7 @@
   ],
   "oauth2": {
     "client_id": "324400631833-lvbvjm8ppis9qn92jvq42b5qoc3s7qu4.apps.googleusercontent.com",
-    "scopes": []
+    "scopes": ["email"]
   },
   "background": {
     "persistent": false,

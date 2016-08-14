@@ -34,15 +34,30 @@ function injectIframe(tab) {
 chrome.runtime.onMessage.addListener((msg) => {
 	if (msg.command === 'requestUserInfo') {
 		console.log('Extension got a command to retrieve user info');
-		chrome.identity.getProfileUserInfo((userInfo) => {
-			console.log(userInfo)
-			messageExtension({loginObj: userInfo})
-    });
+		chrome.identity.getAuthToken({ interactive: true }, function (token) {
+			console.log('user was logged in and token is: ');
+			console.log(token);
+			//with the user logged in we can finally ask for email.
+			askForUserEmail(); 
+		})
 	}
 });
 
+function askForUserEmail() {
+	chrome.identity.getProfileUserInfo((userInfo) => {
+		console.log(userInfo)
+		messageExtension({ loginObj: userInfo })
+	});
+}
+
 function messageExtension(messageToSend, callback) {
-	chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+	/**
+	 * small note: Cannot query tab for currentWindow: true because 
+	 * opening a new window to approve the app permissions 
+	 * will prevent this script from finding the right 
+	 * tab to message with the user info. 
+	 */
+	chrome.tabs.query({ active: true }, function (tabs) {
 		if (callback) {
 			chrome.tabs.sendMessage(tabs[0].id, messageToSend, callback);
 		} else {
