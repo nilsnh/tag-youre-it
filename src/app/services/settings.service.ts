@@ -18,6 +18,9 @@ export class SettingsService {
   // where to send the senses
   private _defaultSenseDestinationUrl = 'https://www.example.org/somewhere'
 
+  //If we have the user's email we treat the user as logged in.
+  private emailWasLoaded = false;
+
   constructor(private $log: ng.ILogService, private $q: ng.IQService) {
   }
 
@@ -70,12 +73,31 @@ export class SettingsService {
       if (!loadedSettings.tagitSenseDestinationUrl) {
         loadedSettings.tagitSenseDestinationUrl = this._defaultSenseDestinationUrl
       }
-      if (!loadedSettings.emailToTagWith) {
+      
+      if (loadedSettings.emailToTagWith) {
+        this.emailWasLoaded = true;
+      } else {
         loadedSettings.emailToTagWith = ''
       }
 
       return loadedSettings
     })
+  }
+
+  /**
+   * Returns true if user was logged in, which
+   * we treat as true if we have the user's email 
+   */
+  isUserLoggedIn() {
+    return this.emailWasLoaded
+  }
+
+  /**
+   * Purpose: Let user's use the app without 
+   * actually logging in.
+   */
+  setLoggedIn(loggedInState) {
+    this.emailWasLoaded = loggedInState
   }
 
   resetSettings() {

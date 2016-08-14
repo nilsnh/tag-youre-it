@@ -31,7 +31,7 @@ export class SettingsCtrl {
 
     $scope.vm = this;
     this.loadSettings()
-    this.startListeningForLogins()
+    this.startListeningToLoginStatus()
   }
 
   loadSettings() {
@@ -66,20 +66,32 @@ export class SettingsCtrl {
     this.SettingsService.resetSettings().then(() => this.loadSettings())
   }
 
-  testLogin() {
+  doLogin() {
     if (typeof chrome === 'undefined') return; //do nothing
-    chrome.runtime.sendMessage({command: 'requestUserInfo'})
+    chrome.runtime.sendMessage({command: 'loginAndRequestUserInfo'})
   }
 
-  startListeningForLogins() {
+  logoutUser() {
+    if (typeof chrome === 'undefined') return; //do nothing
+    chrome.runtime.sendMessage({command: 'logOutUser'})
+  }
+
+  startListeningToLoginStatus() {
+    if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
     chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
-      if (request.loginObj) {
-        this.$log.debug('listenForLogin() got a message from the extension')
-        this.$log.debug(request)
+      
+      this.$log.debug('listenForLogin() got a message from the extension')
+      this.$log.debug(request)
+
+      if (request === 'deletedUserAuthToken') {
+        this.SettingsService.resetSettings()
       }
-    }
-  );
+      else if (request.loginObj) {
+        this.emailToTagWith = request.loginObj.email
+        this.saveSettings();
+      }
+    })
   }
 
 }

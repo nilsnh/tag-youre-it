@@ -36,7 +36,11 @@ export class BackendService {
   sendTaggedDataToServer(senseTag: ISenseTag) {
     this.$log.debug('sendTaggedDataToServer() was called');
     return this.SettingsService.loadSettings()
-      .then(loadedSettings => this.$http.post(loadedSettings.tagitSenseDestinationUrl, senseTag))
+      .then(loadedSettings => {
+        //let's add in the user's email to the tag.
+        senseTag.userEmail = loadedSettings.emailToTagWith 
+        this.$http.post(loadedSettings.tagitSenseDestinationUrl, senseTag)
+      })
   }
 
 }
