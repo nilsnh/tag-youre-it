@@ -32,36 +32,61 @@ function injectIframe(tab) {
  * javascript.
  */
 chrome.runtime.onMessage.addListener((msg) => {
-	if (msg.command === 'requestUserInfo') {
+	if (msg.command === 'loginAndRequestUserInfo') {
 		console.log('Extension got a command to retrieve user info');
+
+		loginUser()
+			.then(askForUserEmail)
+			.then(function (userInfo) {
+				messageExtension({ loginObj: userInfo });
+			});
+	}
+
+	if (msg.command === 'logOutUser') {
+		logOutUser().then(function () {
+			messageExtension('deletedUserAuthToken');
+		});
+	}
+
+});
+
+function loginUser() {
+	return new Promise(function (resolve, reject) {
 		chrome.identity.getAuthToken({ interactive: true }, function (token) {
 			console.log('user was logged in and token is: ');
 			console.log(token);
-			//with the user logged in we can finally ask for email.
-			askForUserEmail(); 
+			resolve(token);
 		})
-	}
-});
-
-function askForUserEmail() {
-	chrome.identity.getProfileUserInfo((userInfo) => {
-		console.log(userInfo)
-		messageExtension({ loginObj: userInfo })
 	});
 }
 
-function messageExtension(messageToSend, callback) {
+function askForUserEmail() {
+		return new Promise(function (resolve, reject) {
+		chrome.identity.getProfileUserInfo(resolve);
+		});
+}
+
+function logOutUser() {
+	return new Promise(function (resolve, reject) {
+		loginUser()
+			.then(function (loadedToken) {
+				chrome.identity.removeCachedAuthToken({ token: loadedToken }, resolve);
+			})
+	});
+}
+
+function messageExtension(messageToSend) {
 	/**
 	 * small note: Cannot query tab for currentWindow: true because 
 	 * opening a new window to approve the app permissions 
 	 * will prevent this script from finding the right 
 	 * tab to message with the user info. 
 	 */
-	chrome.tabs.query({ active: true }, function (tabs) {
-		if (callback) {
-			chrome.tabs.sendMessage(tabs[0].id, messageToSend, callback);
-		} else {
-			chrome.tabs.sendMessage(tabs[0].id, messageToSend);
-		}
-	});
+	return new Promise(function (resolve, reject) {
+		chrome.tabs.query({ active: true }, function (tabs) {
+			chrome.tabs.sendMessage(tabs[0].id, messageToSend, resolve);
+		});
+	})
+
+
 }
