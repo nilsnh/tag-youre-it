@@ -14,7 +14,7 @@ export class BackendService {
   constructor(
     private $http: ng.IHttpService,
     private $q: ng.IQService,
-    private $log: ng.ILogService, 
+    private $log: ng.ILogService,
     private SettingsService: SettingsService) {
   }
 
@@ -29,12 +29,14 @@ export class BackendService {
 
     //alright let's make this query!
     this.previousCall = word;
-    return this.$http.get(`${this.SettingsService.senseQueryUrl}/${word}`)
+    return this.SettingsService.loadSettings()
+      .then(loadedSettings => this.$http.get(`${loadedSettings.tagitSenseQueryUrl}/${word}`))
   }
 
   sendTaggedDataToServer(senseTag: ISenseTag) {
     this.$log.debug('sendTaggedDataToServer() was called');
-    return this.$http.post(this.SettingsService.senseDestinationUrl, senseTag)
+    return this.SettingsService.loadSettings()
+      .then(loadedSettings => this.$http.post(loadedSettings.tagitSenseDestinationUrl, senseTag))
   }
 
 }
