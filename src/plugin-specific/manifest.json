@@ -8,7 +8,7 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "key": "edaikeockhhgpaphanebdpgdcihekchg",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAipAs6zVWMl5Amlhf0N92ZJHv0d8X09dklEELTXFP5ScIwEAKgq4ZvOFqNpJqpUXKlS0sYEh3WSBaDAhhY697r7SXwSQanx7/NFHv5V1ttxqA2uCC0PEtoAZmzdbvF3k9ZA/04cL2NqE38hJ7+ElQNjULShsCHAzYpl3Ej+nxe196BNW7V0+cPE38Sw6psP0LjaovEHX/FbhZwLn/1f1vIWzoee85PdwDsVkl1XuVhk3uOmRx6eYVZSLD1Z3KmYdhHXG20JzZmMh0axGPGIhOLb39Ve4o829iHUDQV6ZcI8u5LgUGJrm74Grk322mQ649rmRG5FpNhVFttkWOiaZ/GwIDAQAB",
   "permissions": [
     "storage",
     "activeTab",
