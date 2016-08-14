@@ -4,7 +4,7 @@
   "description": "Make the meaning clear. This plugin enables semantic tagging of web content.",
   "main": "Gulpfile.js",
   "scripts": {
-    "clean": "rm -r dist",
+    "clean": "rm -r dist typings node_modules jspm_packages || true",
     "build": "jspm bundle-sfx src/app/main.ts dist/app.js --inline-source-maps && ./build.sh",
     "start": "browser-sync start --no-notify -b google-chrome --startPath test/ --server --files 'src/**/*'",
     "postinstall": "typings install && jspm install"
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/nilsnh/tag-youre-it",
   "dependencies": {
     "browser-sync": "^2.9.6",
-    "jspm": "^0.16.39",
+    "jspm": "^0.16.40",
     "material-design-lite": "^1.1.3",
     "typings": "^1.3.0"
   },
