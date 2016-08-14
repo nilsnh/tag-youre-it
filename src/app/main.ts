@@ -50,7 +50,7 @@ function loadAngular() {
  * running in the background. 
  */
 function setupChromeListener() {
-  if (typeof chrome === 'undefined') return; //do nothing
+  if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
 
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
