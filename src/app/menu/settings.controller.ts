@@ -66,5 +66,12 @@ export class SettingsCtrl {
     this.SettingsService.resetSettings().then(() => this.loadSettings())
   }
 
+  testLogin() {
+    debugger;
+    chrome.identity.getAuthToken({'interactive': true}, 
+    (token) => {
+      debugger;
+    })
+  }
 
 }
