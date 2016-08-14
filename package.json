@@ -7,6 +7,7 @@
     "clean": "rm -r dist typings node_modules jspm_packages || true",
     "build": "jspm bundle-sfx src/app/main.ts dist/app.js --inline-source-maps && ./build.sh",
     "start": "browser-sync start --no-notify -b google-chrome --startPath test/ --server --files 'src/**/*'",
+    "package": "rm dist.zip && zip -r dist.zip dist",
     "postinstall": "typings install && jspm install"
   },
   "repository": {
