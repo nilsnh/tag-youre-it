@@ -29,11 +29,6 @@ export class MenuCtrl {
       this.onWordSelectedEvent(selectedWord);
     });
 
-    this.$scope.$on('wordWasSelected', (event, selectedWord) => {
-      this.$log.debug('a word was selected' + selectedWord);
-      this.onWordSelectedEvent(selectedWord);
-    });
-
     // Reload existing tags
     var tagsToLoad = this.TagStorageService.loadTagsForCurrentPage();
 
