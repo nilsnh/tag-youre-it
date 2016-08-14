@@ -31,7 +31,7 @@ export class SettingsCtrl {
 
     $scope.vm = this;
     this.loadSettings()
-
+    this.startListeningForLogins()
   }
 
   loadSettings() {
@@ -67,11 +67,19 @@ export class SettingsCtrl {
   }
 
   testLogin() {
-    debugger;
-    chrome.identity.getAuthToken({'interactive': true}, 
-    (token) => {
-      debugger;
-    })
+    if (typeof chrome === 'undefined') return; //do nothing
+    chrome.runtime.sendMessage({command: 'requestUserInfo'})
+  }
+
+  startListeningForLogins() {
+    chrome.runtime.onMessage.addListener(
+    (request, sender, sendResponse) => {
+      if (request.loginObj) {
+        this.$log.debug('listenForLogin() got a message from the extension')
+        this.$log.debug(request)
+      }
+    }
+  );
   }
 
 }
