@@ -35,6 +35,7 @@ export class SettingsCtrl {
   }
 
   loadSettings() {
+    this.$log.debug('loadSettings()')
     this.SettingsService.loadSettings().then((settings) => {
       this.senseQueryUrl = settings.tagitSenseQueryUrl
       this.serverToSendTo = settings.tagitSenseDestinationUrl
@@ -44,7 +45,7 @@ export class SettingsCtrl {
 
   saveSettings() {
     this.$log.debug('saving!')
-    this.SettingsService.saveSettings({
+    return this.SettingsService.saveSettings({
       'tagitSenseDestinationUrl': this.serverToSendTo,
       'tagitSenseQueryUrl': this.senseQueryUrl,
       'emailToTagWith': this.emailToTagWith
@@ -53,7 +54,7 @@ export class SettingsCtrl {
       this.savedSetting = true
       this.$timeout(()=> {
         this.savedSetting = false
-      }, 3000)
+      }, 3000);
     })
   }
 
@@ -78,6 +79,7 @@ export class SettingsCtrl {
 
   startListeningToLoginStatus() {
     if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
+    this.$log.debug('startListeningToLoginStatus()')
     chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
       
@@ -89,7 +91,7 @@ export class SettingsCtrl {
       }
       else if (request.loginObj) {
         this.emailToTagWith = request.loginObj.email
-        this.saveSettings();
+        this.saveSettings().then(() => this.loadSettings());
       }
     })
   }
