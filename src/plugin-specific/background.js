@@ -12,7 +12,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 });
 
 function isMenuOpen(callback) {
-	messageExtension('isMenuOpen', callback);
+	messageExtension('isMenuOpen').then(callback);
 }
 
 function injectIframe(tab) {
@@ -32,12 +32,17 @@ function injectIframe(tab) {
  * javascript.
  */
 chrome.runtime.onMessage.addListener((msg) => {
+	console.log('chrome.runtime.onMessage.addListener(msg)');
+	console.log(msg);
+	
 	if (msg.command === 'loginAndRequestUserInfo') {
 		console.log('Extension got a command to retrieve user info');
 
 		loginUser()
 			.then(askForUserEmail)
 			.then(function (userInfo) {
+				console.log('Background.js received userInfo:');
+				console.log(userInfo);
 				messageExtension({ loginObj: userInfo });
 			});
 	}
@@ -61,9 +66,9 @@ function loginUser() {
 }
 
 function askForUserEmail() {
-		return new Promise(function (resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		chrome.identity.getProfileUserInfo(resolve);
-		});
+	});
 }
 
 function logOutUser() {
