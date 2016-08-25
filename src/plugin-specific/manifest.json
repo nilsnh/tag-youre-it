@@ -13,6 +13,7 @@
     "storage",
     "activeTab",
     "identity",
+    "identity.email",
     "https://imdb.uib.no/"
   ],
   "oauth2": {
