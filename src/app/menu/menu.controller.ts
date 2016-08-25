@@ -52,7 +52,6 @@ export class MenuCtrl {
       var senseTag = this.WebPageService.initializeNewTag(sense);
       this.TagStorageService.saveTag(senseTag);
 
-      // deactivate BackendService for now.
       this.BackendService.sendTaggedDataToServer(senseTag);
 
       //re-add tags, with new tag. Clear menu options.
