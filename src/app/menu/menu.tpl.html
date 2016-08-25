@@ -44,6 +44,10 @@
       background-color: #eee;
       cursor: pointer;
     }
+    
+    .ng-hide {
+      display: none !important;
+    }
   </style>
 
 </head>
@@ -65,39 +69,56 @@
 
         <br>
 
-        <p>Actions:
-          <a href ng-click="vm.downloadTagsForPage()">Download tags (current page)</a> |
-          <a href ng-click="vm.downloadAllTagsForDomain()">Download all tags (domain)</a> |
-          <a href ng-click="vm.removeTagsFromLocalStorage()">Delete tags from current page</a>
-        </p>
+        <div ng-show="!vm.isUserLoggedIn()">
+          <p>Welcome dear user!</p>
 
-        <p>
-          Mark one or two words on the page to the right. And we'll supply you with possible definitions. Select a definition and the
-          word will be tagged.
-        </p>
+          <p>Please login to use this application.</p>
 
-        <p ng-if="vm.selectedWord">
-          Currently selected word: <strong>{{vm.selectedWord}}</strong>
-        </p>
+          <p>
+            <a href ng-click="vm.doLogin()">Click here to log in</a>
+          </p>
+          <p>
+            <a href ng-click="vm.continueWithoutLoggingIn()">Click here to use application without logging in.</a>
+          </p>
 
-        <p ng-if="!vm.selectedWord">
-          Currently selected word: <strong>No word selected.</strong>
-        </p>
+        </div>
 
-        <center>
-          <div ng-if="vm.isLoadingSenses()" class="is-active mdl-spinner mdl-spinner--single-color mdl-js-spinner"></div>
-        </center>
+        <!-- use display none on element to hide element before angular is done loading -->
+        <div style="display: none;" ng-style="vm.isUserLoggedIn()">
+          <p>Actions:
+            <a href ng-click="vm.downloadTagsForPage()">Download tags (current page)</a> |
+            <a href ng-click="vm.downloadAllTagsForDomain()">Download all tags (domain)</a> |
+            <a href ng-click="vm.removeTagsFromLocalStorage()">Delete tags from current page</a>
+          </p>
 
-        <ul id="senses">
+          <p>
+            Mark one or two words on the page to the right. And we'll supply you with possible definitions. Select a definition and the
+            word will be tagged.
+          </p>
 
-          <li ng-if="vm.senses.length > 0">
-            <strong>Available sense tags:</strong>
-          </li>
+          <p ng-if="vm.selectedWord">
+            Currently selected word: <strong>{{vm.selectedWord}}</strong>
+          </p>
 
-          <li ng-click="vm.onSenseSelect(sense)" id="sense.senseid" ng-repeat="sense in vm.senses" class="list-unstyled">
-            <strong>{{sense.word}}</strong> {{sense.explanation}}
-          </li>
-        </ul>
+          <p ng-if="!vm.selectedWord">
+            Currently selected word: <strong>No word selected.</strong>
+          </p>
+
+          <center>
+            <div ng-if="vm.isLoadingSenses()" class="is-active mdl-spinner mdl-spinner--single-color mdl-js-spinner"></div>
+          </center>
+
+          <ul id="senses">
+
+            <li ng-if="vm.senses.length > 0">
+              <strong>Available sense tags:</strong>
+            </li>
+
+            <li ng-click="vm.onSenseSelect(sense)" id="sense.senseid" ng-repeat="sense in vm.senses" class="list-unstyled">
+              <strong>{{sense.word}}</strong> {{sense.explanation}}
+            </li>
+          </ul>
+        </div>
 
       </div>
 
@@ -110,15 +131,13 @@
           <p>
             <strong><label for="backend-url">Tag destination url:</label></strong>
             <input id="backend-url" type="text" ng-model="vm.serverToSendTo">
-            <br>
-            As you go about tagging pages the tags will be posted to this server endpoint.
+            <br> As you go about tagging pages the tags will be posted to this server endpoint.
           </p>
 
           <p>
             <strong><label for="tag-email">Tag email:</label></strong>
             <input id="tag-email" type="text" ng-model="vm.emailToTagWith">
-            <br>
-            The email that will be included in the tag when it's sent to the server.
+            <br> The email that will be included in the tag when it's sent to the server.
           </p>
 
         </form>
@@ -126,8 +145,6 @@
         <p><a href ng-click="vm.saveSettings()">Save settings</a> <span ng-if="vm.savedSetting">saved!</span></p>
 
         <p><a href ng-click="vm.resetDefaults()">Reset to default settings</a></p>
-
-        <p><a href ng-click="vm.testLogin()">Do test login </a> (warning functionality currently being tested)</p>
 
       </div>
     </div>

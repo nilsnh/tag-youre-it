@@ -31,10 +31,11 @@ export class SettingsCtrl {
 
     $scope.vm = this;
     this.loadSettings()
-    this.startListeningForLogins()
+    this.startListeningToLoginStatus()
   }
 
   loadSettings() {
+    this.$log.debug('loadSettings()')
     this.SettingsService.loadSettings().then((settings) => {
       this.senseQueryUrl = settings.tagitSenseQueryUrl
       this.serverToSendTo = settings.tagitSenseDestinationUrl
@@ -44,7 +45,7 @@ export class SettingsCtrl {
 
   saveSettings() {
     this.$log.debug('saving!')
-    this.SettingsService.saveSettings({
+    return this.SettingsService.saveSettings({
       'tagitSenseDestinationUrl': this.serverToSendTo,
       'tagitSenseQueryUrl': this.senseQueryUrl,
       'emailToTagWith': this.emailToTagWith
@@ -53,7 +54,7 @@ export class SettingsCtrl {
       this.savedSetting = true
       this.$timeout(()=> {
         this.savedSetting = false
-      }, 3000)
+      }, 3000);
     })
   }
 
@@ -66,20 +67,33 @@ export class SettingsCtrl {
     this.SettingsService.resetSettings().then(() => this.loadSettings())
   }
 
-  testLogin() {
+  doLogin() {
     if (typeof chrome === 'undefined') return; //do nothing
-    chrome.runtime.sendMessage({command: 'requestUserInfo'})
+    chrome.runtime.sendMessage({command: 'loginAndRequestUserInfo'})
   }
 
-  startListeningForLogins() {
+  logoutUser() {
+    if (typeof chrome === 'undefined') return; //do nothing
+    chrome.runtime.sendMessage({command: 'logOutUser'})
+  }
+
+  startListeningToLoginStatus() {
+    if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
+    this.$log.debug('startListeningToLoginStatus()')
     chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
-      if (request.loginObj) {
-        this.$log.debug('listenForLogin() got a message from the extension')
-        this.$log.debug(request)
+      
+      this.$log.debug('listenForLogin() got a message from the extension')
+      this.$log.debug(request)
+
+      if (request === 'deletedUserAuthToken') {
+        this.SettingsService.resetSettings()
       }
-    }
-  );
+      else if (request.loginObj) {
+        this.emailToTagWith = request.loginObj.email
+        this.saveSettings().then(() => this.loadSettings());
+      }
+    })
   }
 
 }

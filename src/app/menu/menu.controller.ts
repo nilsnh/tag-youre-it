@@ -5,7 +5,8 @@ import {
   BackendService,
   WebPageService,
   TagStorageService,
-  FileService} from '../services/index';
+  FileService,
+  SettingsService} from '../services/index';
 
 import {IVMScope, ISense} from '../index.interfaces';
 
@@ -20,6 +21,7 @@ export class MenuCtrl {
     private BackendService: BackendService,
     private WebPageService: WebPageService,
     private TagStorageService: TagStorageService,
+    private SettingsService: SettingsService,
     private FileService: FileService) {
     
     $scope.vm = this;
@@ -127,6 +129,30 @@ export class MenuCtrl {
   isLoadingSenses() {
     // if senses var has initialized, we check length to see if they've been loaded. 
     return this.senses && this.senses.length == 0 && this.selectedWord
+  }
+
+  /**
+   * In order to hide the menu before angular has loaded I 
+   * explicitly set display: none; on the div. 
+   * 
+   * Thus to override that after user has logged in 
+   * we use the ng-style attribute in combination with 
+   * this function below.
+   */
+  isUserLoggedIn() {
+    if (!this.SettingsService.isUserLoggedIn()) return null;
+    else return {display: 'block'};  
+  }
+
+  doLogin() {
+    this.$log.debug('doLogin()')
+    if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
+    chrome.runtime.sendMessage({command: 'loginAndRequestUserInfo'})
+  }
+
+  continueWithoutLoggingIn() {
+    this.$log.debug('continueWithoutLoggingIn()')
+    this.SettingsService.setLoggedIn(true);
   }
 
 }
