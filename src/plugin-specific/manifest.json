@@ -1,7 +1,7 @@
 {
   "name": "Tag you're it",
   "description": "A browser tool for tagging words with exact definitions.",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "manifest_version": 2,
   "icons": {
     "16": "icon16.png",
@@ -14,7 +14,7 @@
     "activeTab",
     "identity",
     "identity.email",
-    "https://imdb.uib.no/"
+    "<all_urls>"
   ],
   "oauth2": {
     "client_id": "324400631833-lvbvjm8ppis9qn92jvq42b5qoc3s7qu4.apps.googleusercontent.com",
