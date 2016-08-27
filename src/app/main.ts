@@ -18,7 +18,10 @@ import 'ngstorage';
 console.log('Finished importing');
 
 if (!window.tagitTestMode) {
-  preparePage(loadAngular);
+  preparePage(function () {
+    loadAngular()
+    chrome.runtime.sendMessage({command: 'injectCSS'})
+  });
 } 
 else {
   loadAngular();
