@@ -129,7 +129,13 @@
         <form action="" novalidate>
 
           <p>
-            <strong><label for="backend-url">Tag destination url:</label></strong>
+            <strong><label for="backend-query-url">Tag query url:</label></strong>
+            <input id="backend-query-url" type="text" ng-model="vm.senseQueryUrl">
+            <br> This is the server endpoint that will be queried for synsets.
+          </p>
+
+          <p>
+            <strong><label for="backend-url">Tag storage url:</label></strong>
             <input id="backend-url" type="text" ng-model="vm.serverToSendTo">
             <br> As you go about tagging pages the tags will be posted to this server endpoint.
           </p>

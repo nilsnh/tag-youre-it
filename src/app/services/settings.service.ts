@@ -63,12 +63,10 @@ export class SettingsService {
     })
     //use default value if no setting specified.
     .then((loadedSettings: saveableSettings) => {
-
-      /**
-       * tagitSenseQueryUrl is not configurable yet so we just use
-       * the default instead 
-       */
-      loadedSettings.tagitSenseQueryUrl = this._defaultSenseQueryUrl
+      
+      if(!loadedSettings.tagitSenseQueryUrl) {
+        loadedSettings.tagitSenseQueryUrl = this._defaultSenseQueryUrl
+      }
 
       if (!loadedSettings.tagitSenseDestinationUrl) {
         loadedSettings.tagitSenseDestinationUrl = this._defaultSenseDestinationUrl
