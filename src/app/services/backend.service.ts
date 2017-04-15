@@ -4,7 +4,7 @@ import {SettingsService} from '../services/index';
 import {ISenseTag} from '../index.interfaces';
 
 /**
- * Service that is responsible for talking to the 
+ * Service that is responsible for talking to the
  * backend server.
  */
 export class BackendService {
@@ -30,7 +30,9 @@ export class BackendService {
     //alright let's make this query!
     this.previousCall = word;
     return this.SettingsService.loadSettings()
-      .then(loadedSettings => this.$http.get(`${loadedSettings.tagitSenseQueryUrl}/${word}`))
+      .then(loadedSettings => {
+        return this.$http.get(`${loadedSettings.tagitSenseQueryUrl}/${word}`)
+      })
   }
 
   sendTaggedDataToServer(senseTag: ISenseTag) {
@@ -38,7 +40,7 @@ export class BackendService {
     return this.SettingsService.loadSettings()
       .then(loadedSettings => {
         //let's add in the user's email to the tag.
-        senseTag.userEmail = loadedSettings.emailToTagWith 
+        senseTag.userEmail = loadedSettings.emailToTagWith
         this.$http.post(loadedSettings.tagitSenseDestinationUrl, senseTag)
       })
   }

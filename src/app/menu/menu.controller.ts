@@ -16,14 +16,14 @@ export class MenuCtrl {
   senses: Object[];
 
   constructor(
-    private $scope: IVMScope, 
+    private $scope: IVMScope,
     private $log: angular.ILogService,
     private BackendService: BackendService,
     private WebPageService: WebPageService,
     private TagStorageService: TagStorageService,
     private SettingsService: SettingsService,
     private FileService: FileService) {
-    
+
     $scope.vm = this;
 
     this.$scope.$on('wordWasSelected', (event, selectedWord) => {
@@ -93,6 +93,7 @@ export class MenuCtrl {
   }
 
   onWordSelectedEvent = (newWord: string) => {
+    this.$log.debug('On word selected event()')
     if (countWords(newWord) > 2) {
       this.selectedWord = "Wops! Plugin can't handle more than two words."
       this.senses = []
@@ -100,7 +101,7 @@ export class MenuCtrl {
     else if (newWord.length === 0) {
       this.clearMenuVariables();
     }
-    else {
+    else if (this.selectedWord != newWord) {
       this.selectedWord = newWord;
       this.senses = []
       this.BackendService.callServer(newWord)
@@ -126,21 +127,21 @@ export class MenuCtrl {
   }
 
   isLoadingSenses() {
-    // if senses var has initialized, we check length to see if they've been loaded. 
+    // if senses var has initialized, we check length to see if they've been loaded.
     return this.senses && this.senses.length == 0 && this.selectedWord
   }
 
   /**
-   * In order to hide the menu before angular has loaded I 
-   * explicitly set display: none; on the div. 
-   * 
-   * Thus to override that after user has logged in 
-   * we use the ng-style attribute in combination with 
+   * In order to hide the menu before angular has loaded I
+   * explicitly set display: none; on the div.
+   *
+   * Thus to override that after user has logged in
+   * we use the ng-style attribute in combination with
    * this function below.
    */
   isUserLoggedIn() {
     if (!this.SettingsService.isUserLoggedIn()) return null;
-    else return {display: 'block'};  
+    else return {display: 'block'};
   }
 
   doLogin() {

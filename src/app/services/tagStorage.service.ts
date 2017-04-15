@@ -9,7 +9,7 @@ export class TagStorageService {
   $localStorage: { tagStorage: ISenseTag[] };
 
   constructor(
-    private $http: ng.IHttpService, 
+    private $http: ng.IHttpService,
     private $log: ng.ILogService,
     $localStorage: any) {
     this.$localStorage = $localStorage;
@@ -52,7 +52,7 @@ export class TagStorageService {
 
   loadTagsForCurrentPage(): ISenseTag[] {
     this.$log.debug('loadTagsForCurrentPage');
-    return this.$localStorage.tagStorage
+    return angular.copy(this.$localStorage.tagStorage)
       .filter((tag: ISenseTag) =>
         tag.urlOfPageThatWasTagged === window.location.href
       );
