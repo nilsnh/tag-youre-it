@@ -1,15 +1,6 @@
 {
-    "compilerOptions": {
-        "module": "system",
-        "target": "es5",
-        "noImplicitAny": false,
-        "sourceMap": true,
-        "outFile": "tmp/bundle.js"
-    },
-    "files": [
-        "src/app/globalAugments.d.ts",
-        "src/app/moduleAugments.d.ts",
-        "typings/index.d.ts",
-        "src/app/main.ts"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "noImplicitAny": false
+  }
 }

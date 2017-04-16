@@ -1,3 +1,5 @@
+/// <reference path="./globalAugments.d.ts" />
+/// <reference path="./moduleAugments.d.ts" />
 
 console.log('Trying to load TagIt menu');
 
@@ -10,9 +12,7 @@ import {
 import {MenuCtrl} from './menu/menu.controller';
 import {SettingsCtrl} from './menu/settings.controller';
 import {preparePage} from './pageRebuilder';
-import angular from 'angular';
-import 'rangy';
-import 'uuid';
+import * as angular from 'angular';
 import 'ngstorage';
 
 console.log('Finished importing');
@@ -22,7 +22,7 @@ if (!window.tagitTestMode) {
     loadAngular()
     chrome.runtime.sendMessage({command: 'injectCSS'})
   });
-} 
+}
 else {
   loadAngular();
 }
@@ -39,9 +39,9 @@ function loadAngular() {
 
   angular.bootstrap(
     (<HTMLIFrameElement>document.getElementById("tagit-iframe"))
-    .contentDocument.getElementById('tagit-menu'), 
+    .contentDocument.getElementById('tagit-menu'),
     ['tagit']);
-  
+
   setupChromeListener()
 
   console.log('TagIt menu loaded');
@@ -50,7 +50,7 @@ function loadAngular() {
 /**
  * Enable this script that is loaded
  * on the page to receive messages from the plugin code
- * running in the background. 
+ * running in the background.
  */
 function setupChromeListener() {
   if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing

@@ -1,6 +1,7 @@
 'use strict';
 
-import {ISenseTag} from '../index.interfaces';
+import {ISenseTag} from '../index.interfaces'
+import * as angular from 'angular'
 
 // responsible for saving and loading
 // any tags related to the current page

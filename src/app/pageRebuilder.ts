@@ -1,5 +1,5 @@
-import $ from 'jquery';
-import _ from 'lodash';
+import * as $ from 'jquery';
+import * as _ from 'lodash';
 
 /**
  * To prepare the page for running our app
@@ -66,4 +66,3 @@ interface extendedHTMLIFrameElement extends HTMLIFrameElement {
   srcdoc: any;
   seamless: string;
 }
-

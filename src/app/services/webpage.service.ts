@@ -2,11 +2,12 @@
 
 import {TagStorageService} from './tagStorage.service';
 import {ISense, ISenseTag} from '../index.interfaces';
-import _ from 'lodash';
-import 'rangy-serializer';
-import 'rangy-selectionsaverestore';
-import uuid from 'node-uuid';
-import rangy from 'rangy';
+
+import * as rangy from 'rangy';
+import rangySelectionSaveRestore from 'rangy/lib/rangy-selectionsaverestore';
+import rangySerializer from 'rangy/lib/rangy-serializer';
+import * as _ from 'lodash';
+import * as uuid from 'node-uuid';
 
 /**
  * This service is responsible for interfacing with the content

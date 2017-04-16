@@ -1,4 +1,6 @@
 
+import * as angular from 'angular'
+
 interface saveableSettings {
   tagitSenseQueryUrl: string
   tagitSenseDestinationUrl: string
@@ -7,7 +9,7 @@ interface saveableSettings {
 
 /**
  * Responsible for handling persisting and retrieving
- * *select* user settings. Some settings might not be user 
+ * *select* user settings. Some settings might not be user
  * editable.
  */
 export class SettingsService {
@@ -54,8 +56,8 @@ export class SettingsService {
           'tagitSenseQueryUrl': localStorage.getItem('tagitSenseQueryUrl'),
           'emailToTagWith': localStorage.getItem('emailToTagWith')
         })
-      } 
-      //when backed by chrome.storage.sync (production)      
+      }
+      //when backed by chrome.storage.sync (production)
       else {
         chrome.storage.sync.get(null, resolve)
       }
@@ -63,7 +65,7 @@ export class SettingsService {
     })
     //use default value if no setting specified.
     .then((loadedSettings: saveableSettings) => {
-      
+
       if(!loadedSettings.tagitSenseQueryUrl) {
         loadedSettings.tagitSenseQueryUrl = this._defaultSenseQueryUrl
       }
@@ -71,7 +73,7 @@ export class SettingsService {
       if (!loadedSettings.tagitSenseDestinationUrl) {
         loadedSettings.tagitSenseDestinationUrl = this._defaultSenseDestinationUrl
       }
-      
+
       if (loadedSettings.emailToTagWith) {
         this.emailWasLoaded = true;
       } else {
@@ -84,14 +86,14 @@ export class SettingsService {
 
   /**
    * Returns true if user was logged in, which
-   * we treat as true if we have the user's email 
+   * we treat as true if we have the user's email
    */
   isUserLoggedIn() {
     return this.emailWasLoaded
   }
 
   /**
-   * Purpose: Let user's use the app without 
+   * Purpose: Let user's use the app without
    * actually logging in.
    */
   setLoggedIn(loggedInState) {
@@ -106,7 +108,7 @@ export class SettingsService {
       if (typeof chrome.storage !== 'undefined') {
         chrome.storage.sync.clear(resolve)
       }
-      // delete from localstorage (dev mode) 
+      // delete from localstorage (dev mode)
       else {
         localStorage.removeItem('tagitSenseQueryUrl')
         localStorage.removeItem('tagitSenseDestinationUrl')
@@ -117,4 +119,3 @@ export class SettingsService {
   }
 
 }
-

@@ -34,4 +34,3 @@ export interface ISenseTag {
   deserializedRange?: Range;
   urlOfPageThatWasTagged: string;
 }
-
