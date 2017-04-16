@@ -7,7 +7,7 @@ import * as rangy from 'rangy';
 import rangySelectionSaveRestore from 'rangy/lib/rangy-selectionsaverestore';
 import rangySerializer from 'rangy/lib/rangy-serializer';
 import * as _ from 'lodash';
-import * as uuid from 'node-uuid';
+import * as uuidV4 from 'uuid/v4';
 
 /**
  * This service is responsible for interfacing with the content
@@ -219,7 +219,7 @@ export class WebPageService {
     var range: Range = selection.getRangeAt(0);
     var serializedRange = rangy.serializeRange(range, true,
       iframeOfInterest.contentDocument.documentElement);
-    var generatedUuid: string = uuid.v4();
+    var generatedUuid: string = uuidV4();
     var parentElement = <HTMLElement>range.commonAncestorContainer;
 
     return {

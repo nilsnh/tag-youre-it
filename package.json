@@ -4,11 +4,10 @@
   "description": "Make the meaning clear. This plugin enables semantic tagging of web content.",
   "main": "Gulpfile.js",
   "scripts": {
-    "clean": "rm -r dist typings node_modules jspm_packages || true",
-    "build": "jspm bundle-sfx src/app/main.ts dist/app.js && ./build.sh",
+    "clean": "rm -r dist node_modules || true",
+    "build": "webpack && ./build.sh",
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
     "package": "rm dist.zip && zip -r dist.zip dist",
-    "postinstall": "typings install",
     "webpack": "webpack"
   },
   "repository": {
@@ -36,14 +35,15 @@
     "@types/rangy": "0.0.27",
     "@types/uuid": "^2.0.29",
     "angular": "1.5.8",
-    "browser-sync": "^2.9.6",
+    "browser-sync": "^2.18.8",
     "jquery": "^2.2.4",
     "lodash": "4.12.0",
     "material-design-lite": "^1.1.3",
     "ngstorage": "0.3.10",
     "rangy": "^1.3.0",
     "ts-loader": "^2.0.3",
-    "uuid": "2.0.2",
+    "typescript": "^2.2.2",
+    "uuid": "3.0.1",
     "webpack": "^2.4.1"
   }
 }
