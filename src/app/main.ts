@@ -24,7 +24,11 @@ if (!window.tagitTestMode) {
   });
 }
 else {
-  loadAngular();
+  /**
+   * Cannot load too fast when served locally. The iframes won't be fully
+   * loaded when Angular tries to bootstrap itself.
+   */
+  setTimeout((loadAngular), 1000)
 }
 
 function loadAngular() {

@@ -4,8 +4,8 @@ import {TagStorageService} from './tagStorage.service';
 import {ISense, ISenseTag} from '../index.interfaces';
 
 import * as rangy from 'rangy';
-import rangySelectionSaveRestore from 'rangy/lib/rangy-selectionsaverestore';
-import rangySerializer from 'rangy/lib/rangy-serializer';
+import 'rangy/lib/rangy-selectionsaverestore';
+import 'rangy/lib/rangy-serializer';
 import * as _ from 'lodash';
 import * as uuidV4 from 'uuid/v4';
 
