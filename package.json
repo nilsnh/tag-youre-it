@@ -7,7 +7,7 @@
     "clean": "rm -r dist node_modules || true",
     "build": "webpack && ./build.sh",
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
-    "package": "rm dist.zip && zip -r dist.zip dist",
+    "package": "rm dist.zip || true && zip -r dist.zip dist",
     "webpack": "webpack"
   },
   "repository": {
