@@ -15,6 +15,8 @@ Prerequisites:
 1. Run `npm install`
 1. Run `npm start` to serve up the prototype for live development. To configure what browser is started please see the `npm start` command found in the package.json file.  
 
+`npm test` will run the unit tests.
+
 Please note: A [workaround for CORS](https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi?utm_source=chrome-app-launcher-info-dialog) is needed for allowing the live development version to talk to the server.
 
 ## Deployment
