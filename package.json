@@ -6,10 +6,11 @@
   "scripts": {
     "clean": "rm -r dist node_modules || true",
     "build": "webpack && ./build.sh",
-    "test": "tsc && ava",
+    "test": "karma start",
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
     "package": "rm dist.zip || true && zip -r dist.zip dist",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "karma": "karma"
   },
   "repository": {
     "type": "git",
@@ -36,7 +37,6 @@
     "@types/rangy": "0.0.27",
     "@types/uuid": "^2.0.29",
     "angular": "1.5.8",
-    "ava": "^0.19.1",
     "browser-sync": "^2.18.8",
     "jquery": "^2.2.4",
     "lodash": "4.12.0",
@@ -47,5 +47,11 @@
     "typescript": "^2.2.2",
     "uuid": "3.0.1",
     "webpack": "^2.4.1"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.6.2",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.1.1",
+    "karma-jasmine": "^1.1.0"
   }
 }
