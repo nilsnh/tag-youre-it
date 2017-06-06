@@ -31,6 +31,7 @@
   "dependencies": {
     "@types/angular": "^1.5.8",
     "@types/chrome": "0.0.46",
+    "@types/jasmine": "^2.5.51",
     "@types/jquery": "^2.0.41",
     "@types/lodash": "^4.14.62",
     "@types/ngstorage": "^0.3.34",
@@ -52,6 +53,7 @@
     "jasmine-core": "^2.6.2",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.1.1",
-    "karma-jasmine": "^1.1.0"
+    "karma-jasmine": "^1.1.0",
+    "karma-typescript": "^3.0.3"
   }
 }
