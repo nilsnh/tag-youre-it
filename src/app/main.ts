@@ -32,6 +32,7 @@ else {
 }
 
 function loadAngular() {
+  console.log('Start loading angular')
   angular.module('tagit', ['ngStorage'])
     .service('SettingsService', SettingsService)
     .service('BackendService', BackendService)
