@@ -10,6 +10,7 @@
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
     "package": "rm dist.zip || true && zip -r dist.zip dist",
     "webpack": "webpack",
+    "webpack:watch": "webpack --watch",
     "karma": "karma"
   },
   "repository": {
@@ -53,7 +54,11 @@
     "jasmine-core": "^2.6.2",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.1.1",
+    "karma-es6-shim": "^1.0.0",
     "karma-jasmine": "^1.1.0",
-    "karma-typescript": "^3.0.3"
+    "karma-requirejs": "^1.1.0",
+    "karma-typescript": "^3.0.3",
+    "karma-typescript-es6-transform": "^1.0.1",
+    "requirejs": "^2.3.3"
   }
 }

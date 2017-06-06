@@ -4,6 +4,7 @@ export {};
 declare global {
     interface Window {
         tagitTestMode: boolean;
+        karmaTestMode: boolean;
     }
 
     interface RangyStatic {

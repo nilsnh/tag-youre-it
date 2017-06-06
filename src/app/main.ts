@@ -17,21 +17,24 @@ import 'ngstorage';
 
 console.log('Finished importing');
 
-if (!window.tagitTestMode) {
-  preparePage(function () {
-    loadAngular()
-    chrome.runtime.sendMessage({command: 'injectCSS'})
-  });
-}
-else {
+if (window.tagitTestMode) {
   /**
    * Cannot load too fast when served locally. The iframes won't be fully
    * loaded when Angular tries to bootstrap itself.
    */
   setTimeout((loadAngular), 1000)
 }
+else if (window.karmaTestMode) {
+  loadAngular(false)
+}
+else {
+  preparePage(function () {
+    loadAngular()
+    chrome.runtime.sendMessage({command: 'injectCSS'})
+  });
+}
 
-function loadAngular() {
+function loadAngular(bootstrap?: boolean) {
   console.log('Start loading angular')
   angular.module('tagit', ['ngStorage'])
     .service('SettingsService', SettingsService)
@@ -42,12 +45,16 @@ function loadAngular() {
     .controller('SettingsCtrl', SettingsCtrl)
     .controller('MenuCtrl', MenuCtrl)
 
-  angular.bootstrap(
+  if (bootstrap) {
+    angular.bootstrap(
     (<HTMLIFrameElement>document.getElementById("tagit-iframe"))
     .contentDocument.getElementById('tagit-menu'),
     ['tagit']);
 
-  setupChromeListener()
+    setupChromeListener()  
+  } else {
+    console.log('skipped bootstrapping')
+  }
 
   console.log('TagIt menu loaded');
 }

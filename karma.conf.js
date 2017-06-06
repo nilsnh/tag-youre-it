@@ -15,6 +15,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'karma.pre-test.js',
+      'dist/app.js',
       'src/**/*.spec.ts'
     ],
 
@@ -30,6 +32,12 @@ module.exports = function(config) {
       "**/*.ts": ["karma-typescript"],
     },
 
+    karmaTypescriptConfig: {
+      bundlerOptions: {
+          transforms: [require("karma-typescript-es6-transform")()]
+      },
+      tsconfig: "./tsconfig.json"         
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

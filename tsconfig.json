@@ -3,6 +3,7 @@
     "target": "es5",
     "noImplicitAny": false,
     "module": "commonjs",
-    "outDir": "tmp-js-build/"
+    "outDir": "tmp-js-build/",
+    "inlineSourceMap": true
   }
 }
