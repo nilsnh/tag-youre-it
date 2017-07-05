@@ -37,6 +37,7 @@ export class MenuCtrl {
     this.$log.debug('these tags were found in storage');
     this.$log.debug(tagsToLoad);
 
+    this.WebPageService.addListenersToPage();
     this.WebPageService.readdTagsToPage(tagsToLoad);
   }
 

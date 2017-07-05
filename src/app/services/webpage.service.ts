@@ -25,8 +25,6 @@ export class WebPageService {
     private $log: ng.ILogService,
     private TagStorageService: TagStorageService,
     private $rootScope: ng.IRootScopeService) {
-
-    this.wireUpListener();
     rangy.init();
   }
 
@@ -90,7 +88,7 @@ export class WebPageService {
    * Find one or more iframes in which content has been captured.
    * We then place click listeners on each of the frames.
    */
-  wireUpListener() {
+  addListenersToPage() {
     const tagitBodyIframe = <HTMLIFrameElement>parent.document.getElementById('tagit-body');
     const tagitBodyIframeDoc = tagitBodyIframe.contentDocument;
 
