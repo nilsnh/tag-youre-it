@@ -215,9 +215,9 @@ export class WebPageService {
         var errorMsg = `Error in rangy.js: Was not able to deserialize range.
             In other words: The page might have changed. Is not able
             to determine where this tag should have been placed.`
-        this.$log.debug(errorMsg)
-        this.$log.debug("Couldn't load: " + tagToLoad.sense.word)
-        this.$log.debug(e)
+        console.log(errorMsg)
+        console.log("Couldn't load: " + tagToLoad.sense.word)
+        console.log(e)
         return false
       }
     })
