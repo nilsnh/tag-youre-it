@@ -159,7 +159,10 @@ export class WebPageService {
     //first deselect all places before we go to work
     this.removeAllRanges()
 
-    tagsToLoad = this.tryDeserializeTags(tagsToLoad)
+    tagsToLoad = this.tryDeserializeTags(
+      tagsToLoad,
+      this.listOfFramesWithContent
+    )
 
     this.$log.debug('finished deserializing tags')
 
@@ -196,14 +199,16 @@ export class WebPageService {
    * fail if the page has changed since it was tagged. Thus
    * we remove tags that fail to load.
    */
-  tryDeserializeTags = (tags: ISenseTag[]): ISenseTag[] => {
+  tryDeserializeTags = (
+    tags: ISenseTag[],
+    htmlFrames: (HTMLFrameElement | HTMLIFrameElement)[]
+  ): ISenseTag[] => {
     return _.filter(tags, tagToLoad => {
       try {
         tagToLoad.deserializedRange = rangy.deserializeRange(
           tagToLoad.serializedSelectionRange,
-          this.listOfFramesWithContent[tagToLoad.iframeIndex].contentDocument
-            .documentElement,
-          this.listOfFramesWithContent[tagToLoad.iframeIndex]
+          htmlFrames[tagToLoad.iframeIndex].contentDocument.documentElement,
+          htmlFrames[tagToLoad.iframeIndex]
         )
         return true
       } catch (e) {
