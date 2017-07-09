@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -r dist node_modules || true",
     "build": "webpack && ./build.sh",
-    "test": "karma start",
+    "test:dist": "karma start",
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
     "package": "rm dist.zip || true && zip -r dist.zip dist",
     "webpack": "webpack",
@@ -18,11 +18,7 @@
     "url": "https://github.com/nilsnh/tag-youre-it.git"
   },
   "private": true,
-  "keywords": [
-    "semantic",
-    "web",
-    "tagging"
-  ],
+  "keywords": ["semantic", "web", "tagging"],
   "author": "Nils Norman Haukås <nils@thunki.com>",
   "license": "MIT",
   "bugs": {
