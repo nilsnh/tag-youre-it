@@ -204,24 +204,81 @@ export class WebPageService {
     tags: ISenseTag[],
     htmlFrames: (HTMLFrameElement | HTMLIFrameElement)[]
   ): ISenseTag[] => {
-    return _.filter(tags, tagToLoad => {
-      try {
-        tagToLoad.deserializedRange = rangy.deserializeRange(
-          tagToLoad.serializedSelectionRange,
-          htmlFrames[tagToLoad.iframeIndex].contentDocument.documentElement,
-          htmlFrames[tagToLoad.iframeIndex]
-        )
-        return true
-      } catch (e) {
-        var errorMsg = `Error in rangy.js: Was not able to deserialize range.
+    return _.reduce(
+      tags,
+      (acc, tagToLoad) => {
+        try {
+          tagToLoad.deserializedRange = rangy.deserializeRange(
+            tagToLoad.serializedSelectionRange,
+            htmlFrames[tagToLoad.iframeIndex].contentDocument.documentElement,
+            htmlFrames[tagToLoad.iframeIndex]
+          )
+
+          const savedWord = tagToLoad.wordThatWasTagged.trim()
+          const selectedWordOnPage = tagToLoad.deserializedRange
+            .toString()
+            .trim()
+          if (savedWord !== selectedWordOnPage) {
+            /**
+              Uh oh! deserializedRange does not contain the word we saved.
+              Content might have shifted.
+              Let's try to find a similar word, or throw an error if that's
+              not possible.
+            */
+            const { deserializedRange } = tagToLoad
+            const surroundingWebText =
+              deserializedRange.startContainer.textContent
+            // try to find the closest matching word
+            const sides = {
+              left: surroundingWebText.substring(
+                0,
+                deserializedRange.startOffset
+              ),
+              right: surroundingWebText.substring(deserializedRange.endOffset),
+              leftDistance: surroundingWebText
+                .substring(0, deserializedRange.startOffset)
+                .lastIndexOf(savedWord),
+              rightDistance: surroundingWebText
+                .substring(deserializedRange.endOffset)
+                .indexOf(savedWord)
+            }
+            let closestSide = null
+            if (sides.leftDistance !== -1) {
+              closestSide = 'left'
+            }
+            if (
+              (sides.rightDistance !== -1 && closestSide == false) ||
+              (sides.rightDistance !== -1 &&
+                sides.rightDistance < sides.leftDistance)
+            ) {
+              closestSide = 'right'
+            }
+            if (!closestSide) {
+              throw new Error(
+                `Selected word on page: ${selectedWordOnPage}, did not match the one we saved: ${savedWord}`
+              )
+            } else if (closestSide) {
+              console.log(
+                `Found possible match on saved word on ${closestSide} side. Distance in characters: ${sides[
+                  closestSide + 'Distance'
+                ]}`
+              )
+            }
+          }
+          acc.push(tagToLoad)
+          return acc
+        } catch (e) {
+          var errorMsg = `Error in rangy.js: Was not able to deserialize range.
             In other words: The page might have changed. Is not able
             to determine where this tag should have been placed.`
-        console.log(errorMsg)
-        console.log("Couldn't load: " + tagToLoad.sense.word)
-        console.log(e)
-        return false
-      }
-    })
+          console.log(errorMsg)
+          console.log("Couldn't load:", tagToLoad)
+          console.log(e)
+          return acc
+        }
+      },
+      []
+    )
   }
 
   initializeNewTag = (sense: ISense): ISenseTag => {
