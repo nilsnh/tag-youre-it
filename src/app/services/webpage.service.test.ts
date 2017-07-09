@@ -40,14 +40,25 @@ describe('WebPageService', function() {
         urlOfPageThatWasTagged: 'http://localhost:3000/test/'
       }
     ]
-    const paragraph = document.createElement('p')
-    paragraph.textContent =
-      "The Triumph of Cleopatra, also known as Cleopatra's Arrival in Cilicia[1] and The Arrival of Cleopatra in Cilicia,[2] is an oil painting by English artist William Etty. It was first exhibited in 1821, and is now in the Lady Lever Art Gallery in Port Sunlight across the River Mersey from Liverpool. During the 1810s Etty had become widelyX respected among staff and students at the Royal Academy of Arts, in particular for his use of colour and ability to paint realistic flesh tones. Despite having exhibited at every Summer Exhibition since 1811 he attracted little commercial or critical interest. In 1820 he exhibited The Coral Finder, which showed nude figures on a gilded boat. This painting attracted the attention of Sir Francis Freeling, who commissioned a similar painting on a more ambitious scale."
-    const iframe = document.createElement('iframe')
-    window.document.body.appendChild(iframe)
-    iframe.contentDocument.body.appendChild(paragraph)
+
+    const iframe = initializeTestIframe()
+
     expect(
       webpageService.tryDeserializeTags(mockDataTags, [iframe]).length
     ).toBe(1)
   })
 })
+
+function initializeTestIframe() {
+  const paragraph = document.createElement('p')
+  paragraph.textContent =
+    "The Triumph of Cleopatra, also known as Cleopatra's Arrival in Cilicia[1] and The Arrival of Cleopatra in Cilicia,[2] is an oil painting by English artist William Etty. It was first exhibited in 1821, and is now in the Lady Lever Art Gallery in Port Sunlight across the River Mersey from Liverpool. During the 1810s Etty had become widelyX respected among staff and students at the Royal Academy of Arts, in particular for his use of colour and ability to paint realistic flesh tones. Despite having exhibited at every Summer Exhibition since 1811 he attracted little commercial or critical interest. In 1820 he exhibited The Coral Finder, which showed nude figures on a gilded boat. This painting attracted the attention of Sir Francis Freeling, who commissioned a similar painting on a more ambitious scale."
+  const iframe = document.createElement('iframe')
+  window.document.body.appendChild(iframe)
+  iframe.contentDocument.body.appendChild(document.createElement('script'))
+  iframe.contentDocument.body.appendChild(document.createElement('script'))
+  iframe.contentDocument.body.appendChild(document.createElement('h1'))
+  iframe.contentDocument.body.appendChild(paragraph)
+  console.log(iframe.contentDocument.body)
+  return iframe
+}
