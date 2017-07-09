@@ -1,19 +1,19 @@
 // Ensure this is treated as a module.
-export {};
+export {}
 
 declare global {
-    interface Window {
-        tagitTestMode: boolean;
-        karmaTestMode: boolean;
-    }
+  interface Window {
+    tagitTestMode: boolean
+    karmaTestMode: boolean
+    rangy: any
+  }
 
-    interface RangyStatic {
-        init: () => void;
-        saveSelection: any;
-        removeMarkers: any;
-        serializeRange: any;
-        deserializeRange: any;
-        restoreSelection: any;
-    }
+  interface RangyStatic {
+    init: () => void
+    saveSelection: any
+    removeMarkers: any
+    serializeRange: any
+    deserializeRange: any
+    restoreSelection: any
+  }
 }
-

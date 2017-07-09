@@ -26,6 +26,7 @@ export class WebPageService {
     private $rootScope: ng.IRootScopeService
   ) {
     rangy.init()
+    window.rangy = rangy //expose for testing
   }
 
   /**
