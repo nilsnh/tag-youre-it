@@ -222,48 +222,17 @@ export class WebPageService {
             /**
               Uh oh! deserializedRange does not contain the word we saved.
               Content might have shifted.
-              Let's try to find a similar word, or throw an error if that's
-              not possible.
             */
-            const { deserializedRange } = tagToLoad
-            const surroundingWebText =
-              deserializedRange.startContainer.textContent
-            // try to find the closest matching word
-            const sides = {
-              left: surroundingWebText.substring(
-                0,
-                deserializedRange.startOffset
-              ),
-              right: surroundingWebText.substring(deserializedRange.endOffset),
-              leftDistance: surroundingWebText
-                .substring(0, deserializedRange.startOffset)
-                .lastIndexOf(savedWord),
-              rightDistance: surroundingWebText
-                .substring(deserializedRange.endOffset)
-                .indexOf(savedWord)
-            }
-            let closestSide = null
-            if (sides.leftDistance !== -1) {
-              closestSide = 'left'
-            }
-            if (
-              (sides.rightDistance !== -1 && closestSide == false) ||
-              (sides.rightDistance !== -1 &&
-                sides.rightDistance < sides.leftDistance)
-            ) {
-              closestSide = 'right'
-            }
-            if (!closestSide) {
+            const newRecoveredRange = this.recoverClosestRange(
+              tagToLoad,
+              tagToLoad.deserializedRange.startContainer
+            )
+            if (!newRecoveredRange) {
               throw new Error(
                 `Selected word on page: ${selectedWordOnPage}, did not match the one we saved: ${savedWord}`
               )
-            } else if (closestSide) {
-              console.log(
-                `Found possible match on saved word on ${closestSide} side. Distance in characters: ${sides[
-                  closestSide + 'Distance'
-                ]}`
-              )
             }
+            tagToLoad.deserializedRange = newRecoveredRange
           }
           acc.push(tagToLoad)
           return acc
@@ -279,6 +248,60 @@ export class WebPageService {
       },
       []
     )
+  }
+
+  /**
+   * Fuzzy find logic. Sometimes when deserializing a range we end discover that
+   * the content might have shifted. This function will try to "look around" and
+   * find the closest matching word (if any).
+   */
+  recoverClosestRange = (
+    tagToLoad: ISenseTag,
+    containerElement: Node
+  ): Range => {
+    const savedWord = tagToLoad.wordThatWasTagged
+    const range = tagToLoad.deserializedRange
+    const selectedWordOnPage = range.toString().trim()
+    const surroundingWebText = range.startContainer.textContent
+    /**
+     * Split textContext into left and right side with corresponding
+     * calculations for the closest possible matches.
+     */
+    const sides = {
+      left: surroundingWebText.substring(0, range.startOffset),
+      right: surroundingWebText.substring(range.startOffset),
+      leftDistance: surroundingWebText
+        .substring(0, range.startOffset)
+        .lastIndexOf(savedWord),
+      rightDistance:
+        surroundingWebText.substring(range.startOffset).indexOf(savedWord) - 1
+    }
+    let closestSide = null
+    // first look to the left for a match
+    if (sides.leftDistance !== -1) {
+      closestSide = 'left'
+    }
+    // then look to the right for a match. Compare against a possible left match
+    if (
+      (sides.rightDistance !== -1 && closestSide == false) ||
+      (sides.rightDistance !== -1 && sides.rightDistance < sides.leftDistance)
+    ) {
+      closestSide = 'right'
+    }
+    if (!closestSide) {
+      return null
+    }
+    const distance =
+      closestSide === 'left'
+        ? (sides.left.length - sides[closestSide + 'Distance']) * -1
+        : sides[closestSide + 'Distance']
+    console.log(
+      `Found possible match on saved word on ${closestSide} side.
+      Distance in characters: ${distance}`
+    )
+    range.setStart(containerElement, range.startOffset + distance + 1)
+    range.setEnd(containerElement, range.endOffset + distance - 1)
+    return range
   }
 
   initializeNewTag = (sense: ISense): ISenseTag => {
