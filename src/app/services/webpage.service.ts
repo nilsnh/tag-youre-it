@@ -2,10 +2,6 @@
 
 import { TagStorageService } from './tagStorage.service'
 import { ISense, ISenseTag } from '../index.interfaces'
-
-import * as rangy from 'rangy'
-import 'rangy/lib/rangy-selectionsaverestore'
-import 'rangy/lib/rangy-serializer'
 import * as _ from 'lodash'
 import * as uuidV4 from 'uuid/v4'
 
@@ -19,14 +15,25 @@ export class WebPageService {
   savedSelection: Object
   savedText: string
   listOfFramesWithContent: (HTMLFrameElement | HTMLIFrameElement)[] = []
+  rangy: any
 
   constructor(
     private $log: ng.ILogService,
     private TagStorageService: TagStorageService,
     private $rootScope: ng.IRootScopeService
   ) {
-    rangy.init()
-    window.rangy = rangy //expose for testing
+    this.loadRangy()
+  }
+
+  // load rangy after loading angular to avoid
+  // rangy giving up due to missing body tag which
+  // is an issue with sites using framesets.
+  loadRangy = () => {
+    this.rangy = require('rangy')
+    require('rangy/lib/rangy-selectionsaverestore')
+    require('rangy/lib/rangy-serializer')
+    this.rangy.init()
+    window.rangy = this.rangy //expose for testing
   }
 
   /**
@@ -44,7 +51,7 @@ export class WebPageService {
       removeTagFromWebAndStorage(evt, this.TagStorageService)
     } else if (documentThatWasClicked.getSelection().toString() !== '') {
       resetSavedSelection(this.savedSelection)
-      this.savedSelection = rangy.saveSelection(documentThatWasClicked)
+      this.savedSelection = this.rangy.saveSelection(documentThatWasClicked)
       this.savedText = joinLongWords(
         documentThatWasClicked.getSelection().toString()
       )
@@ -61,7 +68,7 @@ export class WebPageService {
      */
     function resetSavedSelection(savedSelection) {
       if (savedSelection) {
-        rangy.removeMarkers(savedSelection)
+        this.rangy.removeMarkers(savedSelection)
       }
     }
 
@@ -208,7 +215,7 @@ export class WebPageService {
       tags,
       (acc, tagToLoad) => {
         try {
-          tagToLoad.deserializedRange = rangy.deserializeRange(
+          tagToLoad.deserializedRange = this.rangy.deserializeRange(
             tagToLoad.serializedSelectionRange,
             htmlFrames[tagToLoad.iframeIndex].contentDocument.documentElement,
             htmlFrames[tagToLoad.iframeIndex]
@@ -249,7 +256,7 @@ export class WebPageService {
           acc.push(tagToLoad)
           return acc
         } catch (e) {
-          var errorMsg = `Error in rangy.js: Was not able to deserialize range.
+          var errorMsg = `Error in this.rangy.js: Was not able to deserialize range.
             In other words: The page might have changed. Is not able
             to determine where this tag should have been placed.`
           console.log(errorMsg)
@@ -339,14 +346,14 @@ export class WebPageService {
      * with other iframes.
      */
     this.removeAllRanges()
-    rangy.restoreSelection(this.savedSelection)
+    this.rangy.restoreSelection(this.savedSelection)
     var iframeOfInterest = getFrameContainingSelection(
       this.listOfFramesWithContent
     )
     const selection = iframeOfInterest.contentDocument.getSelection()
 
     var range: Range = selection.getRangeAt(0)
-    var serializedRange = rangy.serializeRange(
+    var serializedRange = this.rangy.serializeRange(
       range,
       true,
       iframeOfInterest.contentDocument.documentElement

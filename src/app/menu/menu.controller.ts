@@ -1,19 +1,18 @@
-
-'use strict';
+'use strict'
 
 import {
   BackendService,
   WebPageService,
   TagStorageService,
   FileService,
-  SettingsService} from '../services/index';
+  SettingsService
+} from '../services/index'
 
-import {IVMScope, ISense} from '../index.interfaces';
+import { IVMScope, ISense } from '../index.interfaces'
 
 export class MenuCtrl {
-
-  selectedWord = "";
-  senses: Object[];
+  selectedWord = ''
+  senses: Object[]
 
   constructor(
     private $scope: IVMScope,
@@ -22,23 +21,25 @@ export class MenuCtrl {
     private WebPageService: WebPageService,
     private TagStorageService: TagStorageService,
     private SettingsService: SettingsService,
-    private FileService: FileService) {
-
-    $scope.vm = this;
+    private FileService: FileService
+  ) {
+    $scope.vm = this
 
     this.$scope.$on('wordWasSelected', (event, selectedWord) => {
-      this.$log.debug(`Menucontroller received wordWasSelected event for: ${selectedWord}`);
-      this.onWordSelectedEvent(selectedWord);
-    });
+      this.$log.debug(
+        `Menucontroller received wordWasSelected event for: ${selectedWord}`
+      )
+      this.onWordSelectedEvent(selectedWord)
+    })
 
     // Reload existing tags
-    var tagsToLoad = this.TagStorageService.loadTagsForCurrentPage();
+    var tagsToLoad = this.TagStorageService.loadTagsForCurrentPage()
 
-    this.$log.debug('these tags were found in storage');
-    this.$log.debug(tagsToLoad);
+    this.$log.debug('these tags were found in storage')
+    this.$log.debug(tagsToLoad)
 
-    this.WebPageService.addListenersToPage();
-    this.WebPageService.readdTagsToPage(tagsToLoad);
+    this.WebPageService.addListenersToPage()
+    this.WebPageService.readdTagsToPage(tagsToLoad)
   }
 
   /**
@@ -50,17 +51,17 @@ export class MenuCtrl {
     //based on a document without any highlights
     this.WebPageService.removeAllTagsFromPage(() => {
       //initialize and save the new tag
-      var senseTag = this.WebPageService.initializeNewTag(sense);
-      this.TagStorageService.saveTag(senseTag);
+      var senseTag = this.WebPageService.initializeNewTag(sense)
+      this.TagStorageService.saveTag(senseTag)
 
-      this.BackendService.sendTaggedDataToServer(senseTag);
+      this.BackendService.sendTaggedDataToServer(senseTag)
 
       //re-add tags, with new tag. Clear menu options.
       this.WebPageService.readdTagsToPage(
         this.TagStorageService.loadTagsForCurrentPage()
-      );
-      this.clearMenuVariables();
-    });
+      )
+      this.clearMenuVariables()
+    })
   }
 
   /**
@@ -68,18 +69,20 @@ export class MenuCtrl {
    */
   downloadTagsForPage() {
     if (typeof chrome === 'undefined') {
-      this.$log.debug('Did not find chrome facilities. Can\'t download.')
-      return; //do nothing
+      this.$log.debug("Did not find chrome facilities. Can't download.")
+      return //do nothing
     }
-    this.FileService.saveFile(this.TagStorageService.loadTagsForCurrentPage());
+    this.FileService.saveFile(this.TagStorageService.loadTagsForCurrentPage())
   }
 
   downloadAllTagsForDomain() {
     if (typeof chrome === 'undefined') {
-      this.$log.debug('Did not find chrome facilities. Can\'t download.')
-      return; //do nothing
+      this.$log.debug("Did not find chrome facilities. Can't download.")
+      return //do nothing
     }
-    this.FileService.saveFile(this.TagStorageService.loadAllTagsInLocalStorage());
+    this.FileService.saveFile(
+      this.TagStorageService.loadAllTagsInLocalStorage()
+    )
   }
 
   /**
@@ -98,33 +101,30 @@ export class MenuCtrl {
     if (countWords(newWord) > 2) {
       this.selectedWord = "Wops! Plugin can't handle more than two words."
       this.senses = []
-    }
-    else if (newWord.length === 0) {
-      this.clearMenuVariables();
-    }
-    else if (this.selectedWord != newWord) {
-      this.selectedWord = newWord;
+    } else if (newWord.length === 0) {
+      this.clearMenuVariables()
+    } else if (this.selectedWord != newWord) {
+      this.selectedWord = newWord
       this.senses = []
-      this.BackendService.callServer(newWord)
-        .then((synsets: any) => {
-          this.$log.debug(synsets);
-          this.senses = synsets.data.senses;
-        });
+      this.BackendService.callServer(newWord).then((synsets: any) => {
+        this.$log.debug(synsets)
+        this.senses = synsets.data.senses
+      })
     }
 
     function countWords(wordWithUnderscores: string) {
-      return wordWithUnderscores.split("_").length;
+      return wordWithUnderscores.split('_').length
     }
   }
 
   onWordDeSelectedEvent = () => {
-    this.$log.debug("onWordDeSelected");
+    this.$log.debug('onWordDeSelected')
     this.clearMenuVariables()
   }
 
   clearMenuVariables() {
-    this.selectedWord = "";
-    this.senses = [];
+    this.selectedWord = ''
+    this.senses = []
   }
 
   isLoadingSenses() {
@@ -141,19 +141,18 @@ export class MenuCtrl {
    * this function below.
    */
   isUserLoggedIn() {
-    if (!this.SettingsService.isUserLoggedIn()) return null;
-    else return {display: 'block'};
+    if (!this.SettingsService.isUserLoggedIn()) return null
+    else return { display: 'block' }
   }
 
   doLogin() {
     this.$log.debug('doLogin()')
-    if (window.tagitTestMode || typeof chrome === 'undefined') return; //do nothing
-    chrome.runtime.sendMessage({command: 'loginAndRequestUserInfo'})
+    if (window.tagitTestMode || typeof chrome === 'undefined') return //do nothing
+    chrome.runtime.sendMessage({ command: 'loginAndRequestUserInfo' })
   }
 
   continueWithoutLoggingIn() {
     this.$log.debug('continueWithoutLoggingIn()')
-    this.SettingsService.setLoggedIn(true);
+    this.SettingsService.setLoggedIn(true)
   }
-
 }
