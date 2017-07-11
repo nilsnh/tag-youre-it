@@ -270,12 +270,13 @@ export class WebPageService {
     const sides = {
       left: surroundingWebText.substring(0, range.startOffset),
       right: surroundingWebText.substring(range.startOffset),
-      leftDistance: surroundingWebText
-        .substring(0, range.startOffset)
-        .lastIndexOf(savedWord),
-      rightDistance:
-        surroundingWebText.substring(range.startOffset).indexOf(savedWord) - 1
+      leftDistance: null,
+      rightDistance: null
     }
+    sides.leftDistance =
+      sides.left.length + savedWord.length - sides.left.lastIndexOf(savedWord)
+    sides.rightDistance = sides.right.indexOf(savedWord) - 1
+
     let closestSide = null
     // first look to the left for a match
     if (sides.leftDistance !== -1) {
@@ -293,15 +294,22 @@ export class WebPageService {
     }
     const distance =
       closestSide === 'left'
-        ? (sides.left.length - sides[closestSide + 'Distance']) * -1
+        ? sides[closestSide + 'Distance'] * -1
         : sides[closestSide + 'Distance']
     console.log(
       `Found possible match on saved word on ${closestSide} side.
       Distance in characters: ${distance}`
     )
     range.setStart(containerElement, range.startOffset + distance + 1)
-    range.setEnd(containerElement, range.endOffset + distance - 1)
+    range.setEnd(
+      containerElement,
+      range.startOffset + savedWord.length + distance
+    )
     return range
+  }
+
+  findDistanceToWord = ({ searchSpace, startIndex, targetWord }) => {
+    return 0
   }
 
   initializeNewTag = (sense: ISense): ISenseTag => {
