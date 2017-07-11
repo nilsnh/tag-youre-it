@@ -44,8 +44,6 @@ Please note: After loading the plugin you'll see that it has a extension id in C
 
 ## What's happening under the hood?
 
-Technology stack (roughly): Jspm, Typings, Angular.js, Typescript, Lodash and Rangy.js.
-
 **How is the plugin loaded?** `Manifest.json` adds an icon and defines an [event page](https://developer.chrome.com/extensions/event_pages) called `background.js`. The event page adds a click listener to the plugin's browser icon. When triggered it will first load jquery and then inject the html menu in an iframe as well as create an iframe for housing the page content. The plugin is in fact reloading the page inside an iframe on the page. It will then continue loading dependencies before finally calling `tagit.init()` on the plugin which makes angular initialize itself making it possible to interact with the injected menu. When loading the plugin it will check localstorage for previously made tags and add them to the page. The plugin will also add click listeners to the iframe(s) containing the content to be tagged.
 
 **Why iframes?** I originally tried to just inject the menu into the page to tag. This was the source of a number of issues.  Tags need to be related to the original page structure but was disturbed by the injected non-static plugin menu. CSS was also quite unmanageable as the original page's css would disturb the plugin menu and vice versa. In really bad cases the content to be tagged would seep out of its containing `<div></div>` element and overlap the plugin menu. All things considered iframes seem like a decent approach since they shield our menu and the taggable content from each other.
