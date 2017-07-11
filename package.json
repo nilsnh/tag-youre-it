@@ -8,7 +8,7 @@
     "build": "webpack && ./build.sh",
     "test:dist": "karma start",
     "start": "browser-sync start --no-notify -b chromium --startPath test/ --server --files 'src/**/*'",
-    "package": "rm dist.zip || true && zip -r dist.zip dist",
+    "package": "npm run build && ./package.sh",
     "webpack": "webpack",
     "webpack:watch": "webpack --watch",
     "karma": "karma"

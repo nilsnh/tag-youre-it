@@ -20,15 +20,14 @@ Please note: A [workaround for CORS](https://chrome.google.com/webstore/detail/a
 ## Testing
 
 1. Run `npm run webpack:watch` in one terminal window to activate running code compilation.
-2. Run `npm run test` in another terminal window to start Karma tests. 
+2. Run `npm run test` in another terminal window to start Karma tests.
 
 ## Deployment
 
 Steps to deploy an update to the Chrome extension.
 
 1. Increment the plugin version number found in `src/plugin-specific/manifest.json`
-1. Run `npm run build` to build a dist folder ready to be packaged for upload.
-1. Run `npm run package` to zip the dist folder into a dist.zip.
+1. Run `npm run package` to build a fresh dist/ folder and zip it into dist.zip.
 1. Log into [Chrome Web Store Developer Dashboard - Google](https://chrome.google.com/webstore/developer/dashboard). You'll need to have access
 to the account that have publishing rights to this application.
 1. Within the dashboard upload the update .zip and hit publish.
