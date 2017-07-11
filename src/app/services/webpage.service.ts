@@ -223,16 +223,30 @@ export class WebPageService {
               Uh oh! deserializedRange does not contain the word we saved.
               Content might have shifted.
             */
-            const newRecoveredRange = this.recoverClosestRange(
-              tagToLoad,
-              tagToLoad.deserializedRange.startContainer
-            )
-            if (!newRecoveredRange) {
+            const range = tagToLoad.deserializedRange
+            const searchSpace =
+              tagToLoad.deserializedRange.startContainer.textContent
+            const result = this.findDistanceToWord({
+              searchSpace,
+              startIndex: range.startOffset,
+              targetWord: savedWord
+            })
+            if (!result) {
               throw new Error(
                 `Selected word on page: ${selectedWordOnPage}, did not match the one we saved: ${savedWord}`
               )
             }
-            tagToLoad.deserializedRange = newRecoveredRange
+            tagToLoad.deserializedRange.setStart(
+              range.startContainer,
+              range.startOffset + result.distance
+            )
+            tagToLoad.deserializedRange.setEnd(
+              range.endContainer,
+              range.endOffset + result.distance
+            )
+            console.log(
+              'tryDeserializeTags: Fuzzy find successfully found a neighbouring match that was not too far away.'
+            )
           }
           acc.push(tagToLoad)
           return acc
@@ -251,65 +265,67 @@ export class WebPageService {
   }
 
   /**
-   * Fuzzy find logic. Sometimes when deserializing a range we end discover that
-   * the content might have shifted. This function will try to "look around" and
-   * find the closest matching word (if any).
+   * Fuzzy find.
    */
-  recoverClosestRange = (
-    tagToLoad: ISenseTag,
-    containerElement: Node
-  ): Range => {
-    const savedWord = tagToLoad.wordThatWasTagged
-    const range = tagToLoad.deserializedRange
-    const selectedWordOnPage = range.toString().trim()
-    const surroundingWebText = range.startContainer.textContent
-    /**
-     * Split textContext into left and right side with corresponding
-     * calculations for the closest possible matches.
-     */
-    const sides = {
-      left: surroundingWebText.substring(0, range.startOffset),
-      right: surroundingWebText.substring(range.startOffset),
-      leftDistance: null,
-      rightDistance: null
-    }
-    sides.leftDistance =
-      sides.left.length + savedWord.length - sides.left.lastIndexOf(savedWord)
-    sides.rightDistance = sides.right.indexOf(savedWord) - 1
+  findDistanceToWord = ({
+    searchSpace,
+    startIndex,
+    targetWord
+  }: {
+    searchSpace: string
+    startIndex: number
+    targetWord: string
+  }) => {
+    const re = new RegExp(targetWord, 'g')
+    let matches: RegExpExecArray[] = []
 
-    let closestSide = null
-    // first look to the left for a match
-    if (sides.leftDistance !== -1) {
-      closestSide = 'left'
+    let match = re.exec(searchSpace)
+    while (match) {
+      matches.push(match)
+      match = re.exec(searchSpace)
     }
-    // then look to the right for a match. Compare against a possible left match
-    if (
-      (sides.rightDistance !== -1 && closestSide == false) ||
-      (sides.rightDistance !== -1 && sides.rightDistance < sides.leftDistance)
-    ) {
-      closestSide = 'right'
-    }
-    if (!closestSide) {
+
+    // orderMatches byDistance
+    matches = matches
+      .filter(
+        match =>
+          // remove matches that are too far away
+          ensurePositive(getDistanceTo(match, startIndex)) < 200
+      )
+      .sort((a, b) => {
+        const aDistance = ensurePositive(getDistanceTo(a, startIndex))
+        const bDistance = ensurePositive(getDistanceTo(b, startIndex))
+        if (aDistance < bDistance) {
+          return -1
+        } else if (aDistance > bDistance) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+
+    if (!matches) {
+      console.log('findDistanceToWord: Found no match.')
       return null
     }
-    const distance =
-      closestSide === 'left'
-        ? sides[closestSide + 'Distance'] * -1
-        : sides[closestSide + 'Distance']
-    console.log(
-      `Found possible match on saved word on ${closestSide} side.
-      Distance in characters: ${distance}`
-    )
-    range.setStart(containerElement, range.startOffset + distance + 1)
-    range.setEnd(
-      containerElement,
-      range.startOffset + savedWord.length + distance
-    )
-    return range
-  }
 
-  findDistanceToWord = ({ searchSpace, startIndex, targetWord }) => {
-    return 0
+    const matchesWithDistance = matches.map(elem => ({
+      match: elem[0],
+      index: elem.index,
+      distance: getDistanceTo(elem, startIndex)
+    }))
+
+    console.log('matchesWithDistance', matchesWithDistance)
+    return matchesWithDistance[0]
+
+    // returns negative number if the match is 'behind' the startIndex
+    function getDistanceTo(match: RegExpExecArray, startIndex: number) {
+      return match.index - startIndex
+    }
+
+    function ensurePositive(input: number) {
+      return input < 0 ? input * -1 : input
+    }
   }
 
   initializeNewTag = (sense: ISense): ISenseTag => {

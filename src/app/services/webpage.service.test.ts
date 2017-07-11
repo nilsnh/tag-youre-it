@@ -19,16 +19,43 @@ describe('WebPageService:', function() {
   })
 
   describe('Word distance calculator', () => {
-    const testString =
-      'this is a long string with different words to find in this.'
-    const startIndex = testString.indexOf('long')
     it('should be able to find distance to "this" from "long"', () => {
+      const testString =
+        'this is a long string with different words to find in this.'
+      const startIndex = testString.indexOf('long')
       const result = webpageService.findDistanceToWord({
         searchSpace: testString,
         startIndex,
         targetWord: 'this'
       })
-      expect(result).toBe(-10)
+      expect(result.distance).toBe(-10)
+      expect(result.index).toBe(0)
+    })
+
+    it('should prefer match in the end if thats closer to startIndex', () => {
+      const testString =
+        'find this is a long string with different words to find in this.'
+      const startIndex = testString.indexOf('words')
+      const result = webpageService.findDistanceToWord({
+        searchSpace: testString,
+        startIndex,
+        targetWord: 'find'
+      })
+      expect(result.distance).toBe(9)
+      expect(result.index).toBe(51)
+    })
+
+    it('should match the left closest to startIndex', () => {
+      const testString =
+        'find this is a long string with different find words to in this.'
+      const startIndex = testString.indexOf('words')
+      const result = webpageService.findDistanceToWord({
+        searchSpace: testString,
+        startIndex,
+        targetWord: 'find'
+      })
+      expect(result.distance).toBe(-5)
+      expect(result.index).toBe(42)
     })
   })
 })
