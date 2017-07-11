@@ -221,13 +221,11 @@ export class WebPageService {
           if (savedWord !== selectedWordOnPage) {
             /**
               Uh oh! deserializedRange does not contain the word we saved.
-              Content might have shifted.
+              Content might have shifted. Try finding an adjacent match.
             */
             const range = tagToLoad.deserializedRange
-            const searchSpace =
-              tagToLoad.deserializedRange.startContainer.textContent
             const result = this.findDistanceToWord({
-              searchSpace,
+              searchSpace: range.startContainer.textContent,
               startIndex: range.startOffset,
               targetWord: savedWord
             })
@@ -265,7 +263,12 @@ export class WebPageService {
   }
 
   /**
-   * Fuzzy find.
+   * Fuzzy find. When deserializing ranges we sometimes discover that the
+   * webcontent might have shifted. This function helps us "look around"
+   *
+   * Returns an object with word matched, index of match and distance to the
+   * closest word. Please note that the distance will be negative if the word
+   * is "behind" the starting point.
    */
   findDistanceToWord = ({
     searchSpace,
